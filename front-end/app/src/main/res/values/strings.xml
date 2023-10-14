@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">grocerymanager</string>
+
+    <string name="menu_bar">---</string>
+
+
+    <!-- Login Page -->
+    <string name="google_sign_in">Sign In With Google</string>
+
+
+    <!-- Home Page -->
+    <string name="scan_groceries_button">Scan Groceries</string>
+    <string name="manage_inventory_button">Manage Inventory</string>
+    <string name="consult_dietitian_button">Consult a Dietitian</string>
+    <string name="suggested_recipes_button">Suggested Recipes</string>
+
+
+    <!-- Inventory Page -->
+    <string name="add_items_button">+ Add Items</string>
+
+    <!-- Scanner Page -->
+    <string name="receipt_scanner_button">Receipt</string>
+    <string name="item_scanner_button">Item</string>
+    <string name="manual_button">Manually Add Items</string>
+
+    <!-- Recipe Page -->
+    <!-- Chat Page -->
+    <!-- Profile Page -->
+    <!-- Settings Page -->
+
+
 </resources>
