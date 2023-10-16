@@ -18,7 +18,7 @@ var server=app.listen(8081,"0.0.0.0", (req,res)=>{
 
 })
 
-app.get("/add/user", (req,res)=>{
+app.get("/add/users", (req,res)=>{
 
   con.connect(function(err) {
     if (err) {
