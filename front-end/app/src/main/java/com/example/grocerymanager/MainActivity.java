@@ -31,21 +31,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        signInButton = findViewById(R.id.sign_in_button_login);
-//        signInButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                launchMainIntent();
-//            }
-//        });
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestProfile()
                 .build();
 
-        // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        if (mGoogleSignInClient != null) {
+            launchHomeIntent();
+        }
 
         signInButton = findViewById(R.id.sign_in_button_login);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Family Name: " + account.getFamilyName());
             Log.d(TAG, "Display URI: " + account.getPhotoUrl());
 
-            launchMainIntent();
+            launchHomeIntent();
             //Send token to back-end
             //Move to other activity
 //            account.getIdToken();
@@ -107,8 +102,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void launchMainIntent() {
-        Intent detailsIntent = new Intent(MainActivity.this, MainActivity.class);
-        startActivity(detailsIntent);
+    private void launchHomeIntent() {
+        Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
+        startActivity(homeIntent);
+        finish();
     }
 }
