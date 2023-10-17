@@ -21,6 +21,7 @@ CREATE TABLE OWNS(
     UID MEDIUMINT NOT NULL,
     ExpireDate DATE NOT NULL,
     ItemCount INT NOT NULL,
+    ItemID INT,
     PRIMARY KEY (UPC, UID, ExpireDate),
     FOREIGN KEY (UPC) REFERENCES GROCERIES(UPC)
     ON DELETE CASCADE,
@@ -79,17 +80,41 @@ VALUES
 INSERT INTO
 GROCERIES(UPC, Name, Brand)
 VALUES
+(123456789014, 'test1', 'testing'),
 (123456789012, 'test2', 'testing');
 
 INSERT INTO
 OWNS(UPC, UID,ExpireDate,ItemCount)
 VALUES
-(123456789012, 2, '2023-10-14', 5);
+(123456789012, 2, '2023-10-19', 5),
+(123456789014, 2, '2023-10-16', 5);
 
+/*
 DELETE 
 FROM OWNS 
-WHERE UID=1 AND UPC=123456789012 AND ExpireDate='2023-10-26' AND ItemCount=8
--- SELECT * FROM users
+WHERE UID=1 AND UPC=123456789012 AND ExpireDate='2023-10-26' AND ItemCount=8*/
+
+UPDATE OWNS o
+JOIN (
+    SELECT 
+        o1.UPC,
+        o1.UID,
+        o1.ExpireDate,
+        o1.ItemCount,
+        ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate ASC) AS NewItemID
+    FROM OWNS o1
+    WHERE o1.UID = 2
+) AS result
+ON o.UPC = result.UPC AND o.UID = result.UID
+SET o.ItemID = result.NewItemID
+WHERE o.UID = 2;
+
+SELECT *
+FROM OWNS o
+WHERE o.UID=2
+ORDER BY o.ItemID ASC;
+
+INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES ("a", "b", "c", NULL);
 
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
@@ -97,11 +122,12 @@ SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;')
 FROM information_schema.tables 
 WHERE table_schema = 'grocerymanger'; 
 
---delete all tables 
+-- delete all tables 
 DROP TABLE IF EXISTS `chat`;
 DROP TABLE IF EXISTS `dietician`;
 DROP TABLE IF EXISTS `owns`;
 DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `recipe`;
 DROP TABLE IF EXISTS `groceries`;
+DROP TABLE IF EXISTS `preference`;
 DROP TABLE IF EXISTS `users`;*/
