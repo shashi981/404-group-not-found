@@ -7,18 +7,6 @@
     tools:context=".HomeActivity">
 
     <Button
-        android:id="@+id/menu_bar_home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/menu_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.002" />
-
-    <Button
         android:id="@+id/scan_groceries_button_home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,4 +48,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.711" />
+
+    <Spinner
+        android:id="@+id/menu_bar_home"
+        android:layout_width="290dp"
+        android:layout_height="48dp"
+        android:entries="@array/menu_items"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.149" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
