@@ -17,8 +17,8 @@ CREATE TABLE GROCERIES(
 );
 
 CREATE TABLE OWNS(
+	UID MEDIUMINT NOT NULL,
 	UPC BIGINT NOT NULL,
-    UID MEDIUMINT NOT NULL,
     ExpireDate DATE NOT NULL,
     ItemCount INT NOT NULL,
     ItemID INT,
@@ -84,10 +84,10 @@ VALUES
 (123456789012, 'test2', 'testing');
 
 INSERT INTO
-OWNS(UPC, UID,ExpireDate,ItemCount)
+OWNS(UID, UPC,ExpireDate,ItemCount)
 VALUES
-(123456789012, 2, '2023-10-19', 5),
-(123456789014, 2, '2023-10-16', 5);
+( 1, 123456789012,'2023-10-19', 6),
+( 1, 123456789014,'2023-10-16', 6);
 
 /*
 DELETE 
@@ -101,11 +101,11 @@ JOIN (
         o1.UID,
         o1.ExpireDate,
         o1.ItemCount,
-        ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate ASC) AS NewItemID
+        ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID
     FROM OWNS o1
     WHERE o1.UID = 2
 ) AS result
-ON o.UPC = result.UPC AND o.UID = result.UID
+ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount
 SET o.ItemID = result.NewItemID
 WHERE o.UID = 2;
 
@@ -115,6 +115,10 @@ WHERE o.UID=2
 ORDER BY o.ItemID ASC;
 
 INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES ("a", "b", "c", NULL);
+
+SELECT UID FROM USERS WHERE FirstName=a AND LastName=b AND Email=c;
+
+UPDATE USERS SET FirstName="testing1", LastName="testing1", Email="checkupdate.com", ProfileURL="testing" WHERE UID=1;
 
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
