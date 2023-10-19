@@ -35,7 +35,7 @@ app.get("/get/users", (req,res)=>{
   con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
-      return;
+      return
     }
   
     console.log('Connected to the database as id ' + con.threadId)
@@ -63,7 +63,7 @@ app.get("/add/users", (req,res)=>{
   con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
-      return;
+      return
     }
   
     console.log('Connected to the database as id ' + con.threadId)
@@ -102,7 +102,7 @@ app.get("/delete/users", (req,res)=>{
   con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
-      return;
+      return
     }
   
     console.log('Connected to the database as id ' + con.threadId)
@@ -124,8 +124,8 @@ app.get("/delete/users", (req,res)=>{
   })
 })
 
-//modify user
-app.get("/modify/users", (req,res)=>{
+//update user
+app.get("/update/users", (req,res)=>{
   let UID=req.query.p1
   let FirstName=req.query.p2
   let LastName=req.query.p3
@@ -169,7 +169,7 @@ app.get("/get/items", (req,res)=>{
     con.query(query, [ID,ID], (err, results, fields) => {
       if (err) {
         console.error('Error querying the database: ' + err.stack)
-        res.status(500).send('Error querying the database: ');
+        database_error(res, err.stack)
         return
       }
     })
@@ -178,7 +178,7 @@ app.get("/get/items", (req,res)=>{
     con.query(query2, ID, (err, selectResults, fields) => {
       if (err) {
         console.error('Error querying the database: ' + err.stack)
-        res.status(500).send('Error querying the database: ');
+        database_error(res, err.stack)
         return
       }
 
@@ -207,7 +207,7 @@ app.get("/add/items", (req,res)=>{
   con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
-      return;
+      return
     }
   
     console.log('Connected to the database as id ' + con.threadId)
@@ -242,7 +242,7 @@ app.get("/delete/items", (req,res)=>{
   con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
-      return;
+      return
     }
   
     console.log('Connected to the database as id ' + con.threadId)
@@ -264,4 +264,43 @@ app.get("/delete/items", (req,res)=>{
   })
 })
 
+//done
+//update items
+app.get("/update/items", (req,res)=>{
+
+  let UID=req.query.p1
+  let ItemID=req.query.p2 ? req.query.p2.split(',') : []
+  let UPC = req.query.p3 ? req.query.p3.split(',') : []
+  let ExpireDate = req.query.p4 ? req.query.p4.split(',') : []
+  let ItemCount = req.query.p5 ? req.query.p5.split(',') : []
+  if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length || ItemID.length !== UPC.length) {
+    return res.status(400).send('Arrays should have the same length')
+  }
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const values = [];
+    for (let i = 0; i <UPC.length; i++) {
+      values.push([ExpireDate[i], ItemCount[i], UID, UPC[i], ItemID[i]])
+    }
+    console.log(values)
+    const query = 'UPDATE OWNS SET ExpireDate=?, ItemCount=? WHERE UID=? AND UPC=? AND ItemID=?;'
+    values.forEach((values) => {
+      const executedQuery = mysql.format(query, values);
+      console.log('Executed Query:', executedQuery);
+      con.query(executedQuery, (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack);
+      return
+      }
+      console.log('SUCCESS Updated items');
+      })
+    })
+    query_success(res, 'SUCCESS Updated items')
+  })
+})
 

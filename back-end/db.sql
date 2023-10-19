@@ -120,6 +120,8 @@ SELECT UID FROM USERS WHERE FirstName=a AND LastName=b AND Email=c;
 
 UPDATE USERS SET FirstName="testing1", LastName="testing1", Email="checkupdate.com", ProfileURL="testing" WHERE UID=1;
 
+UPDATE OWNS SET ExpireDate='2023-12-24', ItemCount=100 WHERE UID=1 AND UPC=123456789014 AND ItemID=1;
+
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
 SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;') 
