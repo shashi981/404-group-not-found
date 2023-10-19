@@ -4,6 +4,17 @@
     <string name="menu_bar">---</string>
 
 
+    <!-- Nav Bar -->
+    <string name="chat_icon_dark_description">Move to chat view</string>
+    <string name="scanner_icon_dark_description">Move to scanner view</string>
+    <string name="inventory_icon_dark_description">Move to inventory view</string>
+    <string name="recipe_icon_dark_description">Move to recipe view</string>
+    <string name="shop_icon_dark_description">Move to shopping list view</string>
+    <string name="menu_bar_icon_dark_description">Expand Menu</string>
+
+
+
+
     <!-- Login Page -->
     <string name="google_sign_in">Sign In With Google</string>
 

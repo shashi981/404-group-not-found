@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,6 +24,12 @@ public class HomeActivity extends AppCompatActivity {
     private Button manageInventoryButton;
     private Button consultDietitianButton;
     private Button suggestedRecipesButton;
+
+    private ImageButton chatIcon;
+    private ImageButton scannerIcon;
+    private ImageButton inventoryIcon;
+    private ImageButton recipeIcon;
+
 
     private Spinner dropdownMenu;
     private List<String> items;
@@ -90,6 +97,41 @@ public class HomeActivity extends AppCompatActivity {
                 launchRecipeIntent();
             }
         });
+
+
+        chatIcon = findViewById(R.id.chat_icon_home);
+        chatIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchChatIntent();
+            }
+        });
+
+        scannerIcon = findViewById(R.id.scan_icon_home);
+        scannerIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchScannerIntent();
+            }
+        });
+
+        inventoryIcon = findViewById(R.id.inventory_icon_home);
+        inventoryIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchInventoryIntent();
+            }
+        });
+
+        recipeIcon = findViewById(R.id.recipe_icon_home);
+        chatIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchRecipeIntent();
+            }
+        });
+
+
     }
 
     private void launchScannerIntent() {
