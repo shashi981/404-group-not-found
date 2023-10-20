@@ -304,3 +304,116 @@ app.get("/update/items", (req,res)=>{
   })
 })
 
+//add pref
+//done
+app.get("/add/pref", (req,res)=>{
+
+  let UID=req.query.p1
+  let Pref = req.query.p2 ? req.query.p2.split(',') : []
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const values = [];
+    for (let i = 0; i <Pref.length; i++) {
+      if(i<Pref.length-1){
+        values.push(([UID, Pref[i],]));
+      }
+      else{
+        values.push(([UID, Pref[i]]));
+      }
+    }
+    console.log(values)
+    const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
+    con.query(query, [values], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+      console.log('SUCCESS ADDED Pref') 
+      query_success(res, 'SUCCESS ADDED Pref')
+    })
+  })
+})
+
+//delete pref
+//done
+app.get("/delete/pref", (req,res)=>{
+
+  let UID=req.query.p1
+  let Pref = req.query.p2 ? req.query.p2.split(',') : []
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const query = 'DELETE FROM PREFERENCE WHERE UID= ? AND Pref IN (?)'
+    con.query(query, [UID, Pref], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+      console.log('SUCCESS DELETE Pref') 
+      query_success(res, 'SUCCESS DELETE Pref')
+    })
+  })
+})
+
+//get preference
+//done
+app.get("/get/pref", (req,res)=>{
+
+  let UID=req.query.p1
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const query = 'SELECT Pref FROM PREFERENCE WHERE UID= ?'
+    con.query(query, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+      console.log('SUCCESS select Pref') 
+      const formattedResults = results.map((result) => {
+        return `${result.Pref}`;
+      });
+      query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
+    })
+  })
+})
+
+//get available preference from database
+//done
+app.get("/get/pref_list", (req,res)=>{
+
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const query = 'SELECT * FROM PREF_LIST'
+    con.query(query, (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+      console.log('SUCCESS show Pref_list') 
+      const formattedResults = results.map((result) => {
+        return `${result.Pref}`;
+      });
+      query_success(res, 'SUCCESS show Pref_list ' + formattedResults.join('\n'))
+    })
+  })
+})
+
