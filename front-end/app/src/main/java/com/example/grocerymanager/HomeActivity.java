@@ -39,32 +39,32 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        dropdownMenu = findViewById(R.id.menu_bar_home);
+//        dropdownMenu = findViewById(R.id.menu_bar_home);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.menu_items, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dropdownMenu.setAdapter(adapter);
-
-        dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Handle item selection here
-                String selectedItem = parent.getItemAtPosition(position).toString();
-                if(selectedItem.equals("...")){
-                }
-                else if(selectedItem.equals("Profile")){
-                    launchProfileIntent();
-                }
-                else if(selectedItem.equals("Settings")){
-                    launchSettingsIntent();
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+//                R.array.menu_items, android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        dropdownMenu.setAdapter(adapter);
+//
+//        dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                // Handle item selection here
+//                String selectedItem = parent.getItemAtPosition(position).toString();
+//                if(selectedItem.equals("...")){
+//                }
+//                else if(selectedItem.equals("Profile")){
+//                    launchProfileIntent();
+//                }
+//                else if(selectedItem.equals("Settings")){
+//                    launchSettingsIntent();
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            }
+//        });
 
 
         scanGroceriesButton = findViewById(R.id.scan_groceries_button_home);
@@ -124,7 +124,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         recipeIcon = findViewById(R.id.recipe_icon_home);
-        chatIcon.setOnClickListener(new View.OnClickListener() {
+        recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchRecipeIntent();
