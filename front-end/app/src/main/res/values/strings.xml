@@ -11,8 +11,7 @@
     <string name="recipe_icon_dark_description">Move to recipe view</string>
     <string name="shop_icon_dark_description">Move to shopping list view</string>
     <string name="menu_bar_icon_dark_description">Expand Menu</string>
-
-
+    <string name="back_bar_icon_dark_description">Back icon</string>
 
 
     <!-- Login Page -->
@@ -38,6 +37,9 @@
     <!-- Chat Page -->
     <!-- Profile Page -->
     <!-- Settings Page -->
+
+    <string name="profile_dropdown">Profile</string>
+    <string name="settings_dropdown">Settings</string>
 
 
 </resources>

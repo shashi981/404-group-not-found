@@ -1,21 +1,11 @@
 package com.example.grocerymanager;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Spinner;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.PopupMenu;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -29,56 +19,27 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton scannerIcon;
     private ImageButton inventoryIcon;
     private ImageButton recipeIcon;
-
-
-    private Spinner dropdownMenu;
-    private List<String> items;
+    private ImageButton cartIcon;
+    private ImageButton menuIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-//        dropdownMenu = findViewById(R.id.menu_bar_home);
-
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-//                R.array.menu_items, android.R.layout.simple_spinner_item);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        dropdownMenu.setAdapter(adapter);
-//
-//        dropdownMenu.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                // Handle item selection here
-//                String selectedItem = parent.getItemAtPosition(position).toString();
-//                if(selectedItem.equals("...")){
-//                }
-//                else if(selectedItem.equals("Profile")){
-//                    launchProfileIntent();
-//                }
-//                else if(selectedItem.equals("Settings")){
-//                    launchSettingsIntent();
-//                }
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//            }
-//        });
-
 
         scanGroceriesButton = findViewById(R.id.scan_groceries_button_home);
         scanGroceriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchScannerIntent();
+                ActivityLauncher.launchActivity(HomeActivity.this, ScannerActivity.class);
             }
         });
         manageInventoryButton = findViewById(R.id.manage_inventory_button_home);
         manageInventoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchInventoryIntent();
+                ActivityLauncher.launchActivity(HomeActivity.this, InventoryActivity.class);
             }
         });
 
@@ -86,7 +47,8 @@ public class HomeActivity extends AppCompatActivity {
         consultDietitianButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchChatIntent();
+
+                ActivityLauncher.launchActivity(HomeActivity.this, ChatActivity.class);
             }
         });
 
@@ -94,7 +56,9 @@ public class HomeActivity extends AppCompatActivity {
         suggestedRecipesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchRecipeIntent();
+
+                ActivityLauncher.launchActivity(HomeActivity.this, RecipeActivity.class);
+
             }
         });
 
@@ -103,7 +67,9 @@ public class HomeActivity extends AppCompatActivity {
         chatIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchChatIntent();
+
+                ActivityLauncher.launchActivity(HomeActivity.this, ChatActivity.class);
+
             }
         });
 
@@ -111,7 +77,8 @@ public class HomeActivity extends AppCompatActivity {
         scannerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchScannerIntent();
+                ActivityLauncher.launchActivity(HomeActivity.this, ScannerActivity.class);
+
             }
         });
 
@@ -119,7 +86,8 @@ public class HomeActivity extends AppCompatActivity {
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchInventoryIntent();
+                ActivityLauncher.launchActivity(HomeActivity.this, InventoryActivity.class);
+
             }
         });
 
@@ -127,35 +95,48 @@ public class HomeActivity extends AppCompatActivity {
         recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchRecipeIntent();
+                ActivityLauncher.launchActivity(HomeActivity.this, RecipeActivity.class);
+
+            }
+        });
+
+        cartIcon = findViewById(R.id.shop_icon_home);
+        cartIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(HomeActivity.this, ListActivity.class);
+
+            }
+        });
+
+        menuIcon = findViewById(R.id.menu_bar_icon_home);
+        PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
+
+        popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.settings_dropdown) {
+                    ActivityLauncher.launchActivity(HomeActivity.this, SettingsActivity.class);
+
+                    return true;
+                } else if (id == R.id.profile_dropdown) {
+                    ActivityLauncher.launchActivity(HomeActivity.this, ProfileActivity.class);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        menuIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupMenu.show();
             }
         });
 
 
-    }
-
-    private void launchScannerIntent() {
-        Intent scannerIntent = new Intent(HomeActivity.this, ScannerActivity.class);
-        startActivity(scannerIntent);
-    }
-    private void launchInventoryIntent() {
-        Intent inventoryIntent = new Intent(HomeActivity.this, InventoryActivity.class);
-        startActivity(inventoryIntent);
-    }
-    private void launchChatIntent() {
-        Intent chatIntent = new Intent(HomeActivity.this, ChatActivity.class);
-        startActivity(chatIntent);
-    }
-    private void launchRecipeIntent() {
-        Intent recipeIntent = new Intent(HomeActivity.this, RecipeActivity.class);
-        startActivity(recipeIntent);
-    }
-
-
-    private void launchProfileIntent(){
-        Log.d(TAG, "launched profile intent");
-    }
-    private void launchSettingsIntent(){
-        Log.d(TAG, "launched settings intent");
     }
 }
