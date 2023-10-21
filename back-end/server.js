@@ -417,3 +417,81 @@ app.get("/get/pref_list", (req,res)=>{
   })
 })
 
+//request for being a dietician
+//done
+app.get("/add/dietReq", (req,res)=>{
+
+  let UID=req.query.p1
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    
+    
+    const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
+    con.query(query, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        database_error(res, err.stack)
+        return
+      }
+      console.log('Request for being dietician made!!' + con.threadId)
+      query_success(res, 'Request for being dietician made!!')
+    })
+  })
+})
+
+app.get("/get/dietReq", (req,res)=>{
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
+    con.query(query, (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+      const formattedResults = results.map((result) => {
+        return `${result.RID}\t${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
+      });
+      console.log('SUCCESS show list of being dietician request') 
+      query_success(res, 'SUCCESS show list of being dietician request: ' + formattedResults.join('\n'))
+    })
+  })
+})
+
+app.get("/approve/dietReq", (req,res)=>{
+
+  UID=req.query.p1 ? req.query.p1.split(',') : []
+  con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)
+    const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID IN (?)'
+    con.query(query, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+    })
+    const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID IN (?)'
+    con.query(query2, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+      console.log('SUCCESS approve being dietician request') 
+      query_success(res, 'SUCCESS approve being dietician request')
+  })
+})
+})
