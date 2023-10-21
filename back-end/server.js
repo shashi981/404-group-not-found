@@ -1,13 +1,13 @@
-//figure out if can do array payload
+//TODO add asyc to all requests and maybe add locks to each table
 var mysql = require('mysql2');
 var express = require("express")
 var app=express()
 
 var con = mysql.createConnection({
-  host: "",
+  host: "127.0.0.1",
   port: "3306",
   user: "root",
-  password: "",
+  password: "Zachary",
   database: 'grocerymanger'
 });
 
@@ -102,6 +102,7 @@ app.get("/delete/users", (req,res)=>{
   con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
+      database_error(res, err.stack)
       return
     }
   
@@ -444,6 +445,8 @@ app.get("/add/dietReq", (req,res)=>{
   })
 })
 
+//get all request for being a dietician
+//done
 app.get("/get/dietReq", (req,res)=>{
   con.connect(function(err) {
     if (err) {
@@ -467,6 +470,9 @@ app.get("/get/dietReq", (req,res)=>{
   })
 })
 
+
+//approve request for being a dietician, add to dietician table and remove the request
+//done
 app.get("/approve/dietReq", (req,res)=>{
 
   UID=req.query.p1 ? req.query.p1.split(',') : []
@@ -493,5 +499,44 @@ app.get("/approve/dietReq", (req,res)=>{
       console.log('SUCCESS approve being dietician request') 
       query_success(res, 'SUCCESS approve being dietician request')
   })
+  })
 })
+
+
+app.get("/get/users_type", async (req,res)=>{
+
+  try {
+    const Email = req.query.p1;
+
+    const query1 = 'SELECT * FROM USERS WHERE Email=?'
+    const [userResults] = await con.promise().query(query1, [Email])
+
+    if (userResults.length > 0) {
+      console.log('Entry exists as user')
+      return query_success(res, 'This is a user\n')
+    }
+
+    const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
+    const [dieticianResults] = await con.promise().query(query2, [Email]);
+
+    if (dieticianResults.length > 0) {
+      console.log('Entry exists as dietician')
+      return query_success(res, 'This is a dietician\n')
+    }
+
+    const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
+    const [adminResults] = await con.promise().query(query3, [Email])
+
+    if (adminResults.length > 0) {
+      console.log('Entry exists as admin');
+      return query_success(res, 'This is an admin\n')
+    }
+
+    console.log('This is an entry that does not exist')
+    return query_success(res, 'This is an entry that does not exist\n')
+  } catch (error) {
+    console.error('Error:', error)
+    database_error(res, err.stack)
+  }
+
 })

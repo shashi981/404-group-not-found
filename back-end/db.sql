@@ -64,6 +64,7 @@ CREATE TABLE CHAT(
     DID MEDIUMINT NOT NULL,
     Text VARCHAR(500) NOT NULL,
     Time TIMESTAMP NOT NULL,
+    FROM_USER BIT(1) NOT NULL, -- 1 for from user, 0 for from dietician
     PRIMARY KEY (CID, UID, DID),
     FOREIGN KEY (UID) REFERENCES USERS(UID)
     ON DELETE CASCADE,
@@ -84,12 +85,33 @@ CREATE TABLE PREF_LIST(
     Pref VARCHAR(25) NOT NULL PRIMARY KEY
 );
 
+CREATE TABLE ADMIN(
+	UID MEDIUMINT NOT NULL AUTO_INCREMENT,
+    FirstName VARCHAR(25) NOT NULL,
+    LastName VARCHAR(25) NOT NULL,
+    Email VARCHAR(100) UNIQUE NOT NULL,
+    ProfileURL VARCHAR(500),
+    -- Bios VARCHAR(500),
+    PRIMARY KEY (UID)
+);
 
 INSERT INTO
 USERS(FirstName, LastName, Email)
 VALUES
 ('Test', 'test', 'testing@gmail.com'),
 ('Test2', 'test2', 'testing2@gmail.com');
+
+INSERT INTO 
+USERS (FirstName, LastName, Email, ProfileURL) 
+VALUES ("a", "b", "c", NULL);
+
+INSERT INTO 
+dietician (FirstName, LastName, Email, ProfileURL) 
+VALUES ("dietician", "dietician", "dietician.com", NULL);
+
+INSERT INTO 
+Admin (FirstName, LastName, Email, ProfileURL) 
+VALUES ("admin", "admin", "admin1", NULL);
 
 INSERT INTO
 GROCERIES(UPC, Name, Brand)
@@ -108,6 +130,23 @@ INSERT INTO PREF_LIST (Pref) VALUES
 ( "Vegetarian"), 
 ("Non-dairy"),
 ("Vegan");
+
+INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) 
+SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL
+FROM USERS u
+WHERE u.UID IN (1,2);
+
+INSERT INTO PREFERENCE (UID, Pref) VALUES (1, "Vegan");
+
+INSERT INTO DIETICIAN_REQUEST (UID) VALUES (2);
+
+SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL 
+FROM DIETICIAN_REQUEST d, USERS u 
+WHERE u.UID=d.UID AND u.UID=1;
+
+SELECT UID 
+FROM USERS 
+WHERE FirstName=a AND LastName=b AND Email=c;
 
 DELETE 
 FROM OWNS 
@@ -132,24 +171,15 @@ FROM OWNS o
 WHERE o.UID=2
 ORDER BY o.ItemID ASC;
 
-INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES ("a", "b", "c", NULL);
+UPDATE USERS 
+SET FirstName="testing1", LastName="testing1", Email="checkupdate.com", ProfileURL="testing" 
+WHERE UID=1;
 
-SELECT UID FROM USERS WHERE FirstName=a AND LastName=b AND Email=c;
+UPDATE OWNS 
+SET ExpireDate='2023-12-24', ItemCount=100 
+WHERE UID=1 AND UPC=123456789014 AND ItemID=1;
 
-UPDATE USERS SET FirstName="testing1", LastName="testing1", Email="checkupdate.com", ProfileURL="testing" WHERE UID=1;
 
-UPDATE OWNS SET ExpireDate='2023-12-24', ItemCount=100 WHERE UID=1 AND UPC=123456789014 AND ItemID=1;
-
-INSERT INTO DIETICIAN_REQUEST (UID) VALUES (2);
-
-SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID AND u.UID=1;
-
-INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) 
-SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL
-FROM USERS u
-WHERE u.UID IN (1,2);
-
-INSERT INTO PREFERENCE (UID, Pref) VALUES (1, "Vegan");
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
 SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;') 
@@ -159,9 +189,11 @@ WHERE table_schema = 'grocerymanger';
 -- delete all tables 
 DROP TABLE IF EXISTS `chat`;
 DROP TABLE IF EXISTS `dietician`;
+DROP TABLE IF EXISTS `dietician_request`;
+DROP TABLE IF EXISTS `preference`;
 DROP TABLE IF EXISTS `owns`;
 DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `recipe`;
 DROP TABLE IF EXISTS `groceries`;
-DROP TABLE IF EXISTS `preference`;
+DROP TABLE IF EXISTS `pref_list`;
 DROP TABLE IF EXISTS `users`;*/
