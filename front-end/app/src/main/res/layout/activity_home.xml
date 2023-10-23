@@ -7,6 +7,68 @@
     android:background="#F5F5F5"
     tools:context=".HomeActivity">
 
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_recipe"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"></LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_inventory"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.66666666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_scanner"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333333333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_chat"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+    </LinearLayout>
+
     <Button
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"

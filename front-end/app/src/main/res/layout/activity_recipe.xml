@@ -8,6 +8,56 @@
     tools:context=".RecipeActivity">
 
     <LinearLayout
+        android:id="@+id/bottom_navbar_blue_chat"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_scanner"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333333333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_inventory"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.66666666"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1">
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
         android:id="@+id/bottom_navbar_green"
         android:layout_width="0dp"
         android:layout_height="60dp"
@@ -62,19 +112,33 @@
         app:layout_constraintVertical_bias="1"
         app:srcCompat="@drawable/inventory_dark_40" />
 
+    <LinearLayout
+        android:id="@+id/bottom_navbar_blue_recipe"
+        android:layout_width="103dp"
+        android:layout_height="60dp"
+        android:background="@drawable/navbar_rectangle_dark"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"></LinearLayout>
+
     <ImageButton
         android:id="@+id/recipe_icon_recipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#00FFFFFF"
-        android:contentDescription="@string/recipe_icon_dark_description"
+        android:contentDescription="@string/recipe_icon_light_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1"
-        app:srcCompat="@drawable/recipe_dark_40" />
+        app:srcCompat="@drawable/recipe_light_40" />
 
     <ImageButton
         android:id="@+id/shop_icon_recipe"

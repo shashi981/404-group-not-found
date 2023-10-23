@@ -13,6 +13,11 @@
     <string name="menu_bar_icon_dark_description">Expand Menu</string>
     <string name="back_bar_icon_dark_description">Back icon</string>
 
+    <string name="chat_icon_light_description">Move to chat view</string>
+    <string name="scanner_icon_light_description">Move to scanner view</string>
+    <string name="inventory_icon_light_description">Move to inventory view</string>
+    <string name="recipe_icon_light_description">Move to recipe view</string>
+
 
     <!-- Login Page -->
     <string name="google_sign_in">Sign In With Google</string>
