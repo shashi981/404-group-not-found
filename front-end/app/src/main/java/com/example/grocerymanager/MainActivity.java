@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
     final static String TAG = "MainActivity"; //identify where log is coming from
 
     private GoogleSignInClient mGoogleSignInClient;
+
+    private GoogleSignInAccount googleAccount;
     private int RC_SIGN_IN = 1;
 
 
@@ -37,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        googleAccount = GoogleSignIn.getLastSignedInAccount(this);
 
-        if (mGoogleSignInClient != null) {
+        if (googleAccount != null) {
             launchHomeIntent();
         }
 
