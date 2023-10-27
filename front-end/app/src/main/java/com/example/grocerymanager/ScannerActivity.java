@@ -19,6 +19,7 @@ public class ScannerActivity extends AppCompatActivity {
     private ImageButton recipeIcon;
     private ImageButton cartIcon;
     private ImageButton menuIcon;
+    private Button addItemsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,14 @@ public class ScannerActivity extends AppCompatActivity {
 //
 //            }
 //        });
+
+        addItemsButton = findViewById(R.id.manual_scanner);
+        addItemsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(ScannerActivity.this, AddItemsActivity.class);
+            }
+        });
 
         inventoryIcon = findViewById(R.id.inventory_icon_scanner);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {

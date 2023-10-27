@@ -171,6 +171,9 @@
 
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/receipt_scanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -183,6 +186,9 @@
         app:layout_constraintVertical_bias="0.711" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/item_scanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -195,6 +201,9 @@
         app:layout_constraintVertical_bias="0.711" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/manual_scanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
