@@ -114,13 +114,13 @@ public class ScannerActivity extends AppCompatActivity {
             }
         });
 
-        scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
-        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleScanButtonClick();
-            }
-        });
+//        scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
+//        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                handleScanButtonClick();
+//            }
+//        });
 
 
 
