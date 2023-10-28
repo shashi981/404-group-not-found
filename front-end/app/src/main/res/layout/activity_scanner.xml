@@ -215,9 +215,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.809" />
 
-
-
-
+    <Button
+        android:id="@+id/scanBarcodeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/barcode_scanner_button"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navbar_blue_chat"
+        app:layout_constraintEnd_toStartOf="@+id/manual_scanner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/receipt_scanner" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
