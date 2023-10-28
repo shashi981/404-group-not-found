@@ -20,4 +20,64 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.05"
         app:srcCompat="@drawable/back_arrow_dark_40" />
+
+    <EditText
+        android:id="@+id/item_name"
+        android:layout_width="400dp"
+        android:layout_height="50dp"
+        android:autofillHints="@string/enter_item_hint"
+        android:hint="@string/enter_item"
+        android:inputType="text|textNoSuggestions"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.234" />
+
+    <EditText
+        android:id="@+id/item_expiry"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:autofillHints="@string/enter_expiry_hint"
+        android:ems="10"
+        android:hint="@string/enter_expiry"
+        android:inputType="date"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.318" />
+
+    <Button
+        android:id="@+id/add_item_to_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_item_to_list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.832"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.357" />
+
+    <EditText
+        android:id="@+id/item_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:autofillHints="@string/enter_quantity_hint"
+        android:ems="10"
+        android:hint="@string/enter_quantity"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.392" />
+
+    <!--button for adding item from edit text to list-->
+
+    <!--list view to display list of languages-->
 </androidx.constraintlayout.widget.ConstraintLayout>
