@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+
 public class ScannerActivity extends AppCompatActivity {
 
     final static String TAG = "ScannerActivity"; //identify where log is coming from
@@ -20,6 +23,8 @@ public class ScannerActivity extends AppCompatActivity {
     private ImageButton cartIcon;
     private ImageButton menuIcon;
     private Button addItemsButton;
+
+    private Button scanBarcodeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,5 +113,16 @@ public class ScannerActivity extends AppCompatActivity {
                 popupMenu.show();
             }
         });
+
+        scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
+        scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleScanButtonClick();
+            }
+        });
+
+
+
     }
 }
