@@ -39,7 +39,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ChatActivity.this, ScannerActivity.class);
-
+                finish();
             }
         });
 
@@ -48,7 +48,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ChatActivity.this, InventoryActivity.class);
-
+                finish();
             }
         });
 
@@ -57,7 +57,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ChatActivity.this, RecipeActivity.class);
-
+                finish();
             }
         });
 

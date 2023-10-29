@@ -126,7 +126,7 @@ public class InventoryActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 ActivityLauncher.launchActivity(InventoryActivity.this, ChatActivity.class);
-
+                finish();
             }
         });
 
@@ -135,7 +135,7 @@ public class InventoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(InventoryActivity.this, ScannerActivity.class);
-
+                finish();
             }
         });
 
@@ -148,20 +148,12 @@ public class InventoryActivity extends AppCompatActivity {
 //            }
 //        });
 
-        addItemsButton = findViewById(R.id.add_items_inventory);
-        addItemsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityLauncher.launchActivity(InventoryActivity.this, AddItemsActivity.class);
-            }
-        });
-
         recipeIcon = findViewById(R.id.recipe_icon_inventory);
         recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(InventoryActivity.this, RecipeActivity.class);
-
+                finish();
             }
         });
 
@@ -199,6 +191,14 @@ public class InventoryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 popupMenu.show();
+            }
+        });
+
+        addItemsButton = findViewById(R.id.add_items_inventory);
+        addItemsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(InventoryActivity.this, AddItemsActivity.class);
             }
         });
     }

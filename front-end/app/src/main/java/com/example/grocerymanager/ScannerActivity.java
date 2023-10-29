@@ -65,6 +65,7 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ScannerActivity.this, AddItemsActivity.class);
+                finish();
             }
         });
 
@@ -73,7 +74,7 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ScannerActivity.this, InventoryActivity.class);
-
+                finish();
             }
         });
 
@@ -82,7 +83,7 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ScannerActivity.this, RecipeActivity.class);
-
+                finish();
             }
         });
 
@@ -122,7 +123,6 @@ public class ScannerActivity extends AppCompatActivity {
                 popupMenu.show();
             }
         });
-
         scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,8 +130,6 @@ public class ScannerActivity extends AppCompatActivity {
                 scanCode();
             }
         });
-
-
 
     }
 
