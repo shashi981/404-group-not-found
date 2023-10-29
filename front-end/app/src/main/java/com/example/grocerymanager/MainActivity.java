@@ -1,5 +1,8 @@
 package com.example.grocerymanager;
 
+import static com.example.grocerymanager.GoogleAccountManager.setAccountInfo;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -15,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -102,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Given Name: " + account.getGivenName());
             Log.d(TAG, "Family Name: " + account.getFamilyName());
             Log.d(TAG, "Display URI: " + account.getPhotoUrl());
-
+            setAccountInfo(account.getDisplayName(), account.getEmail(), account.getPhotoUrl());
             launchHomeIntent();
             //Send token to back-end
             //Move to other activity
