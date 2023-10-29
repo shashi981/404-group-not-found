@@ -2,21 +2,31 @@
 //TODO change or redirect the server to use https once the cert is done for server
 const mysql = require('mysql2');
 const express = require("express")
-/*const https = require('https')
-const fs = require('fs')*/
+const https = require('https')
+const fs = require('fs')
 
 const app=express()
 
-
+/*
+//local testing use
 const con = mysql.createConnection({
   host: "",
   port: "3306",
   user: "root",
   password: "",
   database: 'grocerymanger'
+});*/
+
+//server use
+const con = mysql.createConnection({
+  host: "localhost",
+  port: "3306",
+  user: "404GroupNotFound",
+  password: "404Group",
+  database: 'grocerymanger'
 });
 
-/*
+
 const certs = {
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./certificate.pem')
@@ -26,16 +36,16 @@ const server = https.createServer(certs, app);
 
 server.listen(443, () => {
   console.log(`Server is running on port 443`);
-})*/
+})
 
-
+/*
 const server=app.listen(8081,"0.0.0.0", (req,res)=>{
   const host=server.address().address
   const port=server.address().port
 
   console.log("%s %s", host, port)
 
-})
+})*/
 
 
 function database_error(response, error) {
