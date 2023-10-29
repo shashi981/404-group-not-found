@@ -112,7 +112,7 @@ dietician (FirstName, LastName, Email, ProfileURL)
 VALUES ("dietician", "dietician", "dietician.com", NULL);
 
 INSERT INTO 
-Admin (FirstName, LastName, Email, ProfileURL) 
+ADMIN (FirstName, LastName, Email, ProfileURL) 
 VALUES ("admin", "admin", "admin1", NULL);
 
 INSERT INTO

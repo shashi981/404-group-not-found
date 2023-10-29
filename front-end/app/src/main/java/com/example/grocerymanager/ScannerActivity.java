@@ -1,16 +1,24 @@
 package com.example.grocerymanager;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 
 import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 public class ScannerActivity extends AppCompatActivity {
 
@@ -25,6 +33,7 @@ public class ScannerActivity extends AppCompatActivity {
     private Button addItemsButton;
 
     private Button scanBarcodeButton;
+    private ImageView barcodeImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,11 +127,34 @@ public class ScannerActivity extends AppCompatActivity {
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleScanButtonClick();
+                scanCode();
             }
         });
 
 
 
     }
+
+    private void scanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setPrompt("Volume up to turn on flash");
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barcodeLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result ->{
+        if (result.getContents() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ScannerActivity.this);
+            builder.setMessage(result.getContents());
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i){
+                    dialogInterface.dismiss();
+                }
+            }).show();
+        }
+    });
+
 }
