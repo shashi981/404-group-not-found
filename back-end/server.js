@@ -61,7 +61,7 @@ function query_success(response, message){
 app.get("/get/users", async (req,res)=>{
   try{
   let UID=req.query.p1
-  const query = 'SELECT FirstName, LastName, Email, ProfileURL FROM USERS WHERE UID=?'
+  const query = 'SELECT FirstName, LastName, Email, ProfileURL FROM USERS WHERE UID=?;'
 
   const [results] = await con.promise().query(query, [UID])
   /*con.connect(function(err) {
@@ -79,7 +79,7 @@ app.get("/get/users", async (req,res)=>{
       }*/
       const formattedResults = results.map((result) => {
         return `${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
-      });
+      })
       query_success(res, 'SUCCESS Get User:\n' + formattedResults.join('\n'))
    // })
   //})
@@ -98,7 +98,7 @@ app.get("/add/users", async (req,res)=>{
   let Email=req.query.p3
   let ProfileURL=req.query.p4
 
-  const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES (?, ?, ?, ?)'
+  const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES (?, ?, ?, ?);'
   const query2='SELECT UID FROM USERS WHERE Email=?'
 
   const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL])
@@ -147,7 +147,7 @@ app.get("/delete/users", async (req,res)=>{
 
     let UID=req.query.p1
 
-    const query = 'DELETE FROM USERS WHERE UID=?'
+    const query = 'DELETE FROM USERS WHERE UID=?;'
 
     const [results] = await con.promise().query(query, [UID])
   /*con.connect(function(err) {
@@ -188,7 +188,7 @@ app.get("/update/users", async (req,res)=>{
     let Email=req.query.p4
     let ProfileURL=req.query.p5
 
-    const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?'
+    const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?;'
     
 
     const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL])
@@ -227,7 +227,7 @@ app.get("/get/items", async (req,res)=>{
 
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
 
-    const query2 = 'SELECT * FROM OWNS o WHERE o.UID=? ORDER BY o.ItemID ASC'
+    const query2 = 'SELECT * FROM OWNS o WHERE o.UID=? ORDER BY o.ItemID ASC;'
 
     const [result1] = await con.promise().query(query, [ID])
     const [result2] = await con.promise().query(query2, [ID])
@@ -324,7 +324,7 @@ app.get("/delete/items", async (req,res)=>{
   let UID=req.query.p1
   let ItemID=req.query.p2 ? req.query.p2.split(',') : []
 
-  const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?)'
+  const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
   
 /*
   con.connect(function(err) {
