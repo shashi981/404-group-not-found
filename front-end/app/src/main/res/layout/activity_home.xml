@@ -70,59 +70,68 @@
     </LinearLayout>
 
     <Button
-        android:backgroundTint="@color/dark_blue"
-        android:backgroundTintMode="src_over"
-        android:textColor="@color/faded_white"
         android:id="@+id/scan_groceries_button_home"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
         android:text="@string/scan_groceries_button"
+        android:textColor="@color/faded_white"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.55" />
 
     <Button
-        android:backgroundTint="@color/dark_blue"
-        android:backgroundTintMode="src_over"
-        android:textColor="@color/faded_white"
         android:id="@+id/manage_inventory_button_home"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
         android:text="@string/manage_inventory_button"
+        android:textColor="@color/faded_white"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.571" />
+        app:layout_constraintVertical_bias="0.65" />
 
     <Button
-        android:backgroundTint="@color/dark_blue"
-        android:backgroundTintMode="src_over"
-        android:textColor="@color/faded_white"
         android:id="@+id/consult_dietitian_button_home"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="@string/consult_dietitian_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.641" />
-
-    <Button
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
+        android:text="@string/consult_dietitian_button"
         android:textColor="@color/faded_white"
-        android:id="@+id/suggested_recipes_button_home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/suggested_recipes_button"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.711" />
+        app:layout_constraintVertical_bias="0.75" />
+
+    <Button
+        android:id="@+id/suggested_recipes_button_home"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:text="@string/suggested_recipes_button"
+        android:textColor="@color/faded_white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.85" />
 
     <LinearLayout
         android:id="@+id/bottom_navbar_green"
@@ -220,6 +229,45 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.05"
         app:srcCompat="@drawable/menu_bar_dark_40" />
+
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:id="@+id/assistance_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/assistance_home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.366" />
+
+    <TextView
+        android:textSize="24sp"
+        android:textColor="@color/dark_blue"
+        android:id="@+id/salutations_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/salutations_home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.313" />
+
+    <TextView
+        android:textSize="32sp"
+        android:textColor="@color/dark_blue"
+        android:id="@+id/salutations_name_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/salutations_name_home"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.181" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

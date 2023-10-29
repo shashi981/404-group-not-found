@@ -47,7 +47,7 @@ public class ScannerActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 ActivityLauncher.launchActivity(ScannerActivity.this, ChatActivity.class);
-
+                finish();
             }
         });
 
@@ -60,14 +60,7 @@ public class ScannerActivity extends AppCompatActivity {
 //            }
 //        });
 
-        addItemsButton = findViewById(R.id.manual_scanner);
-        addItemsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityLauncher.launchActivity(ScannerActivity.this, AddItemsActivity.class);
-                finish();
-            }
-        });
+
 
         inventoryIcon = findViewById(R.id.inventory_icon_scanner);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +121,14 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 scanCode();
+            }
+        });
+
+        addItemsButton = findViewById(R.id.manual_scanner);
+        addItemsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(ScannerActivity.this, AddItemsActivity.class);
             }
         });
 

@@ -28,6 +28,9 @@
     <string name="manage_inventory_button">Manage Inventory</string>
     <string name="consult_dietitian_button">Consult a Dietitian</string>
     <string name="suggested_recipes_button">Suggested Recipes</string>
+    <string name="assistance_home">How Can I Be Of Assistance?</string>
+    <string name="salutations_home">Good Day</string>
+    <string name="salutations_name_home">Hello User</string>
 
 
     <!-- Inventory Page -->
@@ -43,6 +46,11 @@
     <!-- Chat Page -->
     <!-- Profile Page -->
     <string name="profile_content_description">Google Profile Picture</string>
+    <string name="google_name_profile">Name: </string>
+    <string name="google_email_profile">Email: </string>
+    <string name="grocery_manager_id">GroceryManager ID: </string>
+    <string name="preferences">Preferences: </string>
+    <string name="dietary_restrictions">Dietary Restrictions: </string>
     <!-- Settings Page -->
     <string name="sign_out_settings">Sign Out</string>
     <string name="delete_account_settings">Delete Account</string>

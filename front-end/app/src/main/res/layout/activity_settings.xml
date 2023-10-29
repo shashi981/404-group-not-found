@@ -22,8 +22,9 @@
         app:srcCompat="@drawable/back_arrow_dark_40" />
 
     <Button
+        android:layout_width="300dp"
+        android:textSize="24sp"
         android:id="@+id/sign_out_settings"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
@@ -31,14 +32,15 @@
         android:textColor="@color/faded_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.54" />
+        app:layout_constraintVertical_bias="0.6" />
 
     <Button
+        android:layout_width="300dp"
+        android:textSize="24sp"
         android:id="@+id/delete_account_settings"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
@@ -46,8 +48,8 @@
         android:textColor="@color/faded_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.658" />
+        app:layout_constraintVertical_bias="0.70" />
 </androidx.constraintlayout.widget.ConstraintLayout>
