@@ -122,7 +122,6 @@ public class ScannerActivity extends AppCompatActivity {
                 popupMenu.show();
             }
         });
-
         scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,8 +129,6 @@ public class ScannerActivity extends AppCompatActivity {
                 scanCode();
             }
         });
-
-
 
     }
 

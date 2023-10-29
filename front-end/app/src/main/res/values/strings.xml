@@ -43,6 +43,8 @@
     <!-- Chat Page -->
     <!-- Profile Page -->
     <!-- Settings Page -->
+    <string name="sign_out_settings">Sign Out</string>
+
     <!-- Add Items Page -->
     <string name="enter_item">Enter an Item</string>
     <string name="enter_item_hint">Enter a Grocery Item</string>
