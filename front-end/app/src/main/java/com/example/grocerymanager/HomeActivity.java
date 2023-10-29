@@ -33,6 +33,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(HomeActivity.this, ScannerActivity.class);
+                finish();
+
             }
         });
         manageInventoryButton = findViewById(R.id.manage_inventory_button_home);
@@ -40,6 +42,8 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(HomeActivity.this, InventoryActivity.class);
+                finish();
+
             }
         });
 
@@ -49,6 +53,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 ActivityLauncher.launchActivity(HomeActivity.this, ChatActivity.class);
+                finish();
+
             }
         });
 
@@ -58,6 +64,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 ActivityLauncher.launchActivity(HomeActivity.this, RecipeActivity.class);
+                finish();
 
             }
         });
@@ -69,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 ActivityLauncher.launchActivity(HomeActivity.this, ChatActivity.class);
+                finish();
 
             }
         });
@@ -78,6 +86,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(HomeActivity.this, ScannerActivity.class);
+                finish();
 
             }
         });
@@ -87,7 +96,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(HomeActivity.this, InventoryActivity.class);
-
+                finish();
             }
         });
 
@@ -96,7 +105,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(HomeActivity.this, RecipeActivity.class);
-
+                finish();
             }
         });
 

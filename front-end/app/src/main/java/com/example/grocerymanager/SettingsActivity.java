@@ -3,8 +3,10 @@ package com.example.grocerymanager;
 import static com.example.grocerymanager.GoogleAccountManager.setAccountInfo;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,6 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private ImageButton backIcon;
     private Button signOutButton;
+    private Button deleteAccountButton;
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -41,9 +44,7 @@ public class SettingsActivity extends AppCompatActivity {
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 finish();
-
             }
         });
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -66,6 +67,13 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+        deleteAccountButton = findViewById(R.id.delete_account_settings);
+        deleteAccountButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteConfirmation();
+            }
+        });
     }
 
     private void signOut() {
@@ -85,5 +93,26 @@ public class SettingsActivity extends AppCompatActivity {
         setAccountInfo(null, null, null);
         startActivity(mainIntent);
         finishAffinity();
+    }
+    private void deleteConfirmation() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to delete your account? This action is irreversible. Once deleted, you will be redirected to the login page.")
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteAccount();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void deleteAccount() {
+        // need to connect this to database by deleting entries
+        signOut();
+        launchMainIntent();
     }
 }

@@ -42,8 +42,10 @@
     <!-- Recipe Page -->
     <!-- Chat Page -->
     <!-- Profile Page -->
+    <string name="profile_content_description">Google Profile Picture</string>
     <!-- Settings Page -->
     <string name="sign_out_settings">Sign Out</string>
+    <string name="delete_account_settings">Delete Account</string>
 
     <!-- Add Items Page -->
     <string name="enter_item">Enter an Item</string>
