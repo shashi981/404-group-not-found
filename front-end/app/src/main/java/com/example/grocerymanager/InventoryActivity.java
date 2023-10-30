@@ -47,37 +47,38 @@ public class InventoryActivity extends AppCompatActivity {
     private TrustManagerFactory trustManagerFactory;
     private TrustManager[] trustManagers;
     private SSLContext sslContext;
+    private NetworkManager networkManager;
 
-    private void makeNetworkRequestWithSSL() {
-        try {
-            inputStream = getResources().openRawResource(R.raw.certificate);
-            certificate = readCertificate(inputStream);
-
-            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", certificate);
-
-            trustManagerFactory = TrustManagerFactory.getInstance(
-                    TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init(keyStore);
-            trustManagers = trustManagerFactory.getTrustManagers();
-
-            sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustManagers, new SecureRandom());
-
-            client = new OkHttpClient.Builder()
-                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
-                    .hostnameVerifier((hostname, session) -> hostname.equals("20.104.197.24"))
-                    .build();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private Certificate readCertificate(InputStream inputStream) throws CertificateException {
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        return certificateFactory.generateCertificate(inputStream);
-    }
+//    private void makeNetworkRequestWithSSL() {
+//        try {
+//            inputStream = getResources().openRawResource(R.raw.certificate);
+//            certificate = readCertificate(inputStream);
+//
+//            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//            keyStore.load(null, null);
+//            keyStore.setCertificateEntry("ca", certificate);
+//
+//            trustManagerFactory = TrustManagerFactory.getInstance(
+//                    TrustManagerFactory.getDefaultAlgorithm());
+//            trustManagerFactory.init(keyStore);
+//            trustManagers = trustManagerFactory.getTrustManagers();
+//
+//            sslContext = SSLContext.getInstance("TLS");
+//            sslContext.init(null, trustManagers, new SecureRandom());
+//
+//            client = new OkHttpClient.Builder()
+//                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
+//                    .hostnameVerifier((hostname, session) -> hostname.equals("20.104.197.24"))
+//                    .build();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    private Certificate readCertificate(InputStream inputStream) throws CertificateException {
+//        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+//        return certificateFactory.generateCertificate(inputStream);
+//    }
 
 
 
@@ -86,7 +87,10 @@ public class InventoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
 
-        makeNetworkRequestWithSSL();
+//        makeNetworkRequestWithSSL();
+        networkManager = new NetworkManager(this);
+        client = networkManager.getClient();
+
 
         String serverURL = "https://20.104.197.24/";
         Request requestName = new Request.Builder()

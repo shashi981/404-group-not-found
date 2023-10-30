@@ -1,6 +1,5 @@
 package com.example.grocerymanager;
 
-import static com.example.grocerymanager.GoogleAccountManager.setAccountInfo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -90,7 +89,6 @@ public class SettingsActivity extends AppCompatActivity {
     private void launchMainIntent() {
         Intent mainIntent = new Intent(SettingsActivity.this, MainActivity.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        setAccountInfo(null, null, null);
         startActivity(mainIntent);
         finishAffinity();
     }

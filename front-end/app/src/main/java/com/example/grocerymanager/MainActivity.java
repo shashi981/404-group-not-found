@@ -1,6 +1,5 @@
 package com.example.grocerymanager;
 
-import static com.example.grocerymanager.GoogleAccountManager.setAccountInfo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +22,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button signInButton;
@@ -32,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     private GoogleSignInAccount googleAccount;
     private int RC_SIGN_IN = 1;
+    private NetworkManager networkManager;
+    private OkHttpClient client;
+
 
 
 
@@ -106,8 +121,140 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Given Name: " + account.getGivenName());
             Log.d(TAG, "Family Name: " + account.getFamilyName());
             Log.d(TAG, "Display URI: " + account.getPhotoUrl());
-            setAccountInfo(account.getDisplayName(), account.getEmail(), account.getPhotoUrl());
-            launchHomeIntent();
+
+
+            networkManager = new NetworkManager(this);
+            client = networkManager.getClient();
+
+
+            String serverURL = "https://20.104.197.24/";
+            MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+            Request requestCheck = new Request.Builder()
+                    .url(serverURL + "get/users_type?p1=" + account.getEmail())
+                    .build();
+            client.newCall(requestCheck).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // Handle network request failure
+                    Log.e(TAG, "Request failed: " + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        // Get the response body as a string
+                        String responseBody = response.body().string();
+
+                        // Process the response on the main UI thread
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Update the UI or perform any other necessary actions with the response
+                                Log.d(TAG, "Response: " + responseBody);
+                                if(responseBody.trim().equals("Does not exist")){
+                                    JSONObject postData = new JSONObject();
+                                    try {
+                                        postData.put("p1", account.getGivenName());
+                                        postData.put("p2", account.getFamilyName());
+                                        postData.put("p3", account.getEmail());
+                                        postData.put("p4", account.getPhotoUrl());
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    RequestBody body = RequestBody.create(JSON, postData.toString());
+
+                                    Request request = new Request.Builder()
+                                            .url(serverURL + "add/users")
+                                            .post(body)
+                                            .build();
+
+                                    client.newCall(request).enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            // Handle network request failure
+                                            Log.e(TAG, "Request failed: " + e.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            if (response.isSuccessful()) {
+                                                // Get the response body as a string
+                                                String responseBody = response.body().string();
+
+                                                // Process the response on the main UI thread
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        // Update the UI or perform any other necessary actions with the response
+                                                        Log.d(TAG, "Response: " + responseBody);
+                                                        launchHomeIntent();
+                                                    }
+                                                });
+                                            } else {
+                                                // Handle unsuccessful response (e.g., non-200 status code)
+                                                Log.e(TAG, "Unsuccessful response: " + response.code());
+                                                signOut();
+
+                                            }
+                                        }
+                                    });
+                                }
+                                else if(responseBody.trim().equals("User")){
+                                    Log.d(TAG, "User Exists, Launching Home Intent");
+                                    Request request = new Request.Builder()
+                                            .url(serverURL + "get/users?p1=" + account.getEmail())
+                                            .build();
+
+                                    client.newCall(request).enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            // Handle network request failure
+                                            Log.e(TAG, "Request failed: " + e.getMessage());
+                                        }
+
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            if (response.isSuccessful()) {
+                                                // Get the response body as a string
+                                                String responseBody = response.body().string();
+
+                                                // Process the response on the main UI thread
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        // Update the UI or perform any other necessary actions with the response
+                                                        Log.d(TAG, "Response: " + responseBody);
+                                                        launchHomeIntent();
+                                                    }
+                                                });
+                                            } else {
+                                                // Handle unsuccessful response (e.g., non-200 status code)
+                                                Log.e(TAG, "Unsuccessful response: " + response.code());
+                                                signOut();
+
+                                            }
+                                        }
+                                    });
+                                }
+                                else{
+                                    Log.d(TAG, "User not created");
+                                    signOut();
+
+                                }
+                            }
+                        });
+                    } else {
+                        // Handle unsuccessful response (e.g., non-200 status code)
+                        Log.e(TAG, "Unsuccessful response: " + response.code());
+                        signOut();
+
+                    }
+                }
+            });
+
+
             //Send token to back-end
             //Move to other activity
 //            account.getIdToken();
@@ -119,6 +266,18 @@ public class MainActivity extends AppCompatActivity {
         Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
         startActivity(homeIntent);
         finish();
+    }
+
+    private void signOut() {
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                        Log.d(TAG, "Log out successful");
+                        googleAccount = null;
+                    }
+                });
     }
 
 }

@@ -19,9 +19,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        updateName();
-        updateEmail();
-        updatePicture();
 
 
 
@@ -36,18 +33,5 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
-    }
-
-    private void updateName(){
-        TextView textView = (TextView) findViewById(R.id.google_name_profile);
-        textView.setText(GoogleAccountManager.getGoogleName());
-    }
-    private void updateEmail(){
-        TextView textView = (TextView) findViewById(R.id.google_name_profile);
-        textView.setText(GoogleAccountManager.getGoogleEmail());
-    }
-    private void updatePicture(){
-        ImageView imageView = (ImageView) findViewById(R.id.google_image_profile);
-        imageView.setImageURI(GoogleAccountManager.getGoogleProfilePictureUrl());
     }
 }
