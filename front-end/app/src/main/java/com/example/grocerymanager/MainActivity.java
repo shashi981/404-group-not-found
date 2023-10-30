@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -189,7 +190,21 @@ public class MainActivity extends AppCompatActivity {
                                                     public void run() {
                                                         // Update the UI or perform any other necessary actions with the response
                                                         Log.d(TAG, "Response: " + responseBody);
-                                                        launchHomeIntent();
+                                                        try {
+                                                            JSONArray jsonArray = new JSONArray(responseBody);
+                                                            if (jsonArray.length() > 0) {
+                                                                String numberAsString = jsonArray.getString(0);
+                                                                int number = Integer.parseInt(numberAsString);
+
+                                                                // Store the number in SharedPreferences
+                                                                UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
+                                                                SharedPrefManager.saveUserData(MainActivity.this, userData);
+                                                                launchHomeIntent();
+
+                                                            }
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
                                                     }
                                                 });
                                             } else {
