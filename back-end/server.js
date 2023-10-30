@@ -1,11 +1,12 @@
-//TODO add asyc to all requests and maybe add locks to each table
-//TODO change or redirect the server to use https once the cert is done for server
+//TODO check connection with front end
 const mysql = require('mysql2');
 const express = require("express")
 const https = require('https')
 const fs = require('fs')
 
 const app=express()
+app.use(express.json())
+
 
 /*
 //local testing use
@@ -32,10 +33,10 @@ const certs = {
   cert: fs.readFileSync('./certificate.pem')
 }
 
-const server = https.createServer(certs, app);
+const server = https.createServer(certs, app)
 
 server.listen(443, () => {
-  console.log(`Server is running on port 443`);
+  console.log(`Server is running on port 443`)
 })
 
 /*
@@ -60,10 +61,10 @@ function query_success(response, message){
 //done
 app.get("/get/users", async (req,res)=>{
   try{
-  let UID=req.query.p1
-  const query = 'SELECT FirstName, LastName, Email, ProfileURL FROM USERS WHERE UID=?;'
+  let Email=req.query.p1
+  const query = 'SELECT * FROM USERS WHERE Email=?;'
 
-  const [results] = await con.promise().query(query, [UID])
+  const [results] = await con.promise().query(query, [Email])
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -77,12 +78,29 @@ app.get("/get/users", async (req,res)=>{
         console.error('Error querying the database: ' + err.stack)
         return
       }*/
-      const formattedResults = results.map((result) => {
-        return `${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
+      /*const formattedResults = results.map((result) => {
+        return `${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
       })
-      query_success(res, 'SUCCESS Get User:\n' + formattedResults.join('\n'))
+      query_success(res, formattedResults)*/
    // })
   //})
+
+  if (results.length === 0) {
+    return res.json({});
+  }
+
+  const user = results[0];
+
+  const responseObject = {
+    UID: user.UID,
+    FirstName: user.FirstName,
+    LastName: user.LastName,
+    Email: user.Email,
+    ProfileURL: user.ProfileURL,
+  };
+  console.log("USER GET")
+
+  res.json(responseObject);
   }catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -90,19 +108,19 @@ app.get("/get/users", async (req,res)=>{
 })
 
 //done
-app.get("/add/users", async (req,res)=>{
+app.post("/add/users", async (req,res)=>{
   try{
 
-  let FirstName=req.query.p1
-  let LastName=req.query.p2
-  let Email=req.query.p3
-  let ProfileURL=req.query.p4
+  let FirstName=req.body.p1
+  let LastName=req.body.p2
+  let Email=req.body.p3
+  let ProfileURL=req.body.p4
 
   const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES (?, ?, ?, ?);'
   const query2='SELECT UID FROM USERS WHERE Email=?'
 
   const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL])
-  const [results2] = await con.promise().query(query2, [FirstName, LastName, Email, ProfileURL])
+  const [results2] = await con.promise().query(query2, [Email])
 
   /*
   con.connect(function(err) {
@@ -131,7 +149,7 @@ app.get("/add/users", async (req,res)=>{
       const formattedResults = results2.map((r) => {
         return `${r.UID}`;
       });
-      query_success(res, 'Useradded ' + formattedResults.join('\n'))
+      query_success(res, formattedResults)
     //})
   //})
   } catch(error){
@@ -191,7 +209,7 @@ app.get("/update/users", async (req,res)=>{
     const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?;'
     
 
-    const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL])
+    const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -223,14 +241,14 @@ app.get("/update/users", async (req,res)=>{
 app.get("/get/items", async (req,res)=>{
   try{
 
-    let ID=req.query.ID
+    let UID=req.query.p1
 
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
 
     const query2 = 'SELECT * FROM OWNS o WHERE o.UID=? ORDER BY o.ItemID ASC;'
 
-    const [result1] = await con.promise().query(query, [ID])
-    const [result2] = await con.promise().query(query2, [ID])
+    const [result1] = await con.promise().query(query, [UID])
+    const [result2] = await con.promise().query(query2, [UID])
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -253,14 +271,32 @@ app.get("/get/items", async (req,res)=>{
         database_error(res, err.stack)
         return
       }
-
-      console.log('SUCCESS Get items') */
-      
+*/
+      /*
       const formattedResults = result2.map((result) => {
         const formattedDate = new Date(result.ExpireDate).toLocaleDateString();
         return `${result.UPC}\t${result.UID}\t${formattedDate}\t${result.ItemCount}\t${result.ItemID}`;
-      });
-      query_success(res, 'SUCCESS Get items:\n' + formattedResults.join('\n'))
+      });*/
+
+      if (result2.length === 0) {
+        return res.json({});
+      }
+
+      const items = result2.map((result) => {
+        const formattedDate = new Date(result.ExpireDate).toLocaleDateString();
+        return {
+          UPC: result.UPC,
+          UID: result.UID,
+          ExpireDate: formattedDate,
+          ItemCount: result.ItemCount,
+          ItemID: result.ItemID
+        }
+      })
+
+      console.log('SUCCESS Get items') 
+
+      res.json(items)
+      //query_success(res, 'SUCCESS Get items:\n' + formattedResults.join('\n'))
     //})
   //})
   } catch (error) {
@@ -307,8 +343,8 @@ app.get("/add/items", async (req,res)=>{
         console.error('Error querying the database: ' + err.stack)
         return
       }*/
-      console.log('SUCCESS ADDED') 
-      query_success(res, 'SUCCESS ADDED')
+      console.log('SUCCESS ADDED items') 
+      query_success(res, 'SUCCESS ADDED ITEMS')
     //})
  // })
   }catch(error){
@@ -347,7 +383,7 @@ app.get("/delete/items", async (req,res)=>{
         console.log('No rows were deleted. Check the values in your DELETE query.')
         res.send('No rows were deleted. Check the values in your DELETE query.')
       } else {
-        console.log('SUCCESS DELETED')
+        console.log('SUCCESS DELETED items')
         query_success(res, 'DELETED ITEM')
       }
     //})
@@ -497,11 +533,18 @@ app.get("/get/pref", async (req,res)=>{
         console.error('Error querying the database: ' + err.stack)
         return
       }*/
-      console.log('SUCCESS select Pref') 
+      if (results.length === 0) {
+        return res.json({});
+      }
+
       const formattedResults = results.map((result) => {
-        return `${result.Pref}`;
-      });
-      query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
+        return {
+          Pref: result.Pref
+        }
+      })
+      console.log('SUCCESS select Pref') 
+      res.json(formattedResults)
+      //query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
     //})
   //})
   } catch(error){
@@ -621,7 +664,7 @@ app.get("/get/dietReq", async (req,res)=>{
 app.get("/approve/dietReq", async (req,res)=>{
   try{
   UID=req.query.p1 ? req.query.p1.split(',') : []
-  console.log(UID +"FUCK YOU")
+  console.log(UID)
   const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID IN (?)'
   const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID IN (?)'
   //const query3='DELETE FROM USERS WHERE UID IN (?)'
@@ -671,7 +714,7 @@ app.get("/get/users_type", async (req,res)=>{
 
     if (userResults.length > 0) {
       console.log('Entry exists as user')
-      return query_success(res, 'This is a user\n')
+      return query_success(res, 'User\n')
     }
 
     const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
@@ -679,7 +722,7 @@ app.get("/get/users_type", async (req,res)=>{
 
     if (dieticianResults.length > 0) {
       console.log('Entry exists as dietician')
-      return query_success(res, 'This is a dietician\n')
+      return query_success(res, 'Dietician\n')
     }
 
     const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
@@ -687,14 +730,70 @@ app.get("/get/users_type", async (req,res)=>{
 
     if (adminResults.length > 0) {
       console.log('Entry exists as admin');
-      return query_success(res, 'This is an admin\n')
+      return query_success(res, 'Admin\n')
     }
 
     console.log('This is an entry that does not exist')
-    return query_success(res, 'This is an entry that does not exist\n')
+    return query_success(res, 'Does not exist\n')
   } catch (error) {
     console.error('Error:', error)
     database_error(res, error.stack)
   }
 
 })
+
+//todo test this
+app.get("/get/recipe", async (req,res)=>{
+  try {
+    let UID=req.query.p1
+    let expiryitems=req.query.p2 ? req.query.p2.split(',') : []
+    let Pref=req.query.p2 ? req.query.p3.split(',') : []
+    let query = ''
+
+    for(let i=0; i< Pref.length; i++){
+      let preference = Pref[i];
+      let excludeTable = ''
+
+      if (preference === 'Vegetarian') {
+        excludeTable = 'Vegetarian_exclude';
+      } else if (preference === 'Non-dairy') {
+        excludeTable = 'Nondairy_exclude';
+      } else if (preference === 'Vegan') {
+        excludeTable = 'Vegan_exclude';
+      }
+
+      if(i===0){
+        query.join("SELECT RID FROM ((SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN ${excludeTable} e ON r.Ingredient = e.Ingredient))")
+      }
+      if(i<Pref.length-1){
+        query.join("INTERSECT(SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN ${excludeTable} e ON r.Ingredient = e.Ingredient))")
+      }
+      else{
+        query.join("INTERSECT(SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN ${excludeTable} e ON r.Ingredient = e.Ingredient))) AS Store) WHERE store.Ingredient IN (?)")
+      }
+    }
+    query.join("")
+
+    const [results] = await con.promise().query(query, [expiryitems])
+    //todo fix the formatting and get the complete recipe
+    const responseObject = {
+      recipes: results,
+    };
+
+    res.json(responseObject);
+    //const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
+    /*const [results] = await con.promise().query(query)
+
+    const formattedResults = results.map((result) => {
+      return `${result.RID}\t${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
+    });*/
+
+    //console.log('SUCCESS show list of being a dietician request');
+    //query_success(res, 'SUCCESS show list of being a dietician request: ' + formattedResults.join('\n'));
+
+  } catch (error) {
+    console.error('Error:', error);
+    database_error(res, error.stack);
+  }
+})
+  

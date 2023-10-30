@@ -105,6 +105,92 @@ CREATE TABLE ADMIN(
     PRIMARY KEY (UID)
 );
 
+CREATE TABLE Vegetarian_exclude (
+    Ingredient VARCHAR(50) NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE Nondairy_exclude (
+    Ingredient VARCHAR(50) NOT NULL PRIMARY KEY
+);
+
+CREATE TABLE Vegan_exclude (
+    Ingredient VARCHAR(50) NOT NULL PRIMARY KEY
+);
+
+INSERT INTO 
+Vegetarian_exclude (Ingredient)
+VALUES
+("Doner Meat"),
+("Chicken"),
+("Lamb loin chops"),
+("Beef Fillet"),
+("Beef Gravy"),
+("Beef Stock"),
+("Chicken Breasts"),
+("Chicken Legs"),
+("Chicken Thighs"),
+("Duck Legs"),
+("Beef Stock Concentrate"),
+("Pork Chops"),
+("Anchovy Fillet"),
+("Sardines");
+
+INSERT INTO 
+Nondairy_exclude (Ingredient)
+VALUES
+("Butter"),
+("Cheddar cheese"),
+("Full fat yogurt"),
+("Cream"),
+("Parmesan"),
+("Gruyère"),
+("Semi-skimmed Milk"),
+("Fromage Frais"),
+("Creme Fraiche"),
+("Whole Milk"),
+("Condensed Milk"),
+("Single Cream");
+
+INSERT INTO 
+Vegan_exclude (Ingredient)
+VALUES
+("Doner Meat"),
+("Chicken"),
+("Lamb loin chops"),
+("Beef Fillet"),
+("Beef Gravy"),
+("Beef Stock"),
+("Chicken Breasts"),
+("Chicken Legs"),
+("Chicken Thighs"),
+("Duck Legs"),
+("Beef Stock Concentrate"),
+("Pork Chops"),
+("Anchovy Fillet"),
+("Sardines"),
+("Butter"),
+("Cheddar cheese"),
+("Full fat yogurt"),
+("Cream"),
+("Parmesan"),
+("Gruyère"),
+("Semi-skimmed Milk"),
+("Fromage Frais"),
+("Creme Fraiche"),
+("Whole Milk"),
+("Condensed Milk"),
+("Single Cream"),
+("Free-range egg, beaten");
+
+
+INSERT INTO 
+PREF_LIST (Pref) 
+VALUES 
+( "Vegetarian"), 
+("Non-dairy"),
+("Vegan");
+
+
 INSERT INTO
 USERS(FirstName, LastName, Email)
 VALUES
@@ -135,12 +221,6 @@ VALUES
 ( 1, 123456789012,'2023-10-19', 6),
 ( 1, 123456789014,'2023-10-16', 6);
 
-INSERT INTO PREF_LIST (Pref) VALUES 
-("Gluten-Free"),
-( "Vegetarian"), 
-("Non-dairy"),
-("Vegan");
-
 INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) 
 SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL
 FROM USERS u
@@ -157,6 +237,9 @@ WHERE u.UID=d.UID AND u.UID=1;
 SELECT UID 
 FROM USERS 
 WHERE FirstName=a AND LastName=b AND Email=c;
+
+SELECT DISTINCT Ingredient 
+FROM RECIPE;
 
 DELETE 
 FROM OWNS 
@@ -192,7 +275,7 @@ WHERE UID=1 AND UPC=123456789014 AND ItemID=1;
 TRUNCATE TABLE recipe;
 TRUNCATE TABLE recipe_info;
 
-SELECT COUNT(*) FROM recipe_info
+SELECT COUNT(*) FROM recipe_info;
 
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
