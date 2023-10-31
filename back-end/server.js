@@ -925,3 +925,42 @@ app.get("/get/recipe", async (req,res)=>{
 })
 
 //TODO add endpoints to get recipe info using rid
+app.get("/get/recipe_info", async (req,res)=>{
+  try{
+    
+  let RID=req.query.p1 ? req.query.p1.split(',') : []
+  /*con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)*/
+    const query = 'SELECT * FROM RECIPE_INFO WHERE RID = IN (?)'
+    const [results] = await con.promise().query(query, [RID])
+    /*con.query(query, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }*/
+      if (results.length === 0) {
+        return res.json({});
+      }
+
+      const formattedResults = results.map((result) => {
+        return {
+          Name: result.Rname, 
+          Instruction: result.Instruction,
+          YTLink: result.YoutubeLInk
+        }
+      })
+      console.log('SUCCESS return recipe_info') 
+      res.json(formattedResults)
+      //query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
+    //})
+  //})
+  } catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
+  }
+})
