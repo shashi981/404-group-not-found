@@ -2,9 +2,11 @@ package com.example.grocerymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -164,7 +166,6 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                             }
                         }
                     });
-                    launchInventoryIntent();
 
                 }
 
@@ -173,19 +174,36 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
 
     }
     private void addItemToInventory(Item item) {
-        LinearLayout inventoryContainer = findViewById(R.id.inventory_container);
-        LinearLayout itemGroupLayout = new LinearLayout(this);
-        itemGroupLayout.setOrientation(LinearLayout.VERTICAL);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(16, 16, 16, 16);
-        itemGroupLayout.setLayoutParams(params);
-        TextView itemNameView = new TextView(this);
-        itemNameView.setText("Item Name: " + item.getName());
-        itemGroupLayout.addView(itemNameView);
-        inventoryContainer.addView(itemGroupLayout);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.item_display_template, null);
+
+        TextView itemNameTextView = view.findViewById(R.id.item_name_text_view);
+        TextView expiryDateTextView = view.findViewById(R.id.expiry_date_text_view);
+        TextView quantityTextView = view.findViewById(R.id.quantity_text_view);
+        Button editButton = view.findViewById(R.id.edit_button);
+        Button deleteButton = view.findViewById(R.id.delete_button);
+
+        itemNameTextView.setText(item.getName());
+        expiryDateTextView.setText("Expiry Date: " + item.getExpiry());
+        quantityTextView.setText("Quantity: " + item.getQuantity());
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //need to implement editing
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //need to implement for delete
+            }
+        });
+
+        LinearLayout mainLayout = findViewById(R.id.inventory_container);
+        mainLayout.addView(view);
+
     }
 
     private void launchInventoryIntent() {

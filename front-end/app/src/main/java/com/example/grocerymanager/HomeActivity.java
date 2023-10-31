@@ -1,11 +1,13 @@
 package com.example.grocerymanager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -146,6 +148,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
+        setGreeting();
+    }
+    private void setGreeting(){
+        UserData userData = SharedPrefManager.loadUserData(HomeActivity.this);
+        TextView salutations = findViewById(R.id.salutations_name_home);
+        Log.d(TAG, userData.getFirstName());
+        Log.d(TAG, userData.getLastName());
+        Log.d(TAG, userData.getUserEmail());
+        salutations.setText("Hello " + userData.getFirstName());
     }
 }

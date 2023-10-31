@@ -2,13 +2,21 @@ package com.example.grocerymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +25,8 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -48,6 +58,7 @@ public class InventoryActivity extends AppCompatActivity {
     private TrustManager[] trustManagers;
     private SSLContext sslContext;
     private NetworkManager networkManager;
+    private List<Item> itemList;
 
 
     @Override
@@ -56,7 +67,7 @@ public class InventoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inventory);
         networkManager = new NetworkManager(this);
         client = networkManager.getClient();
-
+        itemList = new ArrayList<>();
 
         String serverURL = "https://20.104.197.24/";
         UserData userData = SharedPrefManager.loadUserData(InventoryActivity.this);
@@ -77,14 +88,30 @@ public class InventoryActivity extends AppCompatActivity {
                     // Get the response body as a string
                     String responseBody = response.body().string();
 
-                    // Process the response on the main UI thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Update the UI or perform any other necessary actions with the response
-                            Log.d(TAG, "Response: " + responseBody);
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseBody);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String itemName = jsonObject.getString("Name");
+                            String expiryDate = jsonObject.getString("ExpireDate");
+                            int quantity = jsonObject.getInt("ItemCount");
+
+                            // Create an Item object
+                            Item item = new Item(itemName, expiryDate, quantity);
+                            itemList.add(item);
                         }
-                    });
+
+                        // Display the items
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                displayItems();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     // Handle unsuccessful response (e.g., non-200 status code)
                     Log.e(TAG, "Unsuccessful response: " + response.code());
@@ -174,5 +201,38 @@ public class InventoryActivity extends AppCompatActivity {
             }
         });
     }
+    private void displayItems(){
+        for(Item item: itemList) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.item_display_template, null);
 
+            TextView itemNameTextView = view.findViewById(R.id.item_name_text_view);
+            TextView expiryDateTextView = view.findViewById(R.id.expiry_date_text_view);
+            TextView quantityTextView = view.findViewById(R.id.quantity_text_view);
+            Button editButton = view.findViewById(R.id.edit_button);
+            Button deleteButton = view.findViewById(R.id.delete_button);
+
+            itemNameTextView.setText(item.getName());
+            expiryDateTextView.setText("Expiry Date: " + item.getExpiry());
+            quantityTextView.setText("Quantity: " + item.getQuantity());
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //need to implement editing
+                }
+            });
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //need to implement for delete
+                }
+            });
+
+            LinearLayout mainLayout = findViewById(R.id.inventory_container_inventory);
+            mainLayout.addView(view);
+        }
+
+    }
 }

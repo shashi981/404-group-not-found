@@ -3,6 +3,9 @@
 
     <string name="menu_bar">---</string>
 
+    <!-- Admin Activity -->
+    <!-- Dietitian Activity -->
+    <!-- View Recipe Activity -->
 
     <!-- Nav Bar -->
     <string name="chat_icon_dark_description">Move to chat view</string>
@@ -29,7 +32,7 @@
     <string name="consult_dietitian_button">Consult a Dietitian</string>
     <string name="suggested_recipes_button">Suggested Recipes</string>
     <string name="assistance_home">How Can I Be Of Assistance?</string>
-    <string name="salutations_home">Good Day</string>
+    <string name="salutations_home">Welcome Back!</string>
     <string name="salutations_name_home">Hello User</string>
 
 
@@ -54,6 +57,7 @@
     <!-- Settings Page -->
     <string name="sign_out_settings">Sign Out</string>
     <string name="delete_account_settings">Delete Account</string>
+    <string name="change_to_dietitian">Request Dietitian View</string>
 
     <!-- Add Items Page -->
     <string name="enter_item">Enter an Item</string>
@@ -63,8 +67,6 @@
     <string name="enter_quantity">Enter the Quantity</string>
     <string name="enter_quantity_hint">Enter the Quantity Amount</string>
     <string name="add_items_to_inventory">Save To Inventory</string>
-
-
 
 
     <string name="add_item_to_list">Add Item</string>

@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                                                                 String numberAsString = jsonArray.getString(0);
                                                                 int number = Integer.parseInt(numberAsString);
 
-                                                                UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
+                                                                UserData userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
                                                                 SharedPrefManager.saveUserData(MainActivity.this, userData);
                                                                 launchHomeIntent();
 
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                                                             int UID = responseJson.getInt("UID");
                                                             // Now you have the UID as an integer
                                                             Log.d(TAG, "Extracted UID: " + UID);
-                                                            UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), UID);
+                                                            UserData userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), UID);
                                                             SharedPrefManager.saveUserData(MainActivity.this, userData);
                                                             launchHomeIntent();
                                                         } catch (JSONException e) {
