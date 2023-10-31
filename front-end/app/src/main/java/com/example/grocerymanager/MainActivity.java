@@ -196,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
                                                                 String numberAsString = jsonArray.getString(0);
                                                                 int number = Integer.parseInt(numberAsString);
 
-                                                                // Store the number in SharedPreferences
                                                                 UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
                                                                 SharedPrefManager.saveUserData(MainActivity.this, userData);
                                                                 launchHomeIntent();
@@ -241,7 +240,17 @@ public class MainActivity extends AppCompatActivity {
                                                     public void run() {
                                                         // Update the UI or perform any other necessary actions with the response
                                                         Log.d(TAG, "Response: " + responseBody);
-                                                        launchHomeIntent();
+                                                        try {
+                                                            JSONObject responseJson = new JSONObject(responseBody);
+                                                            int UID = responseJson.getInt("UID");
+                                                            // Now you have the UID as an integer
+                                                            Log.d(TAG, "Extracted UID: " + UID);
+                                                            UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), UID);
+                                                            SharedPrefManager.saveUserData(MainActivity.this, userData);
+                                                            launchHomeIntent();
+                                                        } catch (JSONException e) {
+                                                            Log.e(TAG, "Failed to extract UID: " + e.getMessage());
+                                                        }
                                                     }
                                                 });
                                             } else {

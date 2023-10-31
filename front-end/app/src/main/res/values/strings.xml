@@ -62,6 +62,7 @@
     <string name="enter_expiry_hint">Enter the estimated Expiry Date</string>
     <string name="enter_quantity">Enter the Quantity</string>
     <string name="enter_quantity_hint">Enter the Quantity Amount</string>
+    <string name="add_items_to_inventory">Save To Inventory</string>
 
 
 

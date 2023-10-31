@@ -20,6 +20,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class SettingsActivity extends AppCompatActivity {
 
 
@@ -33,6 +43,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private GoogleSignInAccount googleAccount;
     private int RC_SIGN_IN = 1;
+    private NetworkManager networkManager;
+    private OkHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +122,37 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void deleteAccount() {
         // need to connect this to database by deleting entries
-        signOut();
-        launchMainIntent();
+        networkManager = new NetworkManager(this);
+        client = networkManager.getClient();
+
+
+        String serverURL = "https://20.104.197.24/";
+        UserData userData = SharedPrefManager.loadUserData(SettingsActivity.this);
+        if (userData != null) {
+            int userID = userData.getUID();
+            Log.d(TAG, "Deleting user with ID: " + userID);
+            Request request = new Request.Builder()
+                    .url(serverURL + "delete/users?p1=" + userID)
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "Request failed: " + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, "User successfully deleted");
+                        signOut();
+                        launchMainIntent();
+                    } else {
+                        Log.e(TAG, "Unsuccessful response: " + response.code());
+                    }
+                }
+            });
+        } else {
+            Log.d(TAG, "User data not found in shared preferences");
+        }
     }
 }
