@@ -12,10 +12,10 @@ CREATE TABLE USERS(
 CREATE TABLE GROCERIES(
 	UPC BIGINT NOT NULL,
     Name VARCHAR(50) NOT NULL,
-    Brand VARCHAR(50) NOT NULL,
-    CATEGORY VARCHAR(50) NOT NULL,
-    Itemsize SMALLINT NOT NULL,
-    PRIMARY KEY (UPC)
+    Brand VARCHAR(50),
+    CATEGORY VARCHAR(50),
+    Itemsize SMALLINT,
+    PRIMARY KEY (UPC, Name)
 );
 
 CREATE TABLE OWNS(
@@ -182,6 +182,9 @@ VALUES
 ("Single Cream"),
 ("Free-range egg, beaten");
 
+CREATE VIEW vegan AS (SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN  Vegan_exclude e ON r.Ingredient = e.Ingredient));
+CREATE VIEW nondairy AS (SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN Nondairy_exclude e ON r.Ingredient = e.Ingredient));
+CREATE VIEW vegetarian AS (SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN Vegetarian_exclude e ON r.Ingredient = e.Ingredient));
 
 INSERT INTO 
 PREF_LIST (Pref) 
@@ -190,7 +193,7 @@ VALUES
 ("Non-dairy"),
 ("Vegan");
 
-
+-- data for testing and query testing
 INSERT INTO
 USERS(FirstName, LastName, Email)
 VALUES
@@ -277,6 +280,15 @@ TRUNCATE TABLE recipe_info;
 
 SELECT COUNT(*) FROM recipe_info;
 
+
+SELECT * FROM store1
+INTERSECT
+SELECT * FROM store2
+INTERSECT
+SELECT * FROM store3;
+
+SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID  FROM OWNS o, GROCERIES g WHERE o.UID=2 && g.UPC=o.UPC ORDER BY o.ItemID ASC;
+      
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
 SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;') 

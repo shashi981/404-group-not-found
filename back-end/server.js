@@ -8,18 +8,26 @@ const app=express()
 app.use(express.json())
 
 
-/*
+
 //local testing use
 const con = mysql.createConnection({
-  host: "",
+  host: "127.0.0.1",
   port: "3306",
   user: "root",
-  password: "",
+  password: "Zachary",
   database: 'grocerymanger'
-});*/
+});
+
+const server=app.listen(8081,"0.0.0.0", (req,res)=>{
+  const host=server.address().address
+  const port=server.address().port
+
+  console.log("%s %s", host, port)
+
+})
 
 //server use
-const con = mysql.createConnection({
+/*const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "404GroupNotFound",
@@ -37,16 +45,8 @@ const server = https.createServer(certs, app)
 
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
-})
-
-/*
-const server=app.listen(8081,"0.0.0.0", (req,res)=>{
-  const host=server.address().address
-  const port=server.address().port
-
-  console.log("%s %s", host, port)
-
 })*/
+
 
 
 function database_error(response, error) {
@@ -245,9 +245,12 @@ app.get("/get/items", async (req,res)=>{
 
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
 
-    const query2 = 'SELECT * FROM OWNS o WHERE o.UID=? ORDER BY o.ItemID ASC;'
+    //const query2 = 'SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID  FROM OWNS o, GROCERIES g WHERE o.UID=? && g.UPC=o.UPC ORDER BY o.ItemID ASC;'
 
-    const [result1] = await con.promise().query(query, [UID])
+    // not sure if this fix the issue, todo test it
+    const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC WHERE o.UID = ? ORDER BY o.ItemID ASC;'
+
+    const [result1] = await con.promise().query(query, [UID, UID])
     const [result2] = await con.promise().query(query2, [UID])
   /*con.connect(function(err) {
     if (err) {
@@ -273,20 +276,20 @@ app.get("/get/items", async (req,res)=>{
       }
 */
       /*
-      const formattedResults = result2.map((result) => {
-        const formattedDate = new Date(result.ExpireDate).toLocaleDateString();
-        return `${result.UPC}\t${result.UID}\t${formattedDate}\t${result.ItemCount}\t${result.ItemID}`;
+      result of result2Array
       });*/
 
       if (result2.length === 0) {
         return res.json({});
       }
-
+      //add get brand and name
       const items = result2.map((result) => {
         const formattedDate = new Date(result.ExpireDate).toLocaleDateString();
         return {
           UPC: result.UPC,
-          UID: result.UID,
+          //UID: result.UID,
+          Name: result.Name, 
+          Brand: result.Brand,
           ExpireDate: formattedDate,
           ItemCount: result.ItemCount,
           ItemID: result.ItemID
@@ -353,6 +356,57 @@ app.get("/add/items", async (req,res)=>{
   }
 })
 
+//todo finish this
+app.post("/add/items_man", async (req,res)=>{
+  try{
+    let UID=req.body.p1
+    let UPC = req.body.p2 // should be -1
+    let ExpireDate = req.body.p3 //? req.query.p3.split(',') : []
+    let ItemCount = req.body.p4 //? req.query.p4.split(',') : []
+    let ItemName = req.body.p5 //? req.query.p5.split(',') : []
+    if ( ExpireDate.length !== ItemCount.length || ItemCount.length !== ItemName.length) {
+      return res.status(400).send('Arrays should have the same length')
+    }
+  /*con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)*/
+    const values = []
+    const store=[]
+    for (let i = 0; i <ItemName.length; i++) {
+      if(i<UPC.length-1){
+        store.push(([UPC, ItemName[i],]))
+        values.push(([UID, UPC, ExpireDate[i], ItemCount[i],]))
+      }
+      else{
+        store.push(([UPC, ItemName[i]]))
+        values.push(([UID, UPC, ExpireDate[i], ItemCount[i]]))
+      }
+    }
+    console.log(values)
+
+    const query = 'INSERT IGNORE INTO GROCERIES (UPC, Name) VALUES ?'
+    const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount) VALUES ?'
+
+    const [results] = await con.promise().query(query, [store])
+    const [results2] = await con.promise().query(query2, [values])
+    /*con.query(query, [values], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }*/
+      console.log('SUCCESS ADDED items') 
+      query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
+    //})
+ // })
+  }catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
+  }
+})
 //delete items
 //done
 app.get("/delete/items", async (req,res)=>{
@@ -745,42 +799,115 @@ app.get("/get/users_type", async (req,res)=>{
 //todo test this
 app.get("/get/recipe", async (req,res)=>{
   try {
-    let UID=req.query.p1
+    /*let UID=req.query.p1
     let expiryitems=req.query.p2 ? req.query.p2.split(',') : []
-    let Pref=req.query.p2 ? req.query.p3.split(',') : []
-    let query = ''
+    let Pref=req.query.p3 ? req.query.p3.split(',') : []*/
+    let expiryitems=['Tomato', 'Salt']
+    let Pref=['Vegetarian','Non-dairy', 'Vegan' ]
+    let storequery=''
+    let query=''
+    const store=[]
+    if(Pref.length != 0){
+    query = 'SELECT store.RID FROM ('
 
     for(let i=0; i< Pref.length; i++){
       let preference = Pref[i];
       let excludeTable = ''
 
       if (preference === 'Vegetarian') {
-        excludeTable = 'Vegetarian_exclude';
+        excludeTable = 'vegetarian';
       } else if (preference === 'Non-dairy') {
-        excludeTable = 'Nondairy_exclude';
+        excludeTable = 'nondairy';
       } else if (preference === 'Vegan') {
-        excludeTable = 'Vegan_exclude';
+        excludeTable = 'vegan';
       }
 
       if(i===0){
-        query.join("SELECT RID FROM ((SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN ${excludeTable} e ON r.Ingredient = e.Ingredient))")
+        query+="SELECT * FROM " +excludeTable + " "
       }
-      if(i<Pref.length-1){
-        query.join("INTERSECT(SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN ${excludeTable} e ON r.Ingredient = e.Ingredient))")
+      else if(i<Pref.length-1){
+        query+="INTERSECT SELECT * FROM " + excludeTable + " "
+        
       }
       else{
-        query.join("INTERSECT(SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN ${excludeTable} e ON r.Ingredient = e.Ingredient))) AS Store) WHERE store.Ingredient IN (?)")
+        query+="INTERSECT SELECT * FROM " +excludeTable + ') AS store WHERE store.Ingredient LIKE ? '
+        store.push(excludeTable)
       }
     }
-    query.join("")
-
-    const [results] = await con.promise().query(query, [expiryitems])
+    console.log(query)
+  }
+  else{
+    query = 'SELECT store.RID FROM recipe r WHERE r.Ingredient LIKE ? '
+  }
+  storequery=query
+  for(let j=0; j< expiryitems.length; j++){
+    if(j==0){
+      temp=query.replace('?', '\''+`%${expiryitems[j]}%`+'\'')
+      query=temp
+    }
+    else if(j< expiryitems.length-1){
+      query += "INTERSECT " + storequery
+      temp=query.replace('?', '\''+`%${expiryitems[j]}%`+'\'')
+      query=temp
+    }
+    else{
+      query += "INTERSECT " + storequery
+      temp=query.replace('?', '\''+`%${expiryitems[j]}%`+'\'')
+      query=temp
+      tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
+      query=tempquery
+    }
+  }
+    const [results] = await con.promise().query(query)
+    //console.log(results.sql);
     //todo fix the formatting and get the complete recipe
-    const responseObject = {
+    /*const responseObject = {
       recipes: results,
-    };
+    };*/
+    /*
+    const formattedResults = results.map((result) => {
+      return `${result.RID}\t`;
+    });
+    console.print(formattedResults)*/
+    const formattedArray = results.map((result) => result.RID);
+    console.log(formattedArray);
+    const query2 = 'SELECT * FROM Recipe WHERE RID IN (?)'
+    const [result2] = await con.promise().query(query2, [formattedArray])
 
-    res.json(responseObject);
+    const formattedResults = result2.map((result) => {
+      return {
+        RID: result.RID,
+        Ingredient: result.Ingredient,
+        Amount: result.Amount,
+      };
+    });
+    
+    console.log(formattedResults)
+    //query_success(res, formattedResults)
+    
+    const structuredData = {};
+
+    for (const result of formattedResults) {
+      if (!structuredData[result.RID]) {
+        structuredData[result.RID] = {
+          RID: result.RID,
+          ingredients: [],
+        };
+      }
+    
+      structuredData[result.RID].ingredients.push({
+        Ingredient: result.Ingredient,
+        Amount: result.Amount,
+      });
+    }
+    
+    const jsonData = Object.values(structuredData);
+    
+    console.log(jsonData);
+    res.json(jsonData);
+    
+    //query_success(res, formattedArray)
+    //res.json(responseObject);
     //const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
     /*const [results] = await con.promise().query(query)
 
@@ -796,4 +923,5 @@ app.get("/get/recipe", async (req,res)=>{
     database_error(res, error.stack);
   }
 })
-  
+
+//TODO add endpoints to get recipe info using rid
