@@ -7,6 +7,18 @@
     android:background="#F5F5F5"
     tools:context=".AddItemsActivity">
 
+    <LinearLayout
+        android:id="@+id/inventory_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <ImageButton
         android:id="@+id/back_icon_add"
         android:layout_width="wrap_content"
@@ -22,6 +34,7 @@
         app:srcCompat="@drawable/back_arrow_dark_40" />
 
     <EditText
+        android:textColor="@color/dark_blue"
         android:id="@+id/item_name"
         android:layout_width="400dp"
         android:layout_height="50dp"
@@ -35,22 +48,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.234" />
 
-    <EditText
-        android:id="@+id/item_expiry"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:autofillHints="@string/enter_expiry_hint"
-        android:ems="10"
-        android:hint="@string/enter_expiry"
-        android:inputType="date"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.318" />
-
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/add_item_to_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,14 +71,41 @@
         android:ems="10"
         android:hint="@string/enter_quantity"
         android:inputType="number"
+        android:textColor="@color/dark_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.392" />
+        app:layout_constraintVertical_bias="0.378" />
 
-    <!--button for adding item from edit text to list-->
+    <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
+        android:id="@+id/add_items_to_inventory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_items_to_inventory"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.85" />
 
-    <!--list view to display list of languages-->
+    <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
+        android:id="@+id/set_expiry_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enter_expiry"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.307" />
 </androidx.constraintlayout.widget.ConstraintLayout>
