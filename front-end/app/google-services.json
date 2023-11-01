@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "185189218166",
+    "project_id": "grocerymanager-402303",
+    "storage_bucket": "grocerymanager-402303.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185189218166:android:3063d86e74381bc7f02c57",
+        "android_client_info": {
+          "package_name": "com.example.grocerymanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185189218166-t2hcsv3ormva3ki1ram1df1e8daleadp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.grocerymanager",
+            "certificate_hash": "85e4d1b55a0bf0f2d6514afed3612fc206426755"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0ttMbTBz9QlhamyGBpzJwQSMVd9xlhSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

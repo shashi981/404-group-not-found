@@ -3,6 +3,24 @@
 
     <string name="menu_bar">---</string>
 
+    <!-- Admin Activity -->
+    <!-- Dietitian Activity -->
+    <!-- View Recipe Activity -->
+
+    <!-- Nav Bar -->
+    <string name="chat_icon_dark_description">Move to chat view</string>
+    <string name="scanner_icon_dark_description">Move to scanner view</string>
+    <string name="inventory_icon_dark_description">Move to inventory view</string>
+    <string name="recipe_icon_dark_description">Move to recipe view</string>
+    <string name="shop_icon_dark_description">Move to shopping list view</string>
+    <string name="menu_bar_icon_dark_description">Expand Menu</string>
+    <string name="back_bar_icon_dark_description">Back icon</string>
+
+    <string name="chat_icon_light_description">Move to chat view</string>
+    <string name="scanner_icon_light_description">Move to scanner view</string>
+    <string name="inventory_icon_light_description">Move to inventory view</string>
+    <string name="recipe_icon_light_description">Move to recipe view</string>
+
 
     <!-- Login Page -->
     <string name="google_sign_in">Sign In With Google</string>
@@ -13,6 +31,9 @@
     <string name="manage_inventory_button">Manage Inventory</string>
     <string name="consult_dietitian_button">Consult a Dietitian</string>
     <string name="suggested_recipes_button">Suggested Recipes</string>
+    <string name="assistance_home">How Can I Be Of Assistance?</string>
+    <string name="salutations_home">Welcome Back!</string>
+    <string name="salutations_name_home">Hello User</string>
 
 
     <!-- Inventory Page -->
@@ -22,11 +43,43 @@
     <string name="receipt_scanner_button">Receipt</string>
     <string name="item_scanner_button">Item</string>
     <string name="manual_button">Manually Add Items</string>
+    <string name="barcode_scanner_button">Scan barcode</string>
 
     <!-- Recipe Page -->
     <!-- Chat Page -->
     <!-- Profile Page -->
+    <string name="profile_content_description">Google Profile Picture</string>
+    <string name="google_name_profile">Name: </string>
+    <string name="google_email_profile">Email: </string>
+    <string name="grocery_manager_id">GroceryManager ID: </string>
+    <string name="preferences">Preferences: </string>
+    <string name="dietary_restrictions">Dietary Restrictions: </string>
+    <string name="edit_dietary_restrictions">Edit</string>
+    <string name="vegan_profile">Vegan</string>
+    <string name="vegetarian_profile">Vegetarian</string>
+    <string name="non_dairy_profile">Non-dairy</string>
+    <string name="save_preferences">Save Preferences</string>
     <!-- Settings Page -->
+    <string name="sign_out_settings">Sign Out</string>
+    <string name="delete_account_settings">Delete Account</string>
+    <string name="change_to_dietitian">Request Dietitian View</string>
+
+    <!-- Add Items Page -->
+    <string name="enter_item">Enter an Item</string>
+    <string name="enter_item_hint">Enter a Grocery Item</string>
+    <string name="enter_expiry">Enter the Expiry Date</string>
+    <string name="enter_expiry_hint">Enter the estimated Expiry Date</string>
+    <string name="enter_quantity">Enter the Quantity</string>
+    <string name="enter_quantity_hint">Enter the Quantity Amount</string>
+    <string name="add_items_to_inventory">Save To Inventory</string>
+
+    <string name="quantity_string">Quantity</string>
+
+
+    <string name="add_item_to_list">Add Item</string>
+
+    <string name="profile_dropdown">Profile</string>
+    <string name="settings_dropdown">Settings</string>
 
 
 </resources>
