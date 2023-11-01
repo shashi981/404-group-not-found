@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const express = require("express")
 const https = require('https')
 const fs = require('fs')
+const moment = require('moment');
 
 const app=express()
 app.use(express.json())
@@ -11,7 +12,7 @@ const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
 const UPCAPIURL= 'https://api.upcdatabase.org/product/'
 
 //local testing use
-/*const con = mysql.createConnection({
+const con = mysql.createConnection({
   host: "",
   port: "3306",
   user: "root",
@@ -25,11 +26,11 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
 
   console.log("%s %s", host, port)
 
-})*/
+})
 
 
 //server use
-const con = mysql.createConnection({
+/*const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "404GroupNotFound",
@@ -47,7 +48,7 @@ const server = https.createServer(certs, app)
 
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
-})
+})*/
 
 function database_error(response, error) {
   response.status(500).send('Error querying the database'+error)
@@ -1061,10 +1062,10 @@ app.get("/get/recipe_info", async (req,res)=>{
   }
 })
 
-const moment = require('moment');
+
 
 // Define a function to process shopping data and generate reminders
-function processShoppingData() {
+function processShoppingData(UID) {
   // User-defined settings
   const reminderPeriodDays = 2;
   const numberOfVisits = 10; // This can be changed
@@ -1088,10 +1089,10 @@ function processShoppingData() {
     
     // NEED TO UPDATE
     // Query to retrieve shopping data from the database
-    const query = 'SELECT item, quantity, purchase_date FROM shopping_data_table';
+    const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?';
 
     // Execute the query
-    con.query(query, (queryErr, shoppingData) => {
+    con.query(query,[UID], (queryErr, shoppingData) => {
       if (queryErr) {
         console.error('MySQL Query Error:', queryErr);
         con.end(); // Close the connection
