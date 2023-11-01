@@ -7,7 +7,8 @@ const fs = require('fs')
 const app=express()
 app.use(express.json())
 
-
+const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
+const UPCAPIURL= 'https://api.upcdatabase.org/product/'
 
 //local testing use
 const con = mysql.createConnection({
@@ -27,7 +28,8 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
 })
 
 //server use
-/*const con = mysql.createConnection({
+/*
+const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "404GroupNotFound",
@@ -46,7 +48,6 @@ const server = https.createServer(certs, app)
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
 })*/
-
 
 
 function database_error(response, error) {
@@ -248,7 +249,7 @@ app.get("/get/items", async (req,res)=>{
     //const query2 = 'SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID  FROM OWNS o, GROCERIES g WHERE o.UID=? && g.UPC=o.UPC ORDER BY o.ItemID ASC;'
 
     // not sure if this fix the issue, todo test it
-    const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC WHERE o.UID = ? ORDER BY o.ItemID ASC;'
+    const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? ORDER BY o.ItemID ASC;'
 
     const [result1] = await con.promise().query(query, [UID, UID])
     const [result2] = await con.promise().query(query2, [UID])
@@ -316,7 +317,8 @@ app.get("/add/items", async (req,res)=>{
     let UPC = req.query.p2 ? req.query.p2.split(',') : []
     let ExpireDate = req.query.p3 ? req.query.p3.split(',') : []
     let ItemCount = req.query.p4 ? req.query.p4.split(',') : []
-    
+    //let count=0;
+    let returnstatement=''
     if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length) {
       return res.status(400).send('Arrays should have the same length')
     }
@@ -329,36 +331,120 @@ app.get("/add/items", async (req,res)=>{
     console.log('Connected to the database as id ' + con.threadId)*/
     const values = [];
     for (let i = 0; i <UPC.length; i++) {
-      if(i<UPC.length-1){
-        values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],]));
-      }
-      else{
-        values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i]]));
-      }
+
+      const query1 = 'SELECT * FROM GROCERIES WHERE UPC=?'
+      const [userResults] = await con.promise().query(query1, [UPC[i]])
+
+      if (userResults.length ==0) {
+        console.log('The upc is not in the db')
+        const url = UPCAPIURL + UPC[i] + UPCAPIKey
+        let title
+        //let description
+        let brand
+        /*https.get(url, (response) => {
+          let data = '';
+        
+          // Event handler for receiving data
+          response.on('data', (chunk) => {
+            data += chunk;
+          });
+        
+          response.on('end', () => {*/
+            try {
+              const jsonData = await fetchDataFromAPI(url);
+              if (jsonData.success) {
+                brand=jsonData.brand
+                title=jsonData.title
+                //description=jsonData.description
+
+                console.log(jsonData);
+                if(i<UPC.length-1){
+                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],]));
+                }
+                else{
+                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i]]));
+                }
+                console.log(brand)
+                console.log(title)
+                num=UPC[i]
+                console.log(num)
+                const query2 = 'INSERT INTO GROCERIES(UPC, Name, Brand, Category) VALUES (?,?,?,?)'
+                const [addgrocery] = await con.promise().query(query2, [num,title, brand, title ])
+              }
+              else{
+                returnstatement += UPC[i]
+                console.error('Product not found. Error code:', jsonData.error.code);
+                console.error('Error message:', jsonData.error.message);
+                
+              }
+            } catch (error) {
+              console.error('Error parsing JSON:', error);
+            }
+          //});
+        
+          // Event handler for any errors
+         // response.on('error', (error) => {
+          //console.error('Request error:', error);
+         // });
+        //});
+    }  
     }
     console.log(values)
 
-    const query = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount) VALUES ?'
-
-    const [results] = await con.promise().query(query, [values])
+    if(values.length>0){
+      const query3 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount) VALUES ?'
+      const [results] = await con.promise().query(query3, [values])
+    }
     /*con.query(query, [values], (err, results, fields) => {
       if (err) {
         console.error('Error querying the database: ' + err.stack)
         return
       }*/
-      console.log('SUCCESS ADDED items') 
+     // console.log('SUCCESS ADDED items') 
+     if(returnstatement === ''){
       query_success(res, 'SUCCESS ADDED ITEMS')
+     }
+     else{
+      query_success(res, 'Values not added ' + returnstatement)
+     }
     //})
  // })
-  }catch(error){
+  }
+catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
   }
 })
 
+function fetchDataFromAPI(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (response) => {
+      let data = '';
+
+      response.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      response.on('end', () => {
+        try {
+          const jsonData = JSON.parse(data);
+          resolve(jsonData);
+        } catch (error) {
+          reject(error);
+        }
+      });
+
+      response.on('error', (error) => {
+        reject(error);
+      });
+    });
+  });
+}
+
 //todo finish this
 app.post("/add/items_man", async (req,res)=>{
   try{
+    //change to auto get a negative upc???
     let UID=req.body.p1
     let UPC = req.body.p2 // should be -1
     let ExpireDate = req.body.p3 //? req.query.p3.split(',') : []
@@ -379,17 +465,17 @@ app.post("/add/items_man", async (req,res)=>{
     for (let i = 0; i <ItemName.length; i++) {
       if(i<UPC.length-1){
         store.push(([UPC, ItemName[i],]))
-        values.push(([UID, UPC, ExpireDate[i], ItemCount[i],]))
+        values.push(([UID, UPC, ExpireDate[i], ItemCount[i],ItemName[i]]))
       }
       else{
         store.push(([UPC, ItemName[i]]))
-        values.push(([UID, UPC, ExpireDate[i], ItemCount[i]]))
+        values.push(([UID, UPC, ExpireDate[i], ItemCount[i], ItemName[i]]))
       }
     }
     console.log(values)
 
     const query = 'INSERT IGNORE INTO GROCERIES (UPC, Name) VALUES ?'
-    const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount) VALUES ?'
+    const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, Name) VALUES ?'
 
     const [results] = await con.promise().query(query, [store])
     const [results2] = await con.promise().query(query2, [values])
@@ -409,10 +495,10 @@ app.post("/add/items_man", async (req,res)=>{
 })
 //delete items
 //done
-app.get("/delete/items", async (req,res)=>{
+app.post("/delete/items", async (req,res)=>{
   try{
-  let UID=req.query.p1
-  let ItemID=req.query.p2 ? req.query.p2.split(',') : []
+  let UID=req.body.p1
+  let ItemID=req.body.p2 //? req.query.p2.split(',') : []
 
   const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
   
