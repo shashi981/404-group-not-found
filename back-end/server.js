@@ -11,11 +11,12 @@ const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
 const UPCAPIURL= 'https://api.upcdatabase.org/product/'
 
 //local testing use
+/*
 const con = mysql.createConnection({
-  host: "127.0.0.1",
+  host: "",
   port: "3306",
   user: "root",
-  password: "Zachary",
+  password: "",
   database: 'grocerymanger'
 });
 
@@ -26,9 +27,9 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
   console.log("%s %s", host, port)
 
 })
+*/
 
 //server use
-/*
 const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
@@ -47,7 +48,7 @@ const server = https.createServer(certs, app)
 
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
-})*/
+})
 
 
 function database_error(response, error) {
@@ -493,6 +494,7 @@ app.post("/add/items_man", async (req,res)=>{
     database_error(res, error.stack)
   }
 })
+
 //delete items
 //done
 app.post("/delete/items", async (req,res)=>{
@@ -536,13 +538,13 @@ app.post("/delete/items", async (req,res)=>{
 
 //done
 //update items
-app.get("/update/items", (req,res)=>{
+app.post("/update/items", (req,res)=>{
   try{
-  let UID=req.query.p1
-  let ItemID=req.query.p2 ? req.query.p2.split(',') : []
-  let UPC = req.query.p3 ? req.query.p3.split(',') : []
-  let ExpireDate = req.query.p4 ? req.query.p4.split(',') : []
-  let ItemCount = req.query.p5 ? req.query.p5.split(',') : []
+  let UID=req.body.p1
+  let ItemID=req.body.p2 //? req.query.p2.split(',') : []
+  let UPC = req.body.p3 //? req.query.p3.split(',') : []
+  let ExpireDate = req.body.p4 //? req.query.p4.split(',') : []
+  let ItemCount = req.body.p5 //? req.query.p5.split(',') : []
 
   if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length || ItemID.length !== UPC.length) {
     return res.status(400).send('Arrays should have the same length')
@@ -553,8 +555,8 @@ app.get("/update/items", (req,res)=>{
       return
     }
   
-    console.log('Connected to the database as id ' + con.threadId)
-    const values = [];*/
+    console.log('Connected to the database as id ' + con.threadId)*/
+    const values = [];
     for (let i = 0; i <UPC.length; i++) {
       values.push([ExpireDate[i], ItemCount[i], UID, UPC[i], ItemID[i]])
     }
@@ -582,11 +584,11 @@ app.get("/update/items", (req,res)=>{
 
 //add pref
 //done
-app.get("/add/pref", async (req,res)=>{
+app.post("/add/pref", async (req,res)=>{
 
   try{
-  let UID=req.query.p1
-  let Pref = req.query.p2 ? req.query.p2.split(',') : []
+  let UID=req.body.p1
+  let Pref = req.body.p2 //? req.query.p2.split(',') : []
  /* con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -623,10 +625,10 @@ app.get("/add/pref", async (req,res)=>{
 
 //delete pref
 //done
-app.get("/delete/pref", async (req,res)=>{
+app.post("/delete/pref", async (req,res)=>{
   try{
   let UID=req.query.p1
-  let Pref = req.query.p2 ? req.query.p2.split(',') : []
+  let Pref = req.body.p2 //? req.query.p2.split(',') : []
 
   /*con.connect(function(err) {
     if (err) {
@@ -713,11 +715,12 @@ app.get("/get/pref_list", async (req,res)=>{
       }*/
       console.log('SUCCESS show Pref_list') 
       const formattedResults = results.map((result) => {
-        return `${result.Pref}`;
+        return {Pref:result.Pref};
       });
-      query_success(res, 'SUCCESS show Pref_list ' + formattedResults.join('\n'))
+      //query_success(res, 'SUCCESS show Pref_list ' + formattedResults.join('\n'))
     //})
   //})
+  res.json(formattedResults)
   } catch(error){
       console.error('Error:', error);
       database_error(res, error.stack);
@@ -801,9 +804,9 @@ app.get("/get/dietReq", async (req,res)=>{
 
 //approve request for being a dietician, add to dietician table and remove the request
 //done
-app.get("/approve/dietReq", async (req,res)=>{
+app.post("/approve/dietReq", async (req,res)=>{
   try{
-  UID=req.query.p1 ? req.query.p1.split(',') : []
+  UID=req.body.p1// ? req.query.p1.split(',') : []
   console.log(UID)
   const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID IN (?)'
   const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID IN (?)'
@@ -883,13 +886,13 @@ app.get("/get/users_type", async (req,res)=>{
 })
 
 //todo test this
-app.get("/get/recipe", async (req,res)=>{
+app.post("/get/recipe", async (req,res)=>{
   try {
-    /*let UID=req.query.p1
-    let expiryitems=req.query.p2 ? req.query.p2.split(',') : []
-    let Pref=req.query.p3 ? req.query.p3.split(',') : []*/
-    let expiryitems=['Tomato', 'Salt']
-    let Pref=['Vegetarian','Non-dairy', 'Vegan' ]
+    //let UID=req.query.p1
+    let expiryitems=req.body.p1 //? req.query.p2.split(',') : []
+    let Pref=req.body.p2 //? req.query.p3.split(',') : []
+    /*let expiryitems=['Tomato', 'Salt']
+    let Pref=['Vegetarian','Non-dairy', 'Vegan' ]*/
     let storequery=''
     let query=''
     const store=[]
