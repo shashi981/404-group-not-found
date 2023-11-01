@@ -11,8 +11,7 @@ const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
 const UPCAPIURL= 'https://api.upcdatabase.org/product/'
 
 //local testing use
-/*
-const con = mysql.createConnection({
+/*const con = mysql.createConnection({
   host: "",
   port: "3306",
   user: "root",
@@ -26,8 +25,8 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
 
   console.log("%s %s", host, port)
 
-})
-*/
+})*/
+
 
 //server use
 const con = mysql.createConnection({
@@ -49,7 +48,6 @@ const server = https.createServer(certs, app)
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
 })
-
 
 function database_error(response, error) {
   response.status(500).send('Error querying the database'+error)
@@ -318,7 +316,11 @@ app.get("/add/items", async (req,res)=>{
     let UPC = req.query.p2 ? req.query.p2.split(',') : []
     let ExpireDate = req.query.p3 ? req.query.p3.split(',') : []
     let ItemCount = req.query.p4 ? req.query.p4.split(',') : []
-    //let count=0;
+    //let count=0
+    const currentDate = new Date()
+    const currentDateString = currentDate.toISOString().split('T')[0]
+    console.log(currentDateString)
+
     let returnstatement=''
     if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length) {
       return res.status(400).send('Arrays should have the same length')
@@ -360,10 +362,10 @@ app.get("/add/items", async (req,res)=>{
 
                 console.log(jsonData);
                 if(i<UPC.length-1){
-                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],]));
+                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]));
                 }
                 else{
-                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i]]));
+                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i], currentDate]));
                 }
                 console.log(brand)
                 console.log(title)
@@ -393,7 +395,7 @@ app.get("/add/items", async (req,res)=>{
     console.log(values)
 
     if(values.length>0){
-      const query3 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount) VALUES ?'
+      const query3 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?'
       const [results] = await con.promise().query(query3, [values])
     }
     /*con.query(query, [values], (err, results, fields) => {
@@ -454,6 +456,11 @@ app.post("/add/items_man", async (req,res)=>{
     if ( ExpireDate.length !== ItemCount.length || ItemCount.length !== ItemName.length) {
       return res.status(400).send('Arrays should have the same length')
     }
+
+    const currentDate = new Date()
+    const currentDateString = currentDate.toISOString().split('T')[0]
+    console.log(currentDateString)
+    
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -466,17 +473,17 @@ app.post("/add/items_man", async (req,res)=>{
     for (let i = 0; i <ItemName.length; i++) {
       if(i<UPC.length-1){
         store.push(([UPC, ItemName[i],]))
-        values.push(([UID, UPC, ExpireDate[i], ItemCount[i],ItemName[i]]))
+        values.push(([UID, UPC, ExpireDate[i], ItemCount[i],ItemName[i], currentDate]))
       }
       else{
         store.push(([UPC, ItemName[i]]))
-        values.push(([UID, UPC, ExpireDate[i], ItemCount[i], ItemName[i]]))
+        values.push(([UID, UPC, ExpireDate[i], ItemCount[i], ItemName[i], currentDate]))
       }
     }
     console.log(values)
 
     const query = 'INSERT IGNORE INTO GROCERIES (UPC, Name) VALUES ?'
-    const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, Name) VALUES ?'
+    const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, Name, PurchaseDate) VALUES ?'
 
     const [results] = await con.promise().query(query, [store])
     const [results2] = await con.promise().query(query2, [values])

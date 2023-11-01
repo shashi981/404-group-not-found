@@ -14,7 +14,7 @@ CREATE TABLE GROCERIES(
     Name VARCHAR(50) NOT NULL,
     Brand VARCHAR(50),
     Category VARCHAR(50),
-    --Itemsize SMALLINT,
+    -- Itemsize SMALLINT,
     PRIMARY KEY (UPC, Name)
 );
 
@@ -24,8 +24,9 @@ CREATE TABLE OWNS(
     ExpireDate DATE NOT NULL,
     ItemCount INT NOT NULL,
     ItemID INT,
+    PurchaseDate DATE NOT NULL,
     Name VARCHAR(50) default 'whatever' NOT NULL,
-    PRIMARY KEY (UPC, UID, ExpireDate, Name),
+    PRIMARY KEY (UPC, UID, ExpireDate, Name, PurchaseDate),
     FOREIGN KEY (UPC) REFERENCES GROCERIES(UPC)
     ON DELETE CASCADE,
     FOREIGN KEY (UID) REFERENCES USERS(UID)
