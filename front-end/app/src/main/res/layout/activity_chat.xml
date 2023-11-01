@@ -180,7 +180,10 @@
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible"></FrameLayout>
+        tools:visibility="visible">
+
+
+    </FrameLayout>
 
     <View
         android:id="@+id/viewBackground"
@@ -193,7 +196,18 @@
         app:layout_constraintTop_toTopOf="@+id/chatBox"
         tools:visibility="visible"></View>
 
-    
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:background="@color/faded_white"
+        app:layout_constraintBottom_toBottomOf="@id/chatBox"
+        app:layout_constraintEnd_toEndOf="@id/chatBox"
+        ></Button>
+
     <FrameLayout
         android:id="@+id/layoutSend"
         android:layout_width="@dimen/_40sdp"
