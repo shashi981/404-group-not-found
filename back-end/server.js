@@ -1060,3 +1060,96 @@ app.get("/get/recipe_info", async (req,res)=>{
     database_error(res, error.stack)
   }
 })
+
+const moment = require('moment');
+
+// Define a function to process shopping data and generate reminders
+function processShoppingData() {
+  // User-defined settings
+  const reminderPeriodDays = 2;
+  const numberOfVisits = 10; // This can be changed
+
+  // Store item purchase history
+  const purchaseHistory = {};
+
+  // Initialize current date
+  const currentDate = moment();
+
+  // Initialize the expected run-out date for each item
+  const expectedRunOutDates = {};
+
+
+  // Connect to the MySQL database
+  con.connect((err) => {
+    if (err) {
+      console.error('MySQL Connection Error:', err);
+      return;
+    }
+    
+    // NEED TO UPDATE
+    // Query to retrieve shopping data from the database
+    const query = 'SELECT item, quantity, purchase_date FROM shopping_data_table';
+
+    // Execute the query
+    con.query(query, (queryErr, shoppingData) => {
+      if (queryErr) {
+        console.error('MySQL Query Error:', queryErr);
+        con.end(); // Close the connection
+        return;
+      }
+
+      // Close the MySQL connection
+      con.end();
+
+      
+      // Populate purchase history, also detecting anomalies
+      shoppingData.forEach((shoppingEntry) => {
+        const item = shoppingEntry.item;
+        const quantity = shoppingEntry.quantity;
+        const anomalyThreshold = quantity * 3; // Anomaly detection threshold (e.g., a quantity higher than this threshold is considered an anomaly)
+        const purchaseDate = moment(shoppingEntry.purchase_date, 'YYYY-MM-DD').toDate();
+
+        // Check for anomalies based on the threshold
+        if (quantity > anomalyThreshold) {
+          console.log(`Anomaly detected for ${item} on ${purchaseDate}: Quantity ${quantity} exceeds threshold.`);
+          return;
+        }
+
+        // Updating purchase history
+        if (item in purchaseHistory) {
+          purchaseHistory[item].push(purchaseDate);
+        } else {
+          purchaseHistory[item] = [purchaseDate];
+        }
+
+        // Calculate expected run-out date based on time frame
+        if (!(item in expectedRunOutDates)) {
+          expectedRunOutDates[item] = moment(purchaseDate).add(numberOfVisits, 'weeks').toDate();
+        }
+      });
+
+      // Generate reminders
+      for (const item in purchaseHistory) {
+        const purchaseDates = purchaseHistory[item];
+
+        // Calculate the average purchase frequency
+        const purchaseFrequency = purchaseDates.length / numberOfVisits; // Number of times purchased per week
+
+        // Calculate the expected run-out date
+        const expectedRunOutDate = expectedRunOutDates[item];
+
+        // Calculate the reminder date
+        const reminderDate = moment(expectedRunOutDate).subtract(reminderPeriodDays, 'days');
+
+        // TO BE IMPLEMENTED IN FIREBASE
+        // Check if it's time to send a reminder 
+        if (currentDate.isSameOrAfter(reminderDate)) {
+          console.log(`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`);
+        }
+      }
+    });
+  });
+}
+
+// Call the function to process shopping data and generate reminders
+//processShoppingData();
