@@ -19,10 +19,10 @@ import android.widget.Button;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.Socket;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 import java.net.URISyntaxException;
 import io.socket.client.IO;
-import io.socket.client.Socket;
 
 
 public class ChatActivity extends AppCompatActivity {
@@ -56,7 +56,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         try {
-            Socket socket = IO.socket("http://your_server_ip:3000");
+            socket = IO.socket("https://20.104.197.24/");
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
