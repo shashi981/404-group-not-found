@@ -25,6 +25,7 @@ CREATE TABLE OWNS(
     ItemCount INT NOT NULL,
     ItemID INT,
     PurchaseDate DATE NOT NULL,
+    AboutExpire BIT(1) default 0 NOT NULL, -- 0 for not about to expiry, 1 for about to expiry
     Name VARCHAR(50) default 'whatever' NOT NULL,
     PRIMARY KEY (UPC, UID, ExpireDate, Name, PurchaseDate),
     FOREIGN KEY (UPC) REFERENCES GROCERIES(UPC)
