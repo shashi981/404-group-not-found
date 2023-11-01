@@ -13,8 +13,8 @@ CREATE TABLE GROCERIES(
 	UPC BIGINT NOT NULL,
     Name VARCHAR(50) NOT NULL,
     Brand VARCHAR(50),
-    CATEGORY VARCHAR(50),
-    Itemsize SMALLINT,
+    Category VARCHAR(50),
+    --Itemsize SMALLINT,
     PRIMARY KEY (UPC, Name)
 );
 
@@ -24,7 +24,8 @@ CREATE TABLE OWNS(
     ExpireDate DATE NOT NULL,
     ItemCount INT NOT NULL,
     ItemID INT,
-    PRIMARY KEY (UPC, UID, ExpireDate),
+    Name VARCHAR(50) default 'whatever' NOT NULL,
+    PRIMARY KEY (UPC, UID, ExpireDate, Name),
     FOREIGN KEY (UPC) REFERENCES GROCERIES(UPC)
     ON DELETE CASCADE,
     FOREIGN KEY (UID) REFERENCES USERS(UID)
@@ -219,10 +220,22 @@ VALUES
 (123456789012, 'test2', 'testing');
 
 INSERT INTO
+GROCERIES(UPC, Name)
+VALUES
+(  -1, 'Apple'),
+(-1,'banana');
+
+INSERT INTO
 OWNS(UID, UPC,ExpireDate,ItemCount)
 VALUES
-( 1, 123456789012,'2023-10-19', 6),
-( 1, 123456789014,'2023-10-16', 6);
+( 2, 123456789012,'2023-10-19', 6),
+( 2, 123456789014,'2023-10-16', 6);
+
+INSERT INTO
+OWNS(UID, UPC,ExpireDate,ItemCount, Name)
+VALUES
+( 2, -1,'2023-10-19', 6, 'Apple'),
+( 2, -1,'2023-10-16', 6, 'banana');
 
 INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) 
 SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL
@@ -280,15 +293,52 @@ TRUNCATE TABLE recipe_info;
 
 SELECT COUNT(*) FROM recipe_info;
 
-
-SELECT * FROM store1
+SELECT *
+FROM recipe r, (
+SELECT store.RID
+FROM (
+SELECT * FROM vegan
 INTERSECT
-SELECT * FROM store2
+SELECT * FROM nondairy
 INTERSECT
-SELECT * FROM store3;
+SELECT * FROM vegetarian) AS store
+WHERE store.Ingredient LIKE '%Tomato%'
+	ORDER BY RAND()
+	LIMIT 5) AS temp
+WHERE r.RID IN (temp.RID);
 
 SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID  FROM OWNS o, GROCERIES g WHERE o.UID=2 && g.UPC=o.UPC ORDER BY o.ItemID ASC;
-      
+
+SELECT whatever.RID 
+FROM (
+SELECT store.RID
+FROM (
+SELECT * FROM vegan
+INTERSECT
+SELECT * FROM nondairy
+INTERSECT
+SELECT * FROM vegetarian) AS store
+WHERE store.Ingredient LIKE '%Tomato%'
+INTERSECT
+SELECT store.RID
+FROM (
+SELECT * FROM vegan
+INTERSECT
+SELECT * FROM nondairy
+INTERSECT
+SELECT * FROM vegetarian) AS store
+WHERE store.Ingredient LIKE '%Salt%') AS whatever
+ORDER BY RAND()
+LIMIT 5
+
+SELECT s.RID FROM (SELECT store.RID FROM (SELECT * FROM vegetarian INTERSECT SELECT * FROM nondairy INTERSECT SELECT * FROM vegan) AS store WHERE store.Ingredient
+ LIKE '%Tomato%' INTERSECT SELECT store.RID FROM (SELECT * FROM vegetarian INTERSECT SELECT * FROM nondairy INTERSECT SELECT * FROM vegan) AS store WHERE store.Ingredient
+ LIKE '%Salt%' INTERSECT SELECT store.RID FROM (SELECT * FROM vegetarian INTERSECT SELECT * FROM nondairy INTERSECT SELECT * FROM vegan) AS store WHERE store.Ingredient L
+IKE ? ) AS s ORDER BY RAND() LIMIT 5
+
+SELECT * FROM Recipe WHERE RID IN (52785,52995,52977,53000,52807)
+
+SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = 'whatever' OR g.Name = o.Name) WHERE o.UID = 2 ORDER BY o.ItemID ASC;
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
 SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;') 
