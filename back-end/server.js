@@ -6,6 +6,12 @@ const fs = require('fs')
 const moment = require('moment');
 const cron = require('node-cron');
 
+const { Server } = require('socket.io');
+const io = new Server(server);
+
+let onlineUsers = {}; // { userId: socketId, ... }
+let onlineDieticians = {}; // { dieticianId: socketId, ... }
+
 //app
 const app=express()
 app.use(express.json())
@@ -20,11 +26,11 @@ const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?numbe
 const schedule = '0 0 * * *'
 
 //local testing use
-const con = mysql.createConnection({
-  host: "",
+/*const con = mysql.createConnection({
+  host: "127.0.0.1",
   port: "3306",
   user: "root",
-  password: "",
+  password: "Zachary",
   database: 'grocerymanger'
 });
 
@@ -34,11 +40,11 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
 
   console.log("%s %s", host, port)
 
-})
+})*/
 
 
 //server use
-/*const con = mysql.createConnection({
+const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "404GroupNotFound",
@@ -56,7 +62,7 @@ const server = https.createServer(certs, app)
 
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
-})*/
+})
 
 function database_error(response, error) {
   response.status(500).send('Error querying the database'+error)
@@ -67,11 +73,6 @@ function query_success(response, message){
 }
 
 //socket
-const { Server } = require('socket.io');
-const io = new Server(server);
-
-let onlineUsers = {}; // { userId: socketId, ... }
-let onlineDieticians = {}; // { dieticianId: socketId, ... }
 
 io.on('connection', (socket) => {
     
@@ -1025,19 +1026,31 @@ app.get("/get/users_type", async (req,res)=>{
 })
 
 //todo test this
-app.post("/get/recipe", async (req,res)=>{
+app.get("/get/recipe", async (req,res)=>{
   try {
     //todo change to get items about to expiry and pref using uid from db
     // then use the api to get extra recipes when the no recipe matches on db
 
-    //let UID=req.query.p1
-    let expiryitems=req.body.p1 //? req.query.p2.split(',') : []
-    let Pref=req.body.p2 //? req.query.p3.split(',') : []
+    let UID=req.query.p1
+    //let expiryitems=req.body.p1 //? req.query.p2.split(',') : []
+   // let Pref//=req.body.p2 //? req.query.p3.split(',') : []
     /*let expiryitems=['Tomato', 'Salt']
     let Pref=['Vegetarian','Non-dairy', 'Vegan' ]*/
     let storequery=''
     let query=''
     const store=[]
+
+    const Prefquery = 'SELECT * FROM PREFERENCE WHERE UID=?'
+    const [Preftemp] = await con.promise().query(Prefquery, [UID])
+    const Pref = Preftemp.map((Prefresult) => Prefresult.Pref);
+    
+    console.log(Pref)
+    const Itemsquery = 'SELECT DISTINCT g.Name FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1'
+    const [Itemstemp] = await con.promise().query(Itemsquery, [UID])
+    const Expiryitems = Itemstemp.map((Items) => Items.Name);
+    
+    console.log(Expiryitems)
+
     if(Pref.length != 0){
     query = 'SELECT store.RID FROM ('
 
@@ -1071,19 +1084,19 @@ app.post("/get/recipe", async (req,res)=>{
     query = 'SELECT store.RID FROM recipe r WHERE r.Ingredient LIKE ? '
   }
   storequery=query
-  for(let j=0; j< expiryitems.length; j++){
+  for(let j=0; j< Expiryitems.length; j++){
     if(j==0){
-      temp=query.replace('?', '\''+`%${expiryitems[j]}%`+'\'')
+      temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
       query=temp
     }
-    else if(j< expiryitems.length-1){
+    else if(j< Expiryitems.length-1){
       query += "INTERSECT " + storequery
-      temp=query.replace('?', '\''+`%${expiryitems[j]}%`+'\'')
+      temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
       query=temp
     }
     else{
       query += "INTERSECT " + storequery
-      temp=query.replace('?', '\''+`%${expiryitems[j]}%`+'\'')
+      temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
       query=temp
       tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
       query=tempquery
@@ -1289,7 +1302,7 @@ function processShoppingData(UID) {
 // Call the function to process shopping data and generate reminders
 //processShoppingData();
 
-
+//expiry date reminders
 cron.schedule(schedule, () => {
   console.log('Cron job triggered');
   checkexpiry();
