@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5"
     tools:context=".ChatActivity">
-
+    
     <LinearLayout
         android:id="@+id/bottom_navbar_blue_recipe"
         android:layout_width="103dp"
@@ -167,5 +167,64 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.05"
         app:srcCompat="@drawable/menu_bar_dark_40" />
+
+    <FrameLayout
+        android:id="@+id/chatBox"
+        android:layout_width="350dp"
+        android:layout_height="500dp"
+        android:background="@color/mint_green"
+        android:visibility="visible"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="@+id/bottom_navbar_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible"></FrameLayout>
+    
+    <FrameLayout
+        android:id="@+id/layoutSend"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:layout_marginRight="@dimen/_16sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:background="@color/faded_white"
+        app:layout_constraintBottom_toBottomOf="@id/chatBox"
+        app:layout_constraintEnd_toEndOf="@id/chatBox">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:layout_marginLeft="@dimen/_4sdp"
+            android:src="@drawable/ic_send"/>
+
+    </FrameLayout>
+    
+    <EditText
+        android:id="@+id/inputMessage"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginStart="@dimen/_16ssp"
+        android:layout_marginLeft="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginRight="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
+        android:background="@color/dark_blue"
+        android:hint="Type a Message:"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="text"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_16sdp"
+        android:textColor="@color/faded_white"
+        android:textColorHint="@color/faded_white"
+        app:layout_constraintBottom_toBottomOf="@id/chatBox"
+        app:layout_constraintEnd_toStartOf="@id/layoutSend"
+        app:layout_constraintStart_toStartOf="@id/chatBox"/>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

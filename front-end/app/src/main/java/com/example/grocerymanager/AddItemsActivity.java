@@ -2,6 +2,7 @@ package com.example.grocerymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -93,7 +94,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     String itemNameString = itemName.getText().toString();
                     String itemQuantityString = itemQuantity.getText().toString();
 
-                    Item newItem = new Item(itemNameString, expiryDateString, Integer.parseInt(itemQuantityString), -1);
+                    Item newItem = new Item(itemNameString, expiryDateString, Integer.parseInt(itemQuantityString), -1, -1);
                     itemList.add(newItem);
                     addItemToInventory(newItem);
                     Log.d(TAG, itemList.toString());
@@ -191,6 +192,11 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
             @Override
             public void onClick(View v) {
                 //need to implement editing
+                displayEditPopup(item);
+                itemList.remove(item);
+                LinearLayout mainLayout = findViewById(R.id.inventory_container);
+                mainLayout.removeView(view);
+
             }
         });
 
@@ -207,6 +213,38 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         LinearLayout mainLayout = findViewById(R.id.inventory_container);
         mainLayout.addView(view);
 
+    }
+    private void displayEditPopup(Item item) {
+        Dialog dialog = new Dialog(AddItemsActivity.this);
+        dialog.setContentView(R.layout.edit_item_template);
+
+        EditText quantityEditText = dialog.findViewById(R.id.edit_quantity);
+        Button editExpiryDateButton = dialog.findViewById(R.id.edit_expiry_date_button);
+        Button saveButton = dialog.findViewById(R.id.save_button);
+
+        quantityEditText.setText(String.valueOf(item.getQuantity()));
+        editExpiryDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int updatedQuantity = Integer.parseInt(quantityEditText.getText().toString());
+                if(expiryDateString != null && !expiryDateString.isEmpty() && updatedQuantity > 0){
+                    item.setQuantity(updatedQuantity);
+                    item.setExpiry(expiryDateString);
+                    addItemToInventory(item);
+                    dialog.dismiss();
+
+                }
+
+            }
+        });
+
+        dialog.show();
     }
 
     private void launchInventoryIntent() {
