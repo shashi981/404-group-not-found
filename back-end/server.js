@@ -3,20 +3,24 @@ const mysql = require('mysql2');
 const express = require("express")
 const https = require('https')
 const fs = require('fs')
+const moment = require('moment');
+const cron = require('node-cron');
 
 //app
 const app=express()
 app.use(express.json())
 
-
-
-
-
 const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
 const UPCAPIURL= 'https://api.upcdatabase.org/product/'
 
+const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
+const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
+
+//change this to maybe minute or hourly for testing
+const schedule = '0 0 * * *'
+
 //local testing use
-/*const con = mysql.createConnection({
+const con = mysql.createConnection({
   host: "",
   port: "3306",
   user: "root",
@@ -30,11 +34,11 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
 
   console.log("%s %s", host, port)
 
-})*/
+})
 
 
 //server use
-const con = mysql.createConnection({
+/*const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "404GroupNotFound",
@@ -52,7 +56,7 @@ const server = https.createServer(certs, app)
 
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
-})
+})*/
 
 function database_error(response, error) {
   response.status(500).send('Error querying the database'+error)
@@ -760,10 +764,10 @@ app.post("/add/pref", async (req,res)=>{
 
 //delete pref
 //done
-app.post("/delete/pref", async (req,res)=>{
+app.get("/delete/pref", async (req,res)=>{
   try{
   let UID=req.query.p1
-  let Pref = req.body.p2 //? req.query.p2.split(',') : []
+  /*let Pref = req.body.p2 ? req.query.p2.split(',') : []*/
 
   /*con.connect(function(err) {
     if (err) {
@@ -772,9 +776,9 @@ app.post("/delete/pref", async (req,res)=>{
     }
   
     console.log('Connected to the database as id ' + con.threadId)*/
-    const query = 'DELETE FROM PREFERENCE WHERE UID= ? AND Pref IN (?)'
+    const query = 'DELETE FROM PREFERENCE WHERE UID= ?'
 
-    const [results] = await con.promise().query(query, [UID, Pref])
+    const [results] = await con.promise().query(query, [UID])
     /*con.query(query, [UID, Pref], (err, results, fields) => {
       if (err) {
         console.error('Error querying the database: ' + err.stack)
@@ -1023,6 +1027,9 @@ app.get("/get/users_type", async (req,res)=>{
 //todo test this
 app.post("/get/recipe", async (req,res)=>{
   try {
+    //todo change to get items about to expiry and pref using uid from db
+    // then use the api to get extra recipes when the no recipe matches on db
+
     //let UID=req.query.p1
     let expiryitems=req.body.p1 //? req.query.p2.split(',') : []
     let Pref=req.body.p2 //? req.query.p3.split(',') : []
@@ -1189,10 +1196,10 @@ app.get("/get/recipe_info", async (req,res)=>{
   }
 })
 
-const moment = require('moment');
+
 
 // Define a function to process shopping data and generate reminders
-function processShoppingData() {
+function processShoppingData(UID) {
   // User-defined settings
   const reminderPeriodDays = 2;
   const numberOfVisits = 10; // This can be changed
@@ -1216,10 +1223,10 @@ function processShoppingData() {
     
     // NEED TO UPDATE
     // Query to retrieve shopping data from the database
-    const query = 'SELECT item, quantity, purchase_date FROM shopping_data_table';
+    const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?';
 
     // Execute the query
-    con.query(query, (queryErr, shoppingData) => {
+    con.query(query,[UID], (queryErr, shoppingData) => {
       if (queryErr) {
         console.error('MySQL Query Error:', queryErr);
         con.end(); // Close the connection
@@ -1281,3 +1288,14 @@ function processShoppingData() {
 
 // Call the function to process shopping data and generate reminders
 //processShoppingData();
+
+
+cron.schedule(schedule, () => {
+  console.log('Cron job triggered');
+  checkexpiry();
+});
+
+async function checkexpiry(){
+  const query='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpiryDate, CURDATE()) <= 2 THEN 1 ELSE 0 END'
+  const [results] = await con.promise().query(query)
+}
