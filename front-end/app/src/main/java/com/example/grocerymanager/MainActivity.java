@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -195,8 +196,18 @@ public class MainActivity extends AppCompatActivity {
                                                             if (jsonArray.length() > 0) {
                                                                 String numberAsString = jsonArray.getString(0);
                                                                 int number = Integer.parseInt(numberAsString);
+                                                                String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
+                                                                Uri defProfileUri = Uri.parse(defProfile);
+                                                                UserData userData;
 
-                                                                UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
+                                                                if(account.getPhotoUrl() == null){
+
+                                                                    userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, number);
+                                                                }
+                                                                else{
+                                                                    userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
+                                                                }
+
                                                                 SharedPrefManager.saveUserData(MainActivity.this, userData);
                                                                 launchHomeIntent();
 
@@ -245,7 +256,17 @@ public class MainActivity extends AppCompatActivity {
                                                             int UID = responseJson.getInt("UID");
                                                             // Now you have the UID as an integer
                                                             Log.d(TAG, "Extracted UID: " + UID);
-                                                            UserData userData = new UserData(account.getDisplayName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), UID);
+                                                            String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
+                                                            Uri defProfileUri = Uri.parse(defProfile);
+                                                            UserData userData;
+
+                                                            if(account.getPhotoUrl() == null){
+
+                                                                userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, UID);
+                                                            }
+                                                            else{
+                                                                userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), UID);
+                                                            }
                                                             SharedPrefManager.saveUserData(MainActivity.this, userData);
                                                             launchHomeIntent();
                                                         } catch (JSONException e) {
