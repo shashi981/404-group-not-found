@@ -93,7 +93,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     String itemNameString = itemName.getText().toString();
                     String itemQuantityString = itemQuantity.getText().toString();
 
-                    Item newItem = new Item(itemNameString, expiryDateString, Integer.parseInt(itemQuantityString));
+                    Item newItem = new Item(itemNameString, expiryDateString, Integer.parseInt(itemQuantityString), -1);
                     itemList.add(newItem);
                     addItemToInventory(newItem);
                     Log.d(TAG, itemList.toString());
@@ -198,6 +198,9 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
             @Override
             public void onClick(View v) {
                 //need to implement for delete
+                itemList.remove(item);
+                LinearLayout mainLayout = findViewById(R.id.inventory_container);
+                mainLayout.removeView(view);
             }
         });
 

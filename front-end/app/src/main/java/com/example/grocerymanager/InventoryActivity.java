@@ -35,8 +35,10 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class InventoryActivity extends AppCompatActivity {
@@ -45,6 +47,8 @@ public class InventoryActivity extends AppCompatActivity {
     private OkHttpClient client;
     private ImageButton chatIcon;
     private ImageButton scannerIcon;
+    private List<Integer> itemIdList;
+
     private ImageButton inventoryIcon;
     private ImageButton recipeIcon;
     private ImageButton cartIcon;
@@ -59,6 +63,7 @@ public class InventoryActivity extends AppCompatActivity {
     private SSLContext sslContext;
     private NetworkManager networkManager;
     private List<Item> itemList;
+    private UserData userData;
 
 
     @Override
@@ -70,7 +75,7 @@ public class InventoryActivity extends AppCompatActivity {
         itemList = new ArrayList<>();
 
         String serverURL = "https://20.104.197.24/";
-        UserData userData = SharedPrefManager.loadUserData(InventoryActivity.this);
+        userData = SharedPrefManager.loadUserData(InventoryActivity.this);
         int userID = userData.getUID();
         Request requestName = new Request.Builder()
                 .url(serverURL + "get/items?p1=" + userID)
@@ -96,9 +101,10 @@ public class InventoryActivity extends AppCompatActivity {
                             String itemName = jsonObject.getString("Name");
                             String expiryDate = jsonObject.getString("ExpireDate");
                             int quantity = jsonObject.getInt("ItemCount");
+                            int itemId = jsonObject.getInt("ItemID");
 
                             // Create an Item object
-                            Item item = new Item(itemName, expiryDate, quantity);
+                            Item item = new Item(itemName, expiryDate, quantity, itemId);
                             itemList.add(item);
                         }
 
@@ -227,6 +233,46 @@ public class InventoryActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     //need to implement for delete
+                    String serverURL = "https://20.104.197.24/";
+                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                    itemList.remove(item);
+                    itemIdList = new ArrayList<>();
+                    itemIdList.add(item.getItemId());
+                    JSONObject postData = new JSONObject();
+                    try {
+                        postData.put("p1", userData.getUID());
+                        postData.put("p2", new JSONArray(itemIdList));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    RequestBody body = RequestBody.create(JSON, postData.toString());
+
+                    Request request = new Request.Builder()
+                            .url(serverURL + "delete/items")
+                            .post(body)
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            // Handle failure
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                // Handle successful response
+                                String responseData = response.body().string();
+                                Log.d(TAG, "Response: " + responseData);
+
+                                ActivityLauncher.launchActivity(InventoryActivity.this, InventoryActivity.class);
+                            } else {
+                                // Handle unsuccessful response
+                                Log.e(TAG, "Unsuccessful response " + response.code());
+                            }
+                        }
+                    });
                 }
             });
 
