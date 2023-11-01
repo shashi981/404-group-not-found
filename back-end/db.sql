@@ -206,7 +206,7 @@ USERS (FirstName, LastName, Email, ProfileURL)
 VALUES ("a", "b", "c", NULL);
 
 INSERT INTO 
-dietician (FirstName, LastName, Email, ProfileURL) 
+DIETICIAN (FirstName, LastName, Email, ProfileURL) 
 VALUES ("dietician", "dietician", "dietician.com", NULL);
 
 INSERT INTO 
