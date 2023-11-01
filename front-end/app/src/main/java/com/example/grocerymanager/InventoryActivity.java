@@ -276,6 +276,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
                                 Log.d(TAG, "Response: " + responseData);
 
                                 ActivityLauncher.launchActivity(InventoryActivity.this, InventoryActivity.class);
+                                finish();
                             } else {
                                 // Handle unsuccessful response
                                 Log.e(TAG, "Unsuccessful response " + response.code());
@@ -357,6 +358,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
                                 Log.d(TAG, "Response: " + responseData);
 
                                 ActivityLauncher.launchActivity(InventoryActivity.this, InventoryActivity.class);
+                                finish();
                             } else {
                                 // Handle unsuccessful response
                                 Log.e(TAG, "Unsuccessful response " + response.code());

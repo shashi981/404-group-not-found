@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ToggleButton
+        android:id="@+id/toggle_vegan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOn="Vegan: ON"
+        android:textOff="Vegan: OFF"
+        android:checked="false"
+        android:textSize="18sp"
+        android:textColor="@color/dark_blue"
+        android:background="@drawable/toggle_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <ToggleButton
+        android:id="@+id/toggle_vegetarian"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOn="Vegetarian: ON"
+        android:textOff="Vegetarian: OFF"
+        android:checked="false"
+        android:textSize="18sp"
+        android:textColor="@color/dark_blue"
+        android:background="@drawable/toggle_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <ToggleButton
+        android:id="@+id/toggle_non_dairy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textOn="Non-Dairy: ON"
+        android:textOff="Non-Dairy: OFF"
+        android:checked="false"
+        android:textSize="18sp"
+        android:textColor="@color/dark_blue"
+        android:background="@drawable/toggle_background"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/save_preferences_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_preferences"
+        android:textColor="@color/faded_white"
+        android:background="@color/dark_blue"
+        android:padding="12dp"/>
+</LinearLayout>
