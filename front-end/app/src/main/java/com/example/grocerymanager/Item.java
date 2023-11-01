@@ -4,11 +4,13 @@ public class Item {
     private String name;
     private String expiry;
     private int quantity;
+    private int itemId;
 
-    public Item(String name, String expiry, int quantity) {
+    public Item(String name, String expiry, int quantity, int itemId) {
         this.name = name;
         this.expiry = expiry;
         this.quantity = quantity;
+        this.itemId = itemId;
     }
 
     public String getName() {
@@ -33,5 +35,9 @@ public class Item {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+    public int getItemId(){return itemId;}
+    public void setItemId(int itemId){
+        this.itemId = itemId;
     }
 }

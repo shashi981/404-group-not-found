@@ -7,17 +7,25 @@
     android:background="#F5F5F5"
     tools:context=".AddItemsActivity">
 
-    <LinearLayout
-        android:id="@+id/inventory_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        app:layout_constraintBottom_toTopOf="@+id/add_items_to_inventory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_expiry_date"
+        app:layout_constraintVertical_bias="0.89">
+
+        <LinearLayout
+            android:id="@+id/inventory_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp" />
+
+    </ScrollView>
 
     <ImageButton
         android:id="@+id/back_icon_add"
@@ -35,6 +43,7 @@
 
     <EditText
         android:textColor="@color/dark_blue"
+        android:textColorHint="@color/dark_blue"
         android:id="@+id/item_name"
         android:layout_width="400dp"
         android:layout_height="50dp"
@@ -64,6 +73,8 @@
         app:layout_constraintVertical_bias="0.357" />
 
     <EditText
+        android:textColor="@color/dark_blue"
+        android:textColorHint="@color/dark_blue"
         android:id="@+id/item_quantity"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -71,7 +82,6 @@
         android:ems="10"
         android:hint="@string/enter_quantity"
         android:inputType="number"
-        android:textColor="@color/dark_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
