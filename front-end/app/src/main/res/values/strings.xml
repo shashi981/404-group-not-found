@@ -54,6 +54,11 @@
     <string name="grocery_manager_id">GroceryManager ID: </string>
     <string name="preferences">Preferences: </string>
     <string name="dietary_restrictions">Dietary Restrictions: </string>
+    <string name="edit_dietary_restrictions">Edit</string>
+    <string name="vegan_profile">Vegan</string>
+    <string name="vegetarian_profile">Vegetarian</string>
+    <string name="non_dairy_profile">Non-dairy</string>
+    <string name="save_preferences">Save Preferences</string>
     <!-- Settings Page -->
     <string name="sign_out_settings">Sign Out</string>
     <string name="delete_account_settings">Delete Account</string>
