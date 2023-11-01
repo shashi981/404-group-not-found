@@ -181,6 +181,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible"></FrameLayout>
+
+    <View
+        android:id="@+id/viewBackground"
+        android:layout_width="350dp"
+        android:layout_height="420dp"
+        android:background="@color/mint_green"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/chatBox"
+        app:layout_constraintStart_toStartOf="@+id/chatBox"
+        app:layout_constraintTop_toTopOf="@+id/chatBox"
+        tools:visibility="visible"></View>
+
     
     <FrameLayout
         android:id="@+id/layoutSend"
