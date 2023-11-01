@@ -38,6 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
     private ImageButton backIcon;
     private Button signOutButton;
     private Button deleteAccountButton;
+    private Button dietitianButton;
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -83,6 +84,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 deleteConfirmation();
+            }
+        });
+        dietitianButton = findViewById(R.id.request_dietitian_settings);
+        dietitianButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

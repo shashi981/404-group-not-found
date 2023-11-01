@@ -2,13 +2,21 @@ package com.example.grocerymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +25,8 @@ import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -25,8 +35,10 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class InventoryActivity extends AppCompatActivity {
@@ -35,6 +47,8 @@ public class InventoryActivity extends AppCompatActivity {
     private OkHttpClient client;
     private ImageButton chatIcon;
     private ImageButton scannerIcon;
+    private List<Integer> itemIdList;
+
     private ImageButton inventoryIcon;
     private ImageButton recipeIcon;
     private ImageButton cartIcon;
@@ -48,6 +62,8 @@ public class InventoryActivity extends AppCompatActivity {
     private TrustManager[] trustManagers;
     private SSLContext sslContext;
     private NetworkManager networkManager;
+    private List<Item> itemList;
+    private UserData userData;
 
 
     @Override
@@ -56,10 +72,10 @@ public class InventoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inventory);
         networkManager = new NetworkManager(this);
         client = networkManager.getClient();
-
+        itemList = new ArrayList<>();
 
         String serverURL = "https://20.104.197.24/";
-        UserData userData = SharedPrefManager.loadUserData(InventoryActivity.this);
+        userData = SharedPrefManager.loadUserData(InventoryActivity.this);
         int userID = userData.getUID();
         Request requestName = new Request.Builder()
                 .url(serverURL + "get/items?p1=" + userID)
@@ -77,14 +93,31 @@ public class InventoryActivity extends AppCompatActivity {
                     // Get the response body as a string
                     String responseBody = response.body().string();
 
-                    // Process the response on the main UI thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Update the UI or perform any other necessary actions with the response
-                            Log.d(TAG, "Response: " + responseBody);
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseBody);
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            String itemName = jsonObject.getString("Name");
+                            String expiryDate = jsonObject.getString("ExpireDate");
+                            int quantity = jsonObject.getInt("ItemCount");
+                            int itemId = jsonObject.getInt("ItemID");
+
+                            // Create an Item object
+                            Item item = new Item(itemName, expiryDate, quantity, itemId);
+                            itemList.add(item);
                         }
-                    });
+
+                        // Display the items
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                displayItems();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     // Handle unsuccessful response (e.g., non-200 status code)
                     Log.e(TAG, "Unsuccessful response: " + response.code());
@@ -174,5 +207,78 @@ public class InventoryActivity extends AppCompatActivity {
             }
         });
     }
+    private void displayItems(){
+        for(Item item: itemList) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.item_display_template, null);
 
+            TextView itemNameTextView = view.findViewById(R.id.item_name_text_view);
+            TextView expiryDateTextView = view.findViewById(R.id.expiry_date_text_view);
+            TextView quantityTextView = view.findViewById(R.id.quantity_text_view);
+            Button editButton = view.findViewById(R.id.edit_button);
+            Button deleteButton = view.findViewById(R.id.delete_button);
+
+            itemNameTextView.setText(item.getName());
+            expiryDateTextView.setText("Expiry Date: " + item.getExpiry());
+            quantityTextView.setText("Quantity: " + item.getQuantity());
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //need to implement editing
+                }
+            });
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //need to implement for delete
+                    String serverURL = "https://20.104.197.24/";
+                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                    itemList.remove(item);
+                    itemIdList = new ArrayList<>();
+                    itemIdList.add(item.getItemId());
+                    JSONObject postData = new JSONObject();
+                    try {
+                        postData.put("p1", userData.getUID());
+                        postData.put("p2", new JSONArray(itemIdList));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    RequestBody body = RequestBody.create(JSON, postData.toString());
+
+                    Request request = new Request.Builder()
+                            .url(serverURL + "delete/items")
+                            .post(body)
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            // Handle failure
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                // Handle successful response
+                                String responseData = response.body().string();
+                                Log.d(TAG, "Response: " + responseData);
+
+                                ActivityLauncher.launchActivity(InventoryActivity.this, InventoryActivity.class);
+                            } else {
+                                // Handle unsuccessful response
+                                Log.e(TAG, "Unsuccessful response " + response.code());
+                            }
+                        }
+                    });
+                }
+            });
+
+            LinearLayout mainLayout = findViewById(R.id.inventory_container_inventory);
+            mainLayout.addView(view);
+        }
+
+    }
 }
