@@ -21,7 +21,7 @@ public class FireBase extends FirebaseMessagingService {
 
         // Create Notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(com.google.android.gms.auth.api.R.drawable.notification_oversize_large_icon_bg)
+//                .setSmallIcon(com.google.android.gms.auth.api.R.drawable.notification_oversize_large_icon_bg)
                 .setContentTitle("New Chat Message")
                 .setContentText("You have a new chat message!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
