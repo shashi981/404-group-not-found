@@ -5,12 +5,14 @@ public class Item {
     private String expiry;
     private int quantity;
     private int itemId;
+    private  int UPC;
 
-    public Item(String name, String expiry, int quantity, int itemId) {
+    public Item(String name, String expiry, int quantity, int itemId, int UPC) {
         this.name = name;
         this.expiry = expiry;
         this.quantity = quantity;
         this.itemId = itemId;
+        this.UPC = UPC;
     }
 
     public String getName() {
@@ -39,5 +41,9 @@ public class Item {
     public int getItemId(){return itemId;}
     public void setItemId(int itemId){
         this.itemId = itemId;
+    }
+    public int getUPC(){return UPC;}
+    public void setUPC(int UPC){
+        this.UPC = UPC;
     }
 }
