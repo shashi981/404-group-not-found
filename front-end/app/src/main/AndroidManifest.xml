@@ -47,7 +47,9 @@
             android:exported="false" />
         <activity
             android:name=".InventoryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".ScannerActivity"
             android:exported="false" />

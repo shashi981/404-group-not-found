@@ -68,6 +68,8 @@
     <string name="enter_quantity_hint">Enter the Quantity Amount</string>
     <string name="add_items_to_inventory">Save To Inventory</string>
 
+    <string name="quantity_string">Quantity</string>
+
 
     <string name="add_item_to_list">Add Item</string>
 
