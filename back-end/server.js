@@ -5,8 +5,13 @@ const https = require('https')
 const fs = require('fs')
 const moment = require('moment');
 
+//app
 const app=express()
 app.use(express.json())
+
+
+
+
 
 const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
 const UPCAPIURL= 'https://api.upcdatabase.org/product/'
@@ -57,6 +62,129 @@ function database_error(response, error) {
 function query_success(response, message){
   response.status(200).send(message)
 }
+
+//socket
+const { Server } = require('socket.io');
+const io = new Server(server);
+
+let onlineUsers = {}; // { userId: socketId, ... }
+let onlineDieticians = {}; // { dieticianId: socketId, ... }
+
+io.on('connection', (socket) => {
+    
+    // Identification for online tracking
+    socket.on('identify', (data) => {
+        if (data.type === 'user') {
+            onlineUsers[data.id] = socket.id;
+        } else if (data.type === 'dietician') {
+            onlineDieticians[data.id] = socket.id;
+        }
+    });
+
+    // Typing notifications
+    socket.on('typing_start', (data) => {
+        const dieticianSocketId = onlineDieticians[data.toDID];
+        if (dieticianSocketId) {
+            io.to(dieticianSocketId).emit('typing_start', { fromUID: data.fromUID });
+        }
+    });
+
+    socket.on('typing_end', (data) => {
+        const dieticianSocketId = onlineDieticians[data.toDID];
+        if (dieticianSocketId) {
+            io.to(dieticianSocketId).emit('typing_end', { fromUID: data.fromUID });
+        }
+    });
+
+    // Read receipts
+    socket.on('message_read', async (data) => {
+        try {
+            const query = 'UPDATE CHAT SET Read = 1 WHERE CID = ?';
+            await con.promise().query(query, [data.CID]);
+            const senderSocketId = onlineUsers[data.fromUID];
+            if (senderSocketId) {
+                io.to(senderSocketId).emit('message_read', { CID: data.CID });
+            }
+        } catch (error) {
+            console.error('Error updating message read status:', error);
+        }
+    });
+
+    // Disconnect handling
+    socket.on('disconnect', () => {
+      let disconnectedUserId;
+      let userType;
+      for (let userId in onlineUsers) {
+          if (onlineUsers[userId] === socket.id) {
+              disconnectedUserId = userId;
+              userType = 'user';
+              delete onlineUsers[userId];
+              break;
+          }
+      }
+      for (let dieticianId in onlineDieticians) {
+          if (onlineDieticians[dieticianId] === socket.id) {
+              disconnectedUserId = dieticianId;
+              userType = 'dietician';
+              delete onlineDieticians[dieticianId];
+              break;
+          }
+      }
+      if (disconnectedUserId && userType) {
+          io.emit('user_disconnected', { id: disconnectedUserId, type: userType });
+      }
+    });
+
+    // Expanded message handling
+    socket.on('message', async (data) => {
+        try {
+            const fromUser = (data.fromType === 'user');
+            const toSocketId = fromUser ? onlineDieticians[data.toDID] : onlineUsers[data.toUID];
+            const query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, NOW(), ?)';
+            await con.promise().query(query, [data.fromUID, data.toDID, data.text, fromUser ? 1 : 0]);
+            if (toSocketId) {
+                io.to(toSocketId).emit('message', data);
+            }
+            socket.emit('message_ack', { status: 'success' });
+        } catch (error) {
+            console.error('Error handling message:', error);
+            socket.emit('message_error', { status: 'error', message: 'Failed to process message.' });
+        }
+    });
+
+    // ... (other code)
+
+});
+
+// END POINTS FOR SOCKET - BEGIN
+
+//New endpoint to get the actiev users fro the chat function
+app.get('/get/activeUsers', (req, res) => {
+  const activeUsersList = Object.keys(onlineUsers);
+  const activeDieticiansList = Object.keys(onlineDieticians);
+  res.json({ users: activeUsersList, dieticians: activeDieticiansList });
+});
+
+app.get('/get/chatHistory', async (req, res) => {
+  const userId = req.query.userId;
+  const dieticianId = req.query.dieticianId;
+
+  if (!userId || !dieticianId) {
+      return res.status(400).send("User ID and Dietician ID are required");
+  }
+
+  try {
+      const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ?';
+      const [rows] = await con.promise().query(query, [userId, dieticianId]);
+      res.json(rows);
+  } catch (error) {
+      console.error("Error fetching chat history:", error);
+      res.status(500).send("Internal server error");
+  }
+});
+
+// END POINTS FOR SOCKET ENDS 
+
 
 //get users
 //done
