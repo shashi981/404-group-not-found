@@ -3,6 +3,10 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+task wrapper(type: Wrapper){
+    gradleVersion = '7.2'
+}
+
 android {
     namespace 'com.example.grocerymanager'
     compileSdk 33
