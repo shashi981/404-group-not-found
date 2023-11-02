@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 1;
     private NetworkManager networkManager;
     private OkHttpClient client;
+    private TokenManager tm;
 
 
 
@@ -125,6 +126,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Display URI: " + account.getPhotoUrl());
 
 
+            tm = new TokenManager(MainActivity.this);
+
             networkManager = new NetworkManager(this);
             client = networkManager.getClient();
 
@@ -155,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                                 // Update the UI or perform any other necessary actions with the response
                                 Log.d(TAG, "Response: " + responseBody);
                                 if(responseBody.trim().equals("Does not exist")){
-                                    TokenManager tm = new TokenManager(MainActivity.this);
                                     String token = tm.getToken();
                                     JSONObject postData = new JSONObject();
                                     try {
@@ -232,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                                 else if(responseBody.trim().equals("User")){
                                     Log.d(TAG, "User Exists, Launching Home Intent");
                                     Request request = new Request.Builder()
-                                            .url(serverURL + "get/users?p1=" + account.getEmail())
+                                            .url(serverURL + "get/users?p1=" + account.getEmail() + "&p2=" + tm.getToken())
                                             .build();
 
                                     client.newCall(request).enqueue(new Callback() {
@@ -285,6 +287,14 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
+                                }
+                                else if(responseBody.trim().equals("Dietitian")){
+                                    ActivityLauncher.launchActivity(MainActivity.this, DietitianActivity.class);
+                                    finish();
+                                }
+                                else if(responseBody.trim().equals("Admin")){
+                                    ActivityLauncher.launchActivity(MainActivity.this, AdminActivity.class);
+                                    finish();
                                 }
                                 else{
                                     Log.d(TAG, "User not created");
