@@ -138,7 +138,6 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
                         postData1.put("p2", new JSONArray(upcList)); // assuming upcList is a list of Integers
                         postData1.put("p3", new JSONArray(expiryDateList1)); // assuming expiryDateList is a list of Strings
                         postData1.put("p4", new JSONArray(quantityList1)); // assuming quantityList is a list of Integers
-                        postData1.put("p5", ""); //
                     }
                     catch (JSONException e){
                         e.printStackTrace();
@@ -146,7 +145,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
 
                     RequestBody body1 = RequestBody.create(JSON, postData1.toString());
                     Request request = new Request.Builder()
-                            .url(serURL + "add/items_bar")
+                            .url(serURL + "add/items")
                             .post(body1)
                             .build();
 
