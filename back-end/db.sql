@@ -4,6 +4,7 @@ CREATE TABLE USERS(
     LastName VARCHAR(25) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     ProfileURL VARCHAR(500),
+    MessageToken VARCHAR(200) NOT NULL,
     -- Bios VARCHAR(500),
     PRIMARY KEY (UID)
 );
@@ -247,6 +248,14 @@ VALUES
 ( 1, -1,'2023-11-19', 6, 'Tomato', '2023-10-19', 1),
 ( 1, -1,'2023-11-16', 6, 'Salt','2023-10-19',1);
 
+INSERT INTO
+OWNS(UID, UPC,ExpireDate,ItemCount, Name, PurchaseDate, AboutExpire)
+VALUES
+( 1, -1,'2023-11-02', 6, 'Tomato', '2023-10-19', 0);
+
+UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END WHERE UID=1;
+
+
 INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) 
 SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL
 FROM USERS u
@@ -349,6 +358,12 @@ IKE ? ) AS s ORDER BY RAND() LIMIT 5
 SELECT * FROM Recipe WHERE RID IN (52785,52995,52977,53000,52807)
 
 SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = 'whatever' OR g.Name = o.Name) WHERE o.UID = 2 ORDER BY o.ItemID ASC;
+
+SET SQL_SAFE_UPDATES = 0;
+UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;
+SET SQL_SAFE_UPDATES = 1;
+
+SELECT DISTINCT UID FROM OWNS WHERE AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
 SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;') 

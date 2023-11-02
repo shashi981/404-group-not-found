@@ -3,11 +3,12 @@ const mysql = require('mysql2');
 const express = require("express")
 const https = require('https')
 const fs = require('fs')
-const moment = require('moment');
+//const moment = require('moment');
 const cron = require('node-cron');
-
+const admin = require('firebase-admin');
+/*
 const { Server } = require('socket.io');
-const io = new Server(server);
+const io = new Server(server);*/
 
 let onlineUsers = {}; // { userId: socketId, ... }
 let onlineDieticians = {}; // { dieticianId: socketId, ... }
@@ -19,11 +20,19 @@ app.use(express.json())
 const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
 const UPCAPIURL= 'https://api.upcdatabase.org/product/'
 
+//use this to get more recipes when have the time to do so
 const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
 const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
 
 //change this to maybe minute or hourly for testing
-const schedule = '0 0 * * *'
+//const schedule = '0 0 * * *'
+const schedule ='*/2 * * * *'
+
+// Initialize the app with appropriate configurations
+const serviceAccount = require('./grocerymanager_firebase.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+})
 
 //local testing use
 /*const con = mysql.createConnection({
@@ -73,7 +82,7 @@ function query_success(response, message){
 }
 
 //socket
-
+/*
 io.on('connection', (socket) => {
     
     // Identification for online tracking
@@ -158,7 +167,7 @@ io.on('connection', (socket) => {
 
     // ... (other code)
 
-});
+});*/
 
 // END POINTS FOR SOCKET - BEGIN
 
@@ -195,8 +204,12 @@ app.get('/get/chatHistory', async (req, res) => {
 app.get("/get/users", async (req,res)=>{
   try{
   let Email=req.query.p1
-  const query = 'SELECT * FROM USERS WHERE Email=?;'
+  let Token=req.query.p2
 
+  const query = 'SELECT * FROM USERS WHERE Email=?;'
+  const updatequery = 'UPDATE USERS SET MessageToken= ?WHERE Email=? ;'
+
+  const [update] = await con.promise().query(updatequery, [Token, Email])
   const [results] = await con.promise().query(query, [Email])
   /*con.connect(function(err) {
     if (err) {
@@ -248,11 +261,12 @@ app.post("/add/users", async (req,res)=>{
   let LastName=req.body.p2
   let Email=req.body.p3
   let ProfileURL=req.body.p4
+  let Token=req.body.p5
 
-  const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL) VALUES (?, ?, ?, ?);'
+  const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL, MessageToken) VALUES (?, ?, ?, ?, ?);'
   const query2='SELECT UID FROM USERS WHERE Email=?'
 
-  const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL])
+  const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
   const [results2] = await con.promise().query(query2, [Email])
 
   /*
@@ -280,7 +294,7 @@ app.post("/add/users", async (req,res)=>{
       }*/
       console.log('USER ADDED') 
       const formattedResults = results2.map((r) => {
-        return `${r.UID}`;
+        return `${r.UID}`
       });
       query_success(res, formattedResults)
     //})
@@ -413,7 +427,7 @@ app.get("/get/items", async (req,res)=>{
       });*/
 
       if (result2.length === 0) {
-        return res.json({});
+        return res.json({})
       }
       //add get brand and name
       const items = result2.map((result) => {
@@ -493,7 +507,7 @@ app.get("/add/items", async (req,res)=>{
                 title=jsonData.title
                 //description=jsonData.description
 
-                console.log(jsonData);
+                console.log(jsonData)
                 if(i<UPC.length-1){
                   values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]));
                 }
@@ -555,26 +569,26 @@ catch(error){
 function fetchDataFromAPI(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (response) => {
-      let data = '';
+      let data = ''
 
       response.on('data', (chunk) => {
-        data += chunk;
+        data += chunk
       });
 
       response.on('end', () => {
         try {
           const jsonData = JSON.parse(data);
-          resolve(jsonData);
+          resolve(jsonData)
         } catch (error) {
-          reject(error);
+          reject(error)
         }
-      });
+      })
 
       response.on('error', (error) => {
-        reject(error);
-      });
-    });
-  });
+        reject(error)
+      })
+    })
+  })
 }
 
 //todo finish this
@@ -925,31 +939,44 @@ app.get("/get/dietReq", async (req,res)=>{
       query_success(res, 'SUCCESS show list of being dietician request: ' + formattedResults.join('\n'))
     })
   })*/
+
+  //todo chnage to json
   try {
     const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
     const [results] = await con.promise().query(query)
-
+    
+    if(results.length==0){
+      return res.json({});
+    }
     const formattedResults = results.map((result) => {
-      return `${result.RID}\t${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
+      return {
+        RID:result.RID,
+        UID:result.UID,
+        FirstName:result.FirstName,
+        LastName:result.LastName,
+        Email:result.Email,
+        ProfileURL:result.ProfileURL,
+      }
     });
 
     console.log('SUCCESS show list of being a dietician request');
-    query_success(res, 'SUCCESS show list of being a dietician request: ' + formattedResults.join('\n'));
+    res.json(formattedResults)
+    //query_success(res, 'SUCCESS show list of being a dietician request: ' + formattedResults.join('\n'));
   } catch (error) {
-    console.error('Error:', error);
-    database_error(res, error.stack);
+    console.error('Error:', error)
+    database_error(res, error.stack)
   }
 })
 
 
 //approve request for being a dietician, add to dietician table and remove the request
 //done
-app.post("/approve/dietReq", async (req,res)=>{
+app.get("/approve/dietReq", async (req,res)=>{
   try{
-  UID=req.body.p1// ? req.query.p1.split(',') : []
+  UID=req.query.p1// ? req.query.p1.split(',') : []
   console.log(UID)
-  const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID IN (?)'
-  const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID IN (?)'
+  const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID=?'
+  const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
   //const query3='DELETE FROM USERS WHERE UID IN (?)'
   const [result1] = await con.promise().query(query, [UID])
   const [result2] = await con.promise().query(query2, [UID])
@@ -986,6 +1013,47 @@ app.post("/approve/dietReq", async (req,res)=>{
   }
 })
 
+app.get("/remove/dietReq", async (req,res)=>{
+  try{
+  UID=req.query.p1// ? req.query.p1.split(',') : []
+  console.log(UID)
+  //const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID IN (?)'
+  const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
+  //const query3='DELETE FROM USERS WHERE UID IN (?)'
+  //const [result1] = await con.promise().query(query, [UID])
+  const [result2] = await con.promise().query(query2, [UID])
+  //const [result3] = await con.promise().query(query3, [UID])
+  
+  //if(result2.length>0){
+    console.log('SUCCESS approve being dietician request') 
+    query_success(res, 'SUCCESS approve being dietician request')
+  //}
+  /*con.connect(function(err) {
+    if (err) {
+      console.error('Error connecting to the database: ' + err.stack)
+      return
+    }
+  
+    console.log('Connected to the database as id ' + con.threadId)*/
+    /*con.query(query, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }
+    })*/
+    /*con.query(query2, [UID], (err, results, fields) => {
+      if (err) {
+        console.error('Error querying the database: ' + err.stack)
+        return
+      }*/
+      
+  //})
+  //})
+  }catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
+  }
+})
 
 app.get("/get/users_type", async (req,res)=>{
 
@@ -1050,6 +1118,9 @@ app.get("/get/recipe", async (req,res)=>{
     const Expiryitems = Itemstemp.map((Items) => Items.Name);
     
     console.log(Expiryitems)
+    if(Expiryitems.length===0){
+      return res.json({});
+    }
 
     if(Pref.length != 0){
     query = 'SELECT store.RID FROM ('
@@ -1084,22 +1155,30 @@ app.get("/get/recipe", async (req,res)=>{
     query = 'SELECT store.RID FROM recipe r WHERE r.Ingredient LIKE ? '
   }
   storequery=query
-  for(let j=0; j< Expiryitems.length; j++){
-    if(j==0){
-      temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
-      query=temp
-    }
-    else if(j< Expiryitems.length-1){
-      query += "INTERSECT " + storequery
-      temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
-      query=temp
-    }
-    else{
-      query += "INTERSECT " + storequery
-      temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
-      query=temp
-      tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
-      query=tempquery
+  if(Expiryitems.length==1){
+    temp=query.replace('?', '\''+`%${Expiryitems[0]}%`+'\'')
+    query=temp
+    tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
+    query=tempquery
+  }
+  else{
+    for(let j=0; j< Expiryitems.length; j++){
+      if(j==0){
+        temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
+        query=temp
+      }
+      else if(j< Expiryitems.length-1){
+        query += "INTERSECT " + storequery
+        temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
+        query=temp
+      }
+      else{
+        query += "INTERSECT " + storequery
+        temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
+        query=temp
+        tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
+        query=tempquery
+      }
     }
   }
     const [results] = await con.promise().query(query)
@@ -1173,6 +1252,7 @@ app.get("/get/recipe_info", async (req,res)=>{
   try{
     
   let RID=req.query.p1 ? req.query.p1.split(',') : []
+  //let RID=[ 52908, 52870, 52868, 52807, 52867 ]
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -1180,7 +1260,7 @@ app.get("/get/recipe_info", async (req,res)=>{
     }
   
     console.log('Connected to the database as id ' + con.threadId)*/
-    const query = 'SELECT * FROM RECIPE_INFO WHERE RID = IN (?)'
+    const query = 'SELECT * FROM RECIPE_INFO WHERE RID IN (?)'
     const [results] = await con.promise().query(query, [RID])
     /*con.query(query, [UID], (err, results, fields) => {
       if (err) {
@@ -1199,6 +1279,7 @@ app.get("/get/recipe_info", async (req,res)=>{
         }
       })
       console.log('SUCCESS return recipe_info') 
+      console.log(formattedResults)
       res.json(formattedResults)
       //query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
     //})
@@ -1305,10 +1386,101 @@ function processShoppingData(UID) {
 //expiry date reminders
 cron.schedule(schedule, () => {
   console.log('Cron job triggered');
-  checkexpiry();
+  SendExpiryReminder();
 });
 
-async function checkexpiry(){
-  const query='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpiryDate, CURDATE()) <= 2 THEN 1 ELSE 0 END'
-  const [results] = await con.promise().query(query)
+//SendExpiryReminder()
+async function SendExpiryReminder(){
+  //get all users that have items about to expiry
+  const currentDate = new Date()
+
+  const DisableSafeMode='SET SQL_SAFE_UPDATES = 0;'
+  const queryupdate='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;'
+  const EnableSafeMode='SET SQL_SAFE_UPDATES = 1;'
+
+  const [disable] = await con.promise().query(DisableSafeMode)
+  const [results] = await con.promise().query(queryupdate)
+  const [enable] = await con.promise().query(EnableSafeMode)
+
+  const queryselect='SELECT DISTINCT UID FROM OWNS WHERE AboutExpire=1'
+  const [store] = await con.promise().query(queryselect)
+  const UIDArray = store.map((temp) => temp.UID);
+  console.log(UIDArray)
+  //for each users
+  for(let i=0; i<UIDArray.length; i++){
+    UID=UIDArray[i]
+    const queryToken='SELECT u.MessageToken FROM USERS u WHERE UID=?'
+    const queryItems='SELECT DISTINCT g.Name, g.Brand, o.ExpireDate, o.ItemCount FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1;'
+    //send notification for all items and the date left
+    //get the token using uid and call firebase using that
+    // Define the message payload
+    const t=await con.promise().query(queryToken, [UID])
+    const [Items]=await con.promise().query(queryItems, [UID])
+    const token=t[0].map((storetoken) => storetoken.MessageToken);
+    console.log(t)
+    console.log(token)
+
+    const ItemArray = Items.map((item) => {
+      const itemData = {
+        Name: item.Name,
+        DatesToExpire: Math.ceil((item.ExpireDate - currentDate) / (1000 * 60 * 60 * 24)), // Calculate days until expiration
+        Quantity: item.ItemCount
+      }
+    
+      if (item.Brand !== null) {
+        itemData.Brand = item.Brand
+      }
+    
+      return itemData
+    })
+
+    const itemsText = ItemArray.reduce((accumulator, item, index) => {
+      const brandText = item.Brand ? `Brand: ${item.Brand}\n` : ''
+      const daysToExpire = item.DatesToExpire
+    
+      let daysToExpireText = ''
+    
+      if (daysToExpire >= 0) {
+        daysToExpireText = `Days to Expire: ${daysToExpire}`
+      } else {
+        daysToExpireText = `Item Already Expired for ${-daysToExpire} days`
+      }
+    
+      const itemText = `Name: ${item.Name}\n${brandText}${daysToExpireText}\nQuantity: ${item.Quantity}\n`
+
+      if (index % 2 === 0) {
+        accumulator.push(itemText)
+      } else {
+        const combinedText = accumulator.pop() + itemText
+        accumulator.push(combinedText)
+      }
+
+      return accumulator
+    }, [])
+
+    const messages = itemsText.map(text => {
+      return{
+        notification: {
+          title: 'Reminder for items about to expire',
+          body: 'Items About to Expire or already expired:\n'+ text,
+        },
+        token: token[0], 
+      }
+  })
+    console.log(messages)
+    messages.forEach(message => {
+      Messaging(message);
+    })
+  }
+}
+
+async function Messaging(message){
+// Send the message
+  admin.messaging().send(message)
+    .then((response) => {
+      console.log('Successfully sent message:', response);
+    })
+    .catch((error) => {
+      console.log('Error sending message:', error);
+    });
 }
