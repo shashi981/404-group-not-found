@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:id="@+id/name_of_recipe_expanded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Recipe Name"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:id="@+id/ingredients_expanded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingredients"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:id="@+id/ingredients_listed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingredients List"
+        android:textSize="14sp" />
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:id="@+id/instructions_expanded"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instructions"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:id="@+id/instructions_listed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Instructions List"
+        android:textSize="14sp" />
+
+</LinearLayout>
