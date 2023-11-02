@@ -4,6 +4,10 @@
     <string name="menu_bar">---</string>
 
     <!-- Admin Activity -->
+    <string name="remove_button">Remove</string>
+    <string name="approve_button">Approve</string>
+    <string name="dietitian_name">Dietitian Name</string>
+    <string name="dietitian_user_id">User ID</string>
     <!-- Dietitian Activity -->
     <!-- View Recipe Activity -->
 

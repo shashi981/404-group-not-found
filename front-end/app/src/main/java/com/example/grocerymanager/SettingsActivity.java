@@ -46,9 +46,11 @@ public class SettingsActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 1;
     private NetworkManager networkManager;
     private OkHttpClient client;
+    private UserData userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        userData = SharedPrefManager.loadUserData(SettingsActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -90,10 +92,65 @@ public class SettingsActivity extends AppCompatActivity {
         dietitianButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                dietitianDialogue();
             }
         });
     }
+
+    private void dietitianDialogue() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("If you are a certified Dietitian, please send your credentials to 404groupnotfound@gmail.com. Please include your userID: " + userData.getUID())
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        declareDietitian();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void declareDietitian() {
+        networkManager = new NetworkManager(this);
+        client = networkManager.getClient();
+
+
+        String serverURL = "https://20.104.197.24/";
+        UserData userData = SharedPrefManager.loadUserData(SettingsActivity.this);
+        if (userData != null) {
+            int userID = userData.getUID();
+            Log.d(TAG, "Requesting: " + userID);
+            Request request = new Request.Builder()
+                    .url(serverURL + "add/dietReq?p1=" + userID)
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "Request failed: " + e.getMessage());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        Log.d(TAG, "Request Successful");
+                        signOut();
+                        launchMainIntent();
+                    } else {
+                        Log.e(TAG, "Unsuccessful response: " + response.code());
+                    }
+                }
+            });
+        } else {
+            Log.d(TAG, "User data not found in shared preferences");
+        }
+
+    }
+
 
     private void signOut() {
         mGoogleSignInClient.signOut()
@@ -117,11 +174,14 @@ public class SettingsActivity extends AppCompatActivity {
         builder.setMessage("Are you sure you want to delete your account? This action is irreversible. Once deleted, you will be redirected to the login page.")
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
                         deleteAccount();
+                        dialog.dismiss();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
                     }
                 });
         AlertDialog dialog = builder.create();
