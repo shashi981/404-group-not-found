@@ -66,6 +66,7 @@ public class NetworkManager {
                     .hostnameVerifier((hostname, session) -> hostname.equals("20.104.197.24"))
                     .build();
 
+
         } catch (Exception e) {
             e.printStackTrace();
         }

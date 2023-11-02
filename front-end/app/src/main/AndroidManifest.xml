@@ -72,10 +72,6 @@
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme" />
 
-        <activity
-            android:name="FireBase"
-            android:exported="false"/>
-
         <service
             android:name=".firebase.NotificationService"
             android:exported="false">

@@ -155,12 +155,15 @@ public class MainActivity extends AppCompatActivity {
                                 // Update the UI or perform any other necessary actions with the response
                                 Log.d(TAG, "Response: " + responseBody);
                                 if(responseBody.trim().equals("Does not exist")){
+                                    TokenManager tm = new TokenManager(MainActivity.this);
+                                    String token = tm.getToken();
                                     JSONObject postData = new JSONObject();
                                     try {
                                         postData.put("p1", account.getGivenName());
                                         postData.put("p2", account.getFamilyName());
                                         postData.put("p3", account.getEmail());
                                         postData.put("p4", account.getPhotoUrl());
+                                        postData.put("p5", token);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
