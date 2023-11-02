@@ -224,6 +224,8 @@ VALUES
 INSERT INTO
 GROCERIES(UPC, Name)
 VALUES
+(  -1, 'Salt'),
+(  -1, 'Tomato'),
 (  -1, 'Apple'),
 (-1,'banana');
 
@@ -238,6 +240,12 @@ OWNS(UID, UPC,ExpireDate,ItemCount, Name)
 VALUES
 ( 2, -1,'2023-10-19', 6, 'Apple'),
 ( 2, -1,'2023-10-16', 6, 'banana');
+
+INSERT INTO
+OWNS(UID, UPC,ExpireDate,ItemCount, Name, PurchaseDate, AboutExpire)
+VALUES
+( 1, -1,'2023-11-19', 6, 'Tomato', '2023-10-19', 1),
+( 1, -1,'2023-11-16', 6, 'Salt','2023-10-19',1);
 
 INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) 
 SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL
@@ -331,7 +339,7 @@ INTERSECT
 SELECT * FROM vegetarian) AS store
 WHERE store.Ingredient LIKE '%Salt%') AS whatever
 ORDER BY RAND()
-LIMIT 5
+LIMIT 5;
 
 SELECT s.RID FROM (SELECT store.RID FROM (SELECT * FROM vegetarian INTERSECT SELECT * FROM nondairy INTERSECT SELECT * FROM vegan) AS store WHERE store.Ingredient
  LIKE '%Tomato%' INTERSECT SELECT store.RID FROM (SELECT * FROM vegetarian INTERSECT SELECT * FROM nondairy INTERSECT SELECT * FROM vegan) AS store WHERE store.Ingredient
