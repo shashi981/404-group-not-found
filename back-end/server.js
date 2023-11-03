@@ -1165,7 +1165,7 @@ app.get("/get/recipe", async (req,res)=>{
       }
     }
     else{
-      query = 'SELECT r.RID FROM recipe r WHERE LOWER(r.Ingredient) LIKE ? '
+      query = 'SELECT r.RID FROM RECIPE r WHERE LOWER(r.Ingredient) LIKE ? '
     }
 
   storequery=query
@@ -1207,22 +1207,26 @@ app.get("/get/recipe", async (req,res)=>{
       return `${result.RID}\t`;
     });
     console.print(formattedResults)*/
+    let formattedResults
     const formattedArray = results.map((result) => result.RID);
     console.log(formattedArray);
-    const query2 = 'SELECT * FROM Recipe WHERE RID IN (?)'
-    const [result2] = await con.promise().query(query2, [formattedArray])
+    if(formattedArray.length===0){
+      return res.json({});
+    }
+    else{
+      const query2 = 'SELECT * FROM RECIPE WHERE RID IN (?)'
+      const [result2] = await con.promise().query(query2, [formattedArray])
 
-    const formattedResults = result2.map((result) => {
-      return {
-        RID: result.RID,
-        Ingredient: result.Ingredient,
-        Amount: result.Amount,
-      };
-    });
-    
-    console.log(formattedResults)
+      formattedResults = result2.map((result) => {
+        return {
+          RID: result.RID,
+          Ingredient: result.Ingredient,
+          Amount: result.Amount,
+        };
+      });
+    }
     //query_success(res, formattedResults)
-    
+    console.log(formattedResults)
     const structuredData = {};
 
     for (const result of formattedResults) {
@@ -1266,8 +1270,8 @@ app.get("/get/recipe", async (req,res)=>{
 app.get("/get/recipe_info", async (req,res)=>{
   try{
     
-  //let RID=req.query.p1 ? req.query.p1.split(',') : []
-  let RID=[ 52908, 52870, 52868, 52807, 52867 ]
+  let RID=req.query.p1 ? req.query.p1.split(',') : []
+  //let RID=[ 52908, 52870, 52868, 52807, 52867 ]
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)

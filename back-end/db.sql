@@ -79,6 +79,7 @@ CREATE TABLE CHAT(
     Text VARCHAR(500) NOT NULL,
     Time TIMESTAMP NOT NULL,
     FROM_USER BIT(1) NOT NULL, -- 1 for from user, 0 for from dietician
+    Delivered BIT(1) default 0 NOT NULL, -- 1 for from delivered, 0 for from not delievered
     PRIMARY KEY (CID, UID, DID),
     FOREIGN KEY (UID) REFERENCES USERS(UID)
     ON DELETE CASCADE,
