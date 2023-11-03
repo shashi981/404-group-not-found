@@ -25,8 +25,8 @@ const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
 const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
 
 //change this to maybe minute or hourly for testing
-//const schedule = '0 0 * * *'
-const schedule ='*/2 * * * *'
+const schedule = '0 0 * * *' //per daily
+//const schedule ='*/2 * * * *' //per 2 minute
 
 // Initialize the app with appropriate configurations
 const serviceAccount = require('./grocerymanager_firebase.json');
@@ -35,11 +35,12 @@ admin.initializeApp({
 })
 
 //local testing use
-/*const con = mysql.createConnection({
-  host: "127.0.0.1",
+/*
+const con = mysql.createConnection({
+  host: "",
   port: "3306",
   user: "root",
-  password: "Zachary",
+  password: "",
   database: 'grocerymanger'
 });
 
@@ -1123,40 +1124,53 @@ app.get("/get/recipe", async (req,res)=>{
     }
 
     if(Pref.length != 0){
-    query = 'SELECT store.RID FROM ('
-
-    for(let i=0; i< Pref.length; i++){
-      let preference = Pref[i];
-      let excludeTable = ''
-
-      if (preference === 'Vegetarian') {
-        excludeTable = 'vegetarian';
-      } else if (preference === 'Non-dairy') {
-        excludeTable = 'nondairy';
-      } else if (preference === 'Vegan') {
-        excludeTable = 'vegan';
-      }
-
-      if(i===0){
-        query+="SELECT * FROM " +excludeTable + " "
-      }
-      else if(i<Pref.length-1){
-        query+="INTERSECT SELECT * FROM " + excludeTable + " "
-        
+      if(Pref.length==1){
+        if (Pref[0] === 'Vegetarian') {
+          excludeTable = 'vegetarian';
+        } else if (Pref[0] === 'Non-dairy') {
+          excludeTable = 'nondairy';
+        } else if (Pref[0] === 'Vegan') {
+          excludeTable = 'vegan';
+        }
+        query ='SELECT store.RID FROM (SELECT * FROM ' +excludeTable + ') AS store WHERE LOWER(store.Ingredient) LIKE ? '
       }
       else{
-        query+="INTERSECT SELECT * FROM " +excludeTable + ') AS store WHERE store.Ingredient LIKE ? '
-        store.push(excludeTable)
+        query = 'SELECT store.RID FROM ('
+
+        for(let i=0; i< Pref.length; i++){
+          let preference = Pref[i];
+          let excludeTable = ''
+
+          if (preference === 'Vegetarian') {
+            excludeTable = 'vegetarian';
+          } else if (preference === 'Non-dairy') {
+            excludeTable = 'nondairy';
+          } else if (preference === 'Vegan') {
+            excludeTable = 'vegan';
+          }
+
+          if(i===0){
+            query+="SELECT * FROM " +excludeTable + " "
+          }
+          else if(i<Pref.length-1){
+            query+="INTERSECT SELECT * FROM " + excludeTable + " "
+            
+          }
+          else{
+            query+="INTERSECT SELECT * FROM " +excludeTable + ') AS store WHERE LOWER(store.Ingredient) LIKE ? '
+            store.push(excludeTable)
+          }
+        }
+        console.log(query)
       }
     }
-    console.log(query)
-  }
-  else{
-    query = 'SELECT store.RID FROM recipe r WHERE r.Ingredient LIKE ? '
-  }
+    else{
+      query = 'SELECT r.RID FROM recipe r WHERE LOWER(r.Ingredient) LIKE ? '
+    }
+
   storequery=query
   if(Expiryitems.length==1){
-    temp=query.replace('?', '\''+`%${Expiryitems[0]}%`+'\'')
+    temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[0]}%`+'\')')
     query=temp
     tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
     query=tempquery
@@ -1164,23 +1178,24 @@ app.get("/get/recipe", async (req,res)=>{
   else{
     for(let j=0; j< Expiryitems.length; j++){
       if(j==0){
-        temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
+        temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
       }
       else if(j< Expiryitems.length-1){
         query += "INTERSECT " + storequery
-        temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
+        temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
       }
       else{
         query += "INTERSECT " + storequery
-        temp=query.replace('?', '\''+`%${Expiryitems[j]}%`+'\'')
+        temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
         tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
         query=tempquery
       }
     }
   }
+  console.log(query)
     const [results] = await con.promise().query(query)
     //console.log(results.sql);
     //todo fix the formatting and get the complete recipe
@@ -1251,8 +1266,8 @@ app.get("/get/recipe", async (req,res)=>{
 app.get("/get/recipe_info", async (req,res)=>{
   try{
     
-  let RID=req.query.p1 ? req.query.p1.split(',') : []
-  //let RID=[ 52908, 52870, 52868, 52807, 52867 ]
+  //let RID=req.query.p1 ? req.query.p1.split(',') : []
+  let RID=[ 52908, 52870, 52868, 52807, 52867 ]
   /*con.connect(function(err) {
     if (err) {
       console.error('Error connecting to the database: ' + err.stack)
@@ -1273,6 +1288,7 @@ app.get("/get/recipe_info", async (req,res)=>{
 
       const formattedResults = results.map((result) => {
         return {
+          RID: result.RID,
           Name: result.Rname, 
           Instruction: result.Instruction,
           YTLink: result.YoutubeLInk

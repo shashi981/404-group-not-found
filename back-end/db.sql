@@ -124,71 +124,64 @@ CREATE TABLE Vegan_exclude (
 INSERT INTO 
 Vegetarian_exclude (Ingredient)
 VALUES
-("Doner Meat"),
+("fish"),
+("Prawns"),
+("Bacon"),
+("Meat"),
 ("Chicken"),
 ("Lamb loin chops"),
-("Beef Fillet"),
-("Beef Gravy"),
-("Beef Stock"),
-("Chicken Breasts"),
-("Chicken Legs"),
-("Chicken Thighs"),
-("Duck Legs"),
-("Beef Stock Concentrate"),
-("Pork Chops"),
-("Anchovy Fillet"),
-("Sardines");
+("Duck"),
+("Anchovy"),
+("Sardines"),
+("Beef"),
+("Pork"),
+("Goat"),
+("Ham");
 
 INSERT INTO 
 Nondairy_exclude (Ingredient)
 VALUES
 ("Butter"),
-("Cheddar cheese"),
-("Full fat yogurt"),
+("cheese"),
+("yogurt"),
 ("Cream"),
 ("Parmesan"),
 ("Gruyère"),
-("Semi-skimmed Milk"),
+("Milk"),
 ("Fromage Frais"),
-("Creme Fraiche"),
-("Whole Milk"),
-("Condensed Milk"),
-("Single Cream");
+("Creme Fraiche");
 
 INSERT INTO 
 Vegan_exclude (Ingredient)
 VALUES
-("Doner Meat"),
-("Chicken"),
-("Lamb loin chops"),
-("Beef Fillet"),
-("Beef Gravy"),
-("Beef Stock"),
-("Chicken Breasts"),
-("Chicken Legs"),
-("Chicken Thighs"),
-("Duck Legs"),
-("Beef Stock Concentrate"),
-("Pork Chops"),
-("Anchovy Fillet"),
-("Sardines"),
+("fish"),
+("Prawns"),
+("Bacon"),
 ("Butter"),
-("Cheddar cheese"),
-("Full fat yogurt"),
+("cheese"),
+("yogurt"),
 ("Cream"),
 ("Parmesan"),
 ("Gruyère"),
-("Semi-skimmed Milk"),
+("Milk"),
 ("Fromage Frais"),
 ("Creme Fraiche"),
-("Whole Milk"),
-("Condensed Milk"),
-("Single Cream"),
-("Free-range egg, beaten");
+("Meat"),
+("Chicken"),
+("Lamb loin chops"),
+("Duck"),
+("Anchovy"),
+("Sardines"),
+("Beef"),
+("Pork"),
+("Goat"),
+("Ham"),
+("Egg");
 
-CREATE VIEW vegan AS (SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN  Vegan_exclude e ON r.Ingredient = e.Ingredient));
-CREATE VIEW nondairy AS (SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN Nondairy_exclude e ON r.Ingredient = e.Ingredient));
-CREATE VIEW vegetarian AS (SELECT r.RID, r.Ingredient, r.Amount FROM RECIPE r WHERE r.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r JOIN Vegetarian_exclude e ON r.Ingredient = e.Ingredient));
+
+CREATE VIEW nondairy AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Nondairy_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
+CREATE VIEW vegetarian AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Vegetarian_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
+CREATE VIEW vegan AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Vegan_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
 
 INSERT INTO 
 PREF_LIST (Pref) 
@@ -337,7 +330,7 @@ INTERSECT
 SELECT * FROM nondairy
 INTERSECT
 SELECT * FROM vegetarian) AS store
-WHERE store.Ingredient LIKE '%Tomato%'
+WHERE LOWER(store.Ingredient) LIKE LOWER('%Tomato%')
 INTERSECT
 SELECT store.RID
 FROM (
@@ -346,7 +339,7 @@ INTERSECT
 SELECT * FROM nondairy
 INTERSECT
 SELECT * FROM vegetarian) AS store
-WHERE store.Ingredient LIKE '%Salt%') AS whatever
+WHERE LOWER(store.Ingredient) LIKE LOWER('%Salt%')) AS whatever
 ORDER BY RAND()
 LIMIT 5;
 
@@ -363,6 +356,8 @@ SET SQL_SAFE_UPDATES = 0;
 UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;
 SET SQL_SAFE_UPDATES = 1;
 
+ALTER TABLE USERS
+ADD COLUMN MessageToken VARCHAR(200) NOT NULL;
 SELECT DISTINCT UID FROM OWNS WHERE AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
