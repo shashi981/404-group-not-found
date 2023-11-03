@@ -2,15 +2,31 @@ package com.example.grocerymanager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,10 +49,17 @@ public class RecipeActivity extends AppCompatActivity {
     private NetworkManager networkManager;
     private OkHttpClient client;
 
+    private List<Recipe> recipeList;
+    private Map<Integer, Recipe> recipeMap;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
+
+        recipeList = new ArrayList<>();
+        recipeMap = new HashMap<>();
 
 
         networkManager = new NetworkManager(this);
@@ -61,14 +84,57 @@ public class RecipeActivity extends AppCompatActivity {
                     // Get the response body as a string
                     String responseBody = response.body().string();
 
-                    // Process the response on the main UI thread
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Update the UI or perform any other necessary actions with the response
-                            Log.d(TAG, "Response: " + responseBody);
+                    Log.d(TAG, "Response: " + responseBody);
+                    Log.d(TAG, "Check 2");
+
+                    try {
+                        JSONArray jsonArray = new JSONArray(responseBody);
+                        Log.d(TAG, "Check 1");
+
+
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            Log.d(TAG, "Size of List: " + recipeList.size());
+                            Log.d(TAG, "Size of JSON: " + jsonArray.length());
+                            Log.d(TAG, "Current Loop: " + i);
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Log.d(TAG, "Check 6");
+                            int RID = jsonObject.getInt("RID");
+                            Log.d(TAG, "Check 9");
+                            JSONArray ingredientsArray = jsonObject.getJSONArray("ingredients");
+                            for(int j = 0; j < ingredientsArray.length(); j++){
+                                JSONObject individualIngredientObject = ingredientsArray.getJSONObject(j);
+                                String ingredientName = individualIngredientObject.getString("Ingredient");
+                                Log.d(TAG, "Check 7");
+
+                                String ingredientAmount = individualIngredientObject.getString("Amount");
+                                Log.d(TAG, "Check 8");
+                                if(!recipeMap.containsKey(RID)){
+                                    Log.d(TAG, "Check 3");
+                                    Recipe recipe = new Recipe(RID);
+                                    recipe.addIngredient(ingredientName, ingredientAmount);
+                                    recipeList.add(recipe);
+                                    recipeMap.put(RID, recipe);
+                                }
+                                else{
+                                    Log.d(TAG, "Check 4");
+                                    Recipe recipe = recipeMap.get(RID);
+                                    recipe.addIngredient(ingredientName, ingredientAmount);
+                                }
+                                Log.d(TAG, "Check 5");
+                            }
                         }
-                    });
+                        Log.d(TAG, "Size of List: " + recipeList.size());
+
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                recipeMoreDetails();
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     // Handle unsuccessful response (e.g., non-200 status code)
                     Log.e(TAG, "Unsuccessful response: " + response.code());
@@ -152,5 +218,103 @@ public class RecipeActivity extends AppCompatActivity {
                 popupMenu.show();
             }
         });
+    }
+    private void recipeMoreDetails() {
+        int numberOfRecipes = recipeList.size();
+        AtomicInteger completedRequests = new AtomicInteger(0);
+
+        for (Recipe recipe : recipeList) {
+            String serverURL = "https://20.104.197.24/";
+            Request requestName = new Request.Builder()
+                    .url(serverURL + "get/recipe_info?p1=" + recipe.getRID())
+                    .build();
+            client.newCall(requestName).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "Request failed: " + e.getMessage());
+                    completedRequests.incrementAndGet();
+                    compareRequests(numberOfRecipes, completedRequests.get());
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String responseBody = response.body().string();
+
+                        Log.d(TAG, "Response: " + responseBody);
+
+                        try {
+                            JSONArray jsonArray = new JSONArray(responseBody);
+
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                Log.d(TAG, "here 1");
+                                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                                String recipeName = jsonObject.getString("Name");
+                                String recipeInstructions = jsonObject.getString("Instruction");
+                                String recipeYTLink = jsonObject.getString("YTLink");
+                                recipe.setRecipeName(recipeName);
+                                recipe.setInstructions(recipeInstructions);
+                                recipe.setYouTubeLink(recipeYTLink);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        completedRequests.incrementAndGet();
+                        compareRequests(numberOfRecipes, completedRequests.get());
+                    } else {
+                        Log.e(TAG, "Unsuccessful response: " + response.code());
+                        completedRequests.incrementAndGet();
+                        compareRequests(numberOfRecipes, completedRequests.get());
+                    }
+                }
+            });
+        }
+    }
+
+    private synchronized void compareRequests(int totalRequests, int completedRequests) {
+        if (completedRequests == totalRequests) {
+            runOnUiThread(this::displayRecipes);
+        }
+    }
+    private void displayRecipes() {
+        Log.d(TAG, String.valueOf(recipeList.size()));
+        for(Recipe recipe : recipeList) {
+            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.recipe_preview_template, null);
+
+            TextView recipeName = view.findViewById(R.id.name_of_recipe);
+            TextView youtubeLink = view.findViewById(R.id.youtube_link);
+            TextView fiveIngredients = view.findViewById(R.id.five_ingredients);
+            Button selectRecipeButton = view.findViewById(R.id.select_recipe_button);
+
+            recipeName.setText(recipe.getRecipeName());
+            youtubeLink.setText(recipe.getYouTubeLink());
+            fiveIngredients.setText(recipe.getFiveIngredientsAstString());
+
+            selectRecipeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    displayFullRecipe(recipe);
+                }
+            });
+
+            LinearLayout mainLayout = findViewById(R.id.recipe_container_recipe);
+            mainLayout.addView(view);
+        }
+    }
+
+    private void displayFullRecipe(Recipe recipe){
+        Dialog dialog = new Dialog(RecipeActivity.this);
+        dialog.setContentView(R.layout.full_recipe_popup_template);
+
+        TextView recipeName = dialog.findViewById(R.id.name_of_recipe_expanded);
+        TextView ingredientsList = dialog.findViewById(R.id.ingredients_listed);
+        TextView instructionsList = dialog.findViewById(R.id.instructions_listed);
+
+        recipeName.setText(recipe.getRecipeName());
+        ingredientsList.setText(recipe.getIngredientsAsString());
+        instructionsList.setText(recipe.getInstructions());
+        dialog.show();
     }
 }
