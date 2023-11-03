@@ -23,6 +23,13 @@
 
         <TextView
             android:textColor="@color/dark_blue"
+            android:id="@+id/youtube_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="YouTube"
+            android:textSize="14sp" />
+        <TextView
+            android:textColor="@color/dark_blue"
             android:id="@+id/five_ingredients"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
