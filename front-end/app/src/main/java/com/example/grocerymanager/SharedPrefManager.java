@@ -12,6 +12,7 @@ public class SharedPrefManager {
     private static final String EMAIL_KEY = "email";
     private static final String PROFILE_PICTURE_URI_KEY = "profile_picture_uri";
     private static final String UID_KEY = "uid";
+    private static final String DID_KEY = "did";
 
     public static void saveUserData(Context context, UserData userData) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
@@ -34,4 +35,29 @@ public class SharedPrefManager {
         UserData userData = new UserData(firstName, lastName, email, Uri.parse(profilePictureUriString), uid);
         return userData;
     }
+
+    public static void saveDietitianData(Context context, DietitianData dietitianData) {
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(FIRST_NAME_KEY, dietitianData.getFirstName());
+        editor.putString(LAST_NAME_KEY, dietitianData.getLastName());
+        editor.putString(EMAIL_KEY, dietitianData.getDietitianEmail());
+        editor.putString(PROFILE_PICTURE_URI_KEY, dietitianData.getDietitianProfilePictureUrl().toString());
+        editor.putInt(DID_KEY, dietitianData.getDID());
+        editor.apply();
+    }
+
+    public static DietitianData loadDietitianData(Context context) {
+        SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
+        String firstName = sharedPref.getString(FIRST_NAME_KEY, "Default First Name");
+        String lastName = sharedPref.getString(LAST_NAME_KEY, "Default Last Name");
+        String email = sharedPref.getString(EMAIL_KEY, "Default Email");
+        String profilePictureUriString = sharedPref.getString(PROFILE_PICTURE_URI_KEY, "Default Profile Picture Uri");
+        int did = sharedPref.getInt(DID_KEY, -1);
+        DietitianData dietitianData = new DietitianData(firstName, lastName, email, Uri.parse(profilePictureUriString), did);
+        return dietitianData;
+    }
+
+
+
 }
