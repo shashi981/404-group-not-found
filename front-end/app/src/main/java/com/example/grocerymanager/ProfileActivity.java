@@ -218,46 +218,53 @@ public class ProfileActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (savePreferences.isEmpty()) {
+                    dialog.dismiss();
+                    ActivityLauncher.launchActivity(ProfileActivity.this, ProfileActivity.class);
+                    finish();
+                } else {
 
-                String serverURL = "https://20.104.197.24/";
-                userData = SharedPrefManager.loadUserData(ProfileActivity.this);
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-                JSONObject postData = new JSONObject();
-                try {
-                    postData.put("p1", userData.getUID());
-                    postData.put("p2", new JSONArray(savePreferences));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
-                RequestBody body = RequestBody.create(JSON, postData.toString());
-
-                Request request = new Request.Builder()
-                        .url(serverURL + "add/pref")
-                        .post(body)
-                        .build();
-                client.newCall(request).enqueue(new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        // Handle failure
+                    String serverURL = "https://20.104.197.24/";
+                    userData = SharedPrefManager.loadUserData(ProfileActivity.this);
+                    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                    JSONObject postData = new JSONObject();
+                    try {
+                        postData.put("p1", userData.getUID());
+                        postData.put("p2", new JSONArray(savePreferences));
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        if (response.isSuccessful()) {
-                            // Handle successful response
-                            String responseData = response.body().string();
-                            Log.d(TAG, "Response: " + responseData);
-                            dialog.dismiss();
-                            ActivityLauncher.launchActivity(ProfileActivity.this, ProfileActivity.class);
-                            finish();
-                        } else {
-                            // Handle unsuccessful response
-                            Log.e(TAG, "Unsuccessful response " + response.code());
+                    RequestBody body = RequestBody.create(JSON, postData.toString());
+
+                    Request request = new Request.Builder()
+                            .url(serverURL + "add/pref")
+                            .post(body)
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            // Handle failure
+                            e.printStackTrace();
                         }
-                    }
-                });
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            if (response.isSuccessful()) {
+                                // Handle successful response
+                                String responseData = response.body().string();
+                                Log.d(TAG, "Response: " + responseData);
+                                dialog.dismiss();
+                                ActivityLauncher.launchActivity(ProfileActivity.this, ProfileActivity.class);
+                                finish();
+                            } else {
+                                // Handle unsuccessful response
+                                Log.e(TAG, "Unsuccessful response " + response.code());
+                            }
+                        }
+                    });
+                }
             }
         });
 
