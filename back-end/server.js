@@ -212,25 +212,6 @@ app.get("/get/users", async (req,res)=>{
 
   const [update] = await con.promise().query(updatequery, [Token, Email])
   const [results] = await con.promise().query(query, [Email])
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
-  
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      /*const formattedResults = results.map((result) => {
-        return `${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
-      })
-      query_success(res, formattedResults)*/
-   // })
-  //})
 
   if (results.length === 0) {
     return res.json({});
@@ -254,55 +235,33 @@ app.get("/get/users", async (req,res)=>{
   }
 })
 
+//add users
 //done
 app.post("/add/users", async (req,res)=>{
   try{
 
-  let FirstName=req.body.p1
-  let LastName=req.body.p2
-  let Email=req.body.p3
-  let ProfileURL=req.body.p4
-  let Token=req.body.p5
+    let FirstName=req.body.p1
+    let LastName=req.body.p2
+    let Email=req.body.p3
+    let ProfileURL=req.body.p4
+    let Token=req.body.p5
 
-  const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL, MessageToken) VALUES (?, ?, ?, ?, ?);'
-  const query2='SELECT UID FROM USERS WHERE Email=?'
+    const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL, MessageToken) VALUES (?, ?, ?, ?, ?);'
+    const query2='SELECT UID FROM USERS WHERE Email=?'
 
-  const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
-  const [results2] = await con.promise().query(query2, [Email])
+    const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
+    const [results2] = await con.promise().query(query2, [Email])
 
-  /*
-  con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
-    
-    /*con.query(query, [FirstName, LastName, Email, ProfileURL], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        database_error(res, err.stack)
-        return
-      }
-    })*/
+    console.log('USER ADDED') 
 
-    /*con.query(query2, [Email], (err, results2, fields2) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        database_error(res, err.stack)
-        return
-      }*/
-      console.log('USER ADDED') 
-      const formattedResults = results2.map((r) => {
+    const formattedResults = results2.map((r) => {
         return `${r.UID}`
-      });
-      query_success(res, formattedResults)
-    //})
-  //})
+    });
+    query_success(res, formattedResults)
+      
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+      console.error('Error:', error)
+      database_error(res, error.stack)
   }
 })
 
@@ -314,22 +273,8 @@ app.get("/delete/users", async (req,res)=>{
     let UID=req.query.p1
 
     const query = 'DELETE FROM USERS WHERE UID=?;'
-
     const [results] = await con.promise().query(query, [UID])
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      database_error(res, err.stack)
-      return
-    }
   
-    console.log('Connected to the database as id ' + con.threadId)*/
-    
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
       if (results.affectedRows === 0) {
         console.log('No rows were deleted. Check the values in your DELETE query.')
         res.send('No rows were deleted. Check the values in your DELETE query.')
@@ -337,8 +282,6 @@ app.get("/delete/users", async (req,res)=>{
         console.log('SUCCESS DELETED USER')
         query_success(res, 'DELETED USER')
       }
-   // })
-  //})
     } catch(error){
         console.error('Error:', error)
         database_error(res, error.stack)
@@ -346,6 +289,7 @@ app.get("/delete/users", async (req,res)=>{
 })
 
 //update user
+//done
 app.get("/update/users", async (req,res)=>{
   try{
     let UID=req.query.p1
@@ -355,29 +299,11 @@ app.get("/update/users", async (req,res)=>{
     let ProfileURL=req.query.p5
 
     const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?;'
-    
-
     const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return;
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
-    
-    
-    
-    /*con.query(query, [FirstName, LastName, Email, ProfileURL, UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        database_error(res, err.stack)
-        return
-      }*/
-      console.log('SUCCESS Update User') 
-      query_success(res, 'Success update user')
-    //})
-  //})
+
+    console.log('SUCCESS Update User') 
+    query_success(res, 'Success update user')
+
   } catch(error){
       console.error('Error:', error)
       database_error(res, error.stack)
@@ -392,64 +318,31 @@ app.get("/get/items", async (req,res)=>{
     let UID=req.query.p1
 
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
-
-    //const query2 = 'SELECT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID  FROM OWNS o, GROCERIES g WHERE o.UID=? && g.UPC=o.UPC ORDER BY o.ItemID ASC;'
-
-    // not sure if this fix the issue, todo test it
     const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? ORDER BY o.ItemID ASC;'
 
     const [result1] = await con.promise().query(query, [UID, UID])
-    const [result2] = await con.promise().query(query2, [UID])
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return;
+    const [result2] = await con.promise().query(query2, [UID])        
+
+    if (result2.length === 0) {
+      return res.json({})
     }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
-    
-    /*con.query(query, [ID,ID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        database_error(res, err.stack)
-        return
-      }
-    })*/
-    
-    /*con.query(query2, ID, (err, selectResults, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        database_error(res, err.stack)
-        return
-      }
-*/
-      /*
-      result of result2Array
-      });*/
 
-      if (result2.length === 0) {
-        return res.json({})
+    const items = result2.map((result) => {
+    const formattedDate = new Date(result.ExpireDate).toLocaleDateString();
+      return {
+        UPC: result.UPC,
+        Name: result.Name, 
+        Brand: result.Brand,
+        ExpireDate: formattedDate,
+        ItemCount: result.ItemCount,
+        ItemID: result.ItemID
       }
-      //add get brand and name
-      const items = result2.map((result) => {
-        const formattedDate = new Date(result.ExpireDate).toLocaleDateString();
-        return {
-          UPC: result.UPC,
-          //UID: result.UID,
-          Name: result.Name, 
-          Brand: result.Brand,
-          ExpireDate: formattedDate,
-          ItemCount: result.ItemCount,
-          ItemID: result.ItemID
-        }
-      })
+    })
 
-      console.log('SUCCESS Get items') 
+    console.log('SUCCESS Get items') 
 
-      res.json(items)
-      //query_success(res, 'SUCCESS Get items:\n' + formattedResults.join('\n'))
-    //})
-  //})
+    res.json(items)
+      
   } catch (error) {
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -464,22 +357,18 @@ app.get("/add/items", async (req,res)=>{
     let UPC = req.query.p2 ? req.query.p2.split(',') : []
     let ExpireDate = req.query.p3 ? req.query.p3.split(',') : []
     let ItemCount = req.query.p4 ? req.query.p4.split(',') : []
-    //let count=0
+
     const currentDate = new Date()
     const currentDateString = currentDate.toISOString().split('T')[0]
+
     console.log(currentDateString)
 
     let returnstatement=''
+
     if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length) {
       return res.status(400).send('Arrays should have the same length')
     }
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
   
-    console.log('Connected to the database as id ' + con.threadId)*/
     const values = [];
     for (let i = 0; i <UPC.length; i++) {
 
@@ -490,55 +379,40 @@ app.get("/add/items", async (req,res)=>{
         console.log('The upc is not in the db')
         const url = UPCAPIURL + UPC[i] + UPCAPIKey
         let title
-        //let description
         let brand
-        /*https.get(url, (response) => {
-          let data = '';
         
-          // Event handler for receiving data
-          response.on('data', (chunk) => {
-            data += chunk;
-          });
-        
-          response.on('end', () => {*/
-            try {
-              const jsonData = await fetchDataFromAPI(url);
-              if (jsonData.success) {
-                brand=jsonData.brand
-                title=jsonData.title
-                //description=jsonData.description
+        try {
+          const jsonData = await fetchDataFromAPI(url);
+          if (jsonData.success) {
+            brand=jsonData.brand
+            title=jsonData.title
 
-                console.log(jsonData)
-                if(i<UPC.length-1){
-                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]));
-                }
-                else{
-                  values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i], currentDate]));
-                }
-                console.log(brand)
-                console.log(title)
-                num=UPC[i]
-                console.log(num)
-                const query2 = 'INSERT INTO GROCERIES(UPC, Name, Brand, Category) VALUES (?,?,?,?)'
-                const [addgrocery] = await con.promise().query(query2, [num,title, brand, title ])
-              }
-              else{
-                returnstatement += UPC[i]
-                console.error('Product not found. Error code:', jsonData.error.code);
-                console.error('Error message:', jsonData.error.message);
-                
-              }
-            } catch (error) {
-              console.error('Error parsing JSON:', error);
+            console.log(jsonData)
+            if(i<UPC.length-1){
+              values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]));
             }
-          //});
-        
-          // Event handler for any errors
-         // response.on('error', (error) => {
-          //console.error('Request error:', error);
-         // });
-        //});
-    }  
+            else{
+              values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i], currentDate]));
+            }
+            console.log(brand)
+            console.log(title)
+            num=UPC[i]
+            console.log(num)
+
+            const query2 = 'INSERT INTO GROCERIES(UPC, Name, Brand, Category) VALUES (?,?,?,?)'
+            const [addgrocery] = await con.promise().query(query2, [num,title, brand, title ])
+
+          }
+          else{
+            returnstatement += UPC[i]
+            console.error('Product not found. Error code:', jsonData.error.code);
+            console.error('Error message:', jsonData.error.message);
+                
+          }
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+      }  
     }
     console.log(values)
 
@@ -546,24 +420,17 @@ app.get("/add/items", async (req,res)=>{
       const query3 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?'
       const [results] = await con.promise().query(query3, [values])
     }
-    /*con.query(query, [values], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-     // console.log('SUCCESS ADDED items') 
-     if(returnstatement === ''){
+
+    if(returnstatement === ''){
       query_success(res, 'SUCCESS ADDED ITEMS')
-     }
-     else{
+    }
+    else{
       query_success(res, 'Values not added ' + returnstatement)
-     }
-    //})
- // })
+    }
   }
-catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+  catch(error){
+      console.error('Error:', error)
+      database_error(res, error.stack)
   }
 })
 
@@ -592,15 +459,16 @@ function fetchDataFromAPI(url) {
   })
 }
 
-//todo finish this
+//add items manually
+//done
 app.post("/add/items_man", async (req,res)=>{
   try{
-    //change to auto get a negative upc???
+
     let UID=req.body.p1
     let UPC = req.body.p2 // should be -1
-    let ExpireDate = req.body.p3 //? req.query.p3.split(',') : []
-    let ItemCount = req.body.p4 //? req.query.p4.split(',') : []
-    let ItemName = req.body.p5 //? req.query.p5.split(',') : []
+    let ExpireDate = req.body.p3 
+    let ItemCount = req.body.p4
+    let ItemName = req.body.p5 
     if ( ExpireDate.length !== ItemCount.length || ItemCount.length !== ItemName.length) {
       return res.status(400).send('Arrays should have the same length')
     }
@@ -609,13 +477,6 @@ app.post("/add/items_man", async (req,res)=>{
     const currentDateString = currentDate.toISOString().split('T')[0]
     console.log(currentDateString)
     
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
     const values = []
     const store=[]
     for (let i = 0; i <ItemName.length; i++) {
@@ -635,15 +496,10 @@ app.post("/add/items_man", async (req,res)=>{
 
     const [results] = await con.promise().query(query, [store])
     const [results2] = await con.promise().query(query2, [values])
-    /*con.query(query, [values], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      console.log('SUCCESS ADDED items') 
-      query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
-    //})
- // })
+
+    console.log('SUCCESS ADDED items') 
+    query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
+   
   }catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -654,37 +510,20 @@ app.post("/add/items_man", async (req,res)=>{
 //done
 app.post("/delete/items", async (req,res)=>{
   try{
-  let UID=req.body.p1
-  let ItemID=req.body.p2 //? req.query.p2.split(',') : []
+    let UID=req.body.p1
+    let ItemID=req.body.p2 
 
-  const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
-  
-/*
-  con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
+    const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
+
+    const [results] = await con.promise().query(query, [UID, ItemID])
+
+    if (results.affectedRows === 0) {
+      console.log('No rows were deleted. Check the values in your DELETE query.')
+      res.send('No rows were deleted. Check the values in your DELETE query.')
+    } else {
+      console.log('SUCCESS DELETED items')
+      query_success(res, 'DELETED ITEM')
     }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
-    
-    /*con.query(query, [UID, ItemID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-
-      const [results] = await con.promise().query(query, [UID, ItemID])
-
-      if (results.affectedRows === 0) {
-        console.log('No rows were deleted. Check the values in your DELETE query.')
-        res.send('No rows were deleted. Check the values in your DELETE query.')
-      } else {
-        console.log('SUCCESS DELETED items')
-        query_success(res, 'DELETED ITEM')
-      }
-    //})
-  //})
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -695,42 +534,33 @@ app.post("/delete/items", async (req,res)=>{
 //update items
 app.post("/update/items", (req,res)=>{
   try{
-  let UID=req.body.p1
-  let ItemID=req.body.p2 //? req.query.p2.split(',') : []
-  let UPC = req.body.p3 //? req.query.p3.split(',') : []
-  let ExpireDate = req.body.p4 //? req.query.p4.split(',') : []
-  let ItemCount = req.body.p5 //? req.query.p5.split(',') : []
+    let UID=req.body.p1
+    let ItemID=req.body.p2 
+    let UPC = req.body.p3 
+    let ExpireDate = req.body.p4 
+    let ItemCount = req.body.p5 
 
-  if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length || ItemID.length !== UPC.length) {
-    return res.status(400).send('Arrays should have the same length')
-  }
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
+    if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length || ItemID.length !== UPC.length) {
+      return res.status(400).send('Arrays should have the same length')
     }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
+    
     const values = [];
     for (let i = 0; i <UPC.length; i++) {
       values.push([ExpireDate[i], ItemCount[i], UID, UPC[i], ItemID[i]])
     }
     console.log(values)
     const query = 'UPDATE OWNS SET ExpireDate=?, ItemCount=? WHERE UID=? AND UPC=? AND ItemID=?;'
+    
     values.forEach(async (values) => {
-      const executedQuery = mysql.format(query, values);
-      console.log('Executed Query:', executedQuery);
+      const executedQuery = mysql.format(query, values)
+
+      console.log('Executed Query:', executedQuery)
       const [results1] = await con.promise().query(executedQuery)
-      /*con.query(executedQuery, (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack);
-      return
-      }*/
-      console.log('SUCCESS Updated items');
-      })
-    //})
-    query_success(res, 'SUCCESS Updated items')
-  //})
+          
+      console.log('SUCCESS Updated items')
+    })
+
+  query_success(res, 'SUCCESS Updated items')
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -743,35 +573,23 @@ app.post("/add/pref", async (req,res)=>{
 
   try{
   let UID=req.body.p1
-  let Pref = req.body.p2 //? req.query.p2.split(',') : []
- /* con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
+  let Pref = req.body.p2 
+  const values = [];
+  for (let i = 0; i <Pref.length; i++) {
+    if(i<Pref.length-1){
+      values.push(([UID, Pref[i],]));
     }
+    else{
+      values.push(([UID, Pref[i]]));
+    }
+  }
+  console.log(values)
+  const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
+
+  const [results] = await con.promise().query(query, [values])
+  console.log('SUCCESS ADDED Pref') 
+  query_success(res, 'SUCCESS ADDED Pref')
   
-    console.log('Connected to the database as id ' + con.threadId)*/
-    const values = [];
-    for (let i = 0; i <Pref.length; i++) {
-      if(i<Pref.length-1){
-        values.push(([UID, Pref[i],]));
-      }
-      else{
-        values.push(([UID, Pref[i]]));
-      }
-    }
-    console.log(values)
-    const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
-    /*con.query(query, [values], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      const [results] = await con.promise().query(query, [values])
-      console.log('SUCCESS ADDED Pref') 
-      query_success(res, 'SUCCESS ADDED Pref')
-    //})
-  //})
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -782,28 +600,14 @@ app.post("/add/pref", async (req,res)=>{
 //done
 app.get("/delete/pref", async (req,res)=>{
   try{
-  let UID=req.query.p1
-  /*let Pref = req.body.p2 ? req.query.p2.split(',') : []*/
+    let UID=req.query.p1
 
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
     const query = 'DELETE FROM PREFERENCE WHERE UID= ?'
-
     const [results] = await con.promise().query(query, [UID])
-    /*con.query(query, [UID, Pref], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      console.log('SUCCESS DELETE Pref') 
-      query_success(res, 'SUCCESS DELETE Pref')
-    //})
-  //})
+    
+    console.log('SUCCESS DELETE Pref') 
+    query_success(res, 'SUCCESS DELETE Pref')
+    
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -815,24 +619,14 @@ app.get("/delete/pref", async (req,res)=>{
 app.get("/get/pref", async (req,res)=>{
   try{
     
-  let UID=req.query.p1
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
+    let UID=req.query.p1
+
     const query = 'SELECT Pref FROM PREFERENCE WHERE UID= ?'
     const [results] = await con.promise().query(query, [UID])
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      if (results.length === 0) {
-        return res.json({});
-      }
+
+    if (results.length === 0) {
+      return res.json({});
+    }
 
       const formattedResults = results.map((result) => {
         return {
@@ -841,9 +635,7 @@ app.get("/get/pref", async (req,res)=>{
       })
       console.log('SUCCESS select Pref') 
       res.json(formattedResults)
-      //query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
-    //})
-  //})
+      
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -854,28 +646,14 @@ app.get("/get/pref", async (req,res)=>{
 //done
 app.get("/get/pref_list", async (req,res)=>{
   try{
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
     const query = 'SELECT * FROM PREF_LIST'
     const [results] = await con.promise().query(query)
-    /*con.query(query, (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      console.log('SUCCESS show Pref_list') 
-      const formattedResults = results.map((result) => {
-        return {Pref:result.Pref};
-      });
-      //query_success(res, 'SUCCESS show Pref_list ' + formattedResults.join('\n'))
-    //})
-  //})
-  res.json(formattedResults)
+
+    console.log('SUCCESS show Pref_list') 
+    const formattedResults = results.map((result) => {
+      return {Pref:result.Pref};
+    });
+    res.json(formattedResults)
   } catch(error){
       console.error('Error:', error);
       database_error(res, error.stack);
@@ -887,61 +665,22 @@ app.get("/get/pref_list", async (req,res)=>{
 app.get("/add/dietReq", async (req,res)=>{
 
   try{
-  let UID=req.query.p1
-  const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
-  const [result1] = await con.promise().query(query, [UID])
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
+    let UID=req.query.p1
+    const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
+    const [result1] = await con.promise().query(query, [UID])
+
+    console.log('Request for being dietician made!!' + con.threadId)
+    query_success(res, 'Request for being dietician made!!')
     
-    
-    
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        database_error(res, err.stack)
-        return
-      }*/
-      console.log('Request for being dietician made!!' + con.threadId)
-      query_success(res, 'Request for being dietician made!!')
-    //})
-  //})
-} catch(error){
-    console.error('Error:', error);
-    database_error(res, error.stack);
+  } catch(error){
+      console.error('Error:', error);
+      database_error(res, error.stack);
   }
 })
 
 //get all request for being a dietician
 //done
 app.get("/get/dietReq", async (req,res)=>{
-  /*
-  con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)
-    const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
-    con.query(query, (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }
-      const formattedResults = results.map((result) => {
-        return `${result.RID}\t${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
-      });
-      console.log('SUCCESS show list of being dietician request') 
-      query_success(res, 'SUCCESS show list of being dietician request: ' + formattedResults.join('\n'))
-    })
-  })*/
-
-  //todo chnage to json
   try {
     const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
     const [results] = await con.promise().query(query)
@@ -949,6 +688,7 @@ app.get("/get/dietReq", async (req,res)=>{
     if(results.length==0){
       return res.json({});
     }
+
     const formattedResults = results.map((result) => {
       return {
         RID:result.RID,
@@ -962,7 +702,7 @@ app.get("/get/dietReq", async (req,res)=>{
 
     console.log('SUCCESS show list of being a dietician request');
     res.json(formattedResults)
-    //query_success(res, 'SUCCESS show list of being a dietician request: ' + formattedResults.join('\n'));
+    
   } catch (error) {
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -974,40 +714,19 @@ app.get("/get/dietReq", async (req,res)=>{
 //done
 app.get("/approve/dietReq", async (req,res)=>{
   try{
-  UID=req.query.p1// ? req.query.p1.split(',') : []
-  console.log(UID)
-  const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID=?'
-  const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
-  //const query3='DELETE FROM USERS WHERE UID IN (?)'
-  const [result1] = await con.promise().query(query, [UID])
-  const [result2] = await con.promise().query(query2, [UID])
-  //const [result3] = await con.promise().query(query3, [UID])
-  
-  //if(result2.length>0){
+    UID=req.query.p1
+    console.log(UID)
+    const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID=?'
+    const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
+    const query3='DELETE FROM USERS WHERE UID IN (?)'
+
+    const [result1] = await con.promise().query(query, [UID])
+    const [result2] = await con.promise().query(query2, [UID])
+    const [result3] = await con.promise().query(query3, [UID])
+    
     console.log('SUCCESS approve being dietician request') 
     query_success(res, 'SUCCESS approve being dietician request')
-  //}
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
   
-    console.log('Connected to the database as id ' + con.threadId)*/
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }
-    })*/
-    /*con.query(query2, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      
-  //})
-  //})
   }catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -1016,40 +735,15 @@ app.get("/approve/dietReq", async (req,res)=>{
 
 app.get("/remove/dietReq", async (req,res)=>{
   try{
-  UID=req.query.p1// ? req.query.p1.split(',') : []
-  console.log(UID)
-  //const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID IN (?)'
-  const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
-  //const query3='DELETE FROM USERS WHERE UID IN (?)'
-  //const [result1] = await con.promise().query(query, [UID])
-  const [result2] = await con.promise().query(query2, [UID])
-  //const [result3] = await con.promise().query(query3, [UID])
+    UID=req.query.p1
+    console.log(UID)
+
+    const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
+    const [result2] = await con.promise().query(query2, [UID])
+
+    console.log('SUCCESS delete being dietician request') 
+    query_success(res, 'SUCCESS delete being dietician request')
   
-  //if(result2.length>0){
-    console.log('SUCCESS approve being dietician request') 
-    query_success(res, 'SUCCESS approve being dietician request')
-  //}
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }
-    })*/
-    /*con.query(query2, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      
-  //})
-  //})
   }catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -1086,6 +780,7 @@ app.get("/get/users_type", async (req,res)=>{
     }
 
     console.log('This is an entry that does not exist')
+
     return query_success(res, 'Does not exist\n')
   } catch (error) {
     console.error('Error:', error)
@@ -1094,17 +789,13 @@ app.get("/get/users_type", async (req,res)=>{
 
 })
 
-//todo test this
+//get recipe for items about to expiry based on preference and use uid
+//done
 app.get("/get/recipe", async (req,res)=>{
   try {
-    //todo change to get items about to expiry and pref using uid from db
-    // then use the api to get extra recipes when the no recipe matches on db
+    // todo use the api to get extra recipes when the no recipe matches on db
 
     let UID=req.query.p1
-    //let expiryitems=req.body.p1 //? req.query.p2.split(',') : []
-   // let Pref//=req.body.p2 //? req.query.p3.split(',') : []
-    /*let expiryitems=['Tomato', 'Salt']
-    let Pref=['Vegetarian','Non-dairy', 'Vegan' ]*/
     let storequery=''
     let query=''
     const store=[]
@@ -1165,7 +856,7 @@ app.get("/get/recipe", async (req,res)=>{
       }
     }
     else{
-      query = 'SELECT r.RID FROM recipe r WHERE LOWER(r.Ingredient) LIKE ? '
+      query = 'SELECT r.RID FROM RECIPE r WHERE LOWER(r.Ingredient) LIKE ? '
     }
 
   storequery=query
@@ -1196,33 +887,30 @@ app.get("/get/recipe", async (req,res)=>{
     }
   }
   console.log(query)
-    const [results] = await con.promise().query(query)
-    //console.log(results.sql);
-    //todo fix the formatting and get the complete recipe
-    /*const responseObject = {
-      recipes: results,
-    };*/
-    /*
-    const formattedResults = results.map((result) => {
-      return `${result.RID}\t`;
-    });
-    console.print(formattedResults)*/
-    const formattedArray = results.map((result) => result.RID);
-    console.log(formattedArray);
-    const query2 = 'SELECT * FROM Recipe WHERE RID IN (?)'
-    const [result2] = await con.promise().query(query2, [formattedArray])
 
-    const formattedResults = result2.map((result) => {
-      return {
-        RID: result.RID,
-        Ingredient: result.Ingredient,
-        Amount: result.Amount,
-      };
-    });
-    
+    const [results] = await con.promise().query(query)
+    let formattedResults
+
+    const formattedArray = results.map((result) => result.RID);
+    console.log(formattedArray)
+
+    if(formattedArray.length===0){
+      return res.json({})
+    }
+    else{
+      const query2 = 'SELECT * FROM RECIPE WHERE RID IN (?)'
+      const [result2] = await con.promise().query(query2, [formattedArray])
+
+      formattedResults = result2.map((result) => {
+        return {
+          RID: result.RID,
+          Ingredient: result.Ingredient,
+          Amount: result.Amount,
+        }
+      })
+    }
+
     console.log(formattedResults)
-    //query_success(res, formattedResults)
-    
     const structuredData = {};
 
     for (const result of formattedResults) {
@@ -1230,31 +918,19 @@ app.get("/get/recipe", async (req,res)=>{
         structuredData[result.RID] = {
           RID: result.RID,
           ingredients: [],
-        };
+        }
       }
     
       structuredData[result.RID].ingredients.push({
         Ingredient: result.Ingredient,
         Amount: result.Amount,
-      });
+      })
     }
     
     const jsonData = Object.values(structuredData);
     
-    console.log(jsonData);
-    res.json(jsonData);
-    
-    //query_success(res, formattedArray)
-    //res.json(responseObject);
-    //const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
-    /*const [results] = await con.promise().query(query)
-
-    const formattedResults = results.map((result) => {
-      return `${result.RID}\t${result.UID}\t${result.FirstName}\t${result.LastName}\t${result.Email}\t${result.ProfileURL}`;
-    });*/
-
-    //console.log('SUCCESS show list of being a dietician request');
-    //query_success(res, 'SUCCESS show list of being a dietician request: ' + formattedResults.join('\n'));
+    console.log(jsonData)
+    res.json(jsonData)
 
   } catch (error) {
     console.error('Error:', error);
@@ -1262,44 +938,33 @@ app.get("/get/recipe", async (req,res)=>{
   }
 })
 
-//TODO add endpoints to get recipe info using rid
+// get recipe info using rid
+//done
 app.get("/get/recipe_info", async (req,res)=>{
   try{
     
-  //let RID=req.query.p1 ? req.query.p1.split(',') : []
-  let RID=[ 52908, 52870, 52868, 52807, 52867 ]
-  /*con.connect(function(err) {
-    if (err) {
-      console.error('Error connecting to the database: ' + err.stack)
-      return
-    }
-  
-    console.log('Connected to the database as id ' + con.threadId)*/
+    let RID=req.query.p1 ? req.query.p1.split(',') : []
+
     const query = 'SELECT * FROM RECIPE_INFO WHERE RID IN (?)'
     const [results] = await con.promise().query(query, [RID])
-    /*con.query(query, [UID], (err, results, fields) => {
-      if (err) {
-        console.error('Error querying the database: ' + err.stack)
-        return
-      }*/
-      if (results.length === 0) {
-        return res.json({});
-      }
 
-      const formattedResults = results.map((result) => {
-        return {
-          RID: result.RID,
-          Name: result.Rname, 
-          Instruction: result.Instruction,
-          YTLink: result.YoutubeLInk
-        }
-      })
+    if (results.length === 0) {
+      return res.json({});
+    }
+
+    const formattedResults = results.map((result) => {
+      return {
+        RID: result.RID,
+        Name: result.Rname, 
+        Instruction: result.Instruction,
+        YTLink: result.YoutubeLInk
+      }
+    })
+
       console.log('SUCCESS return recipe_info') 
       console.log(formattedResults)
       res.json(formattedResults)
-      //query_success(res, 'SUCCESS select Pref ' + formattedResults.join('\n'))
-    //})
-  //})
+      
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -1422,14 +1087,17 @@ async function SendExpiryReminder(){
   const [store] = await con.promise().query(queryselect)
   const UIDArray = store.map((temp) => temp.UID);
   console.log(UIDArray)
+  
   //for each users
   for(let i=0; i<UIDArray.length; i++){
     UID=UIDArray[i]
     const queryToken='SELECT u.MessageToken FROM USERS u WHERE UID=?'
     const queryItems='SELECT DISTINCT g.Name, g.Brand, o.ExpireDate, o.ItemCount FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1;'
+
     //send notification for all items and the date left
     //get the token using uid and call firebase using that
     // Define the message payload
+
     const t=await con.promise().query(queryToken, [UID])
     const [Items]=await con.promise().query(queryItems, [UID])
     const token=t[0].map((storetoken) => storetoken.MessageToken);
