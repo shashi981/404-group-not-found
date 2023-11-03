@@ -9,9 +9,14 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.*;
+
+import java.net.URISyntaxException;
+
+import java.io.IOException;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -23,8 +28,13 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton recipeIcon;
     private ImageButton cartIcon;
     private ImageButton menuIcon;
+    private NetworkManager networkManager;
 
-    private Socket mSocket;
+    private WebSocket webSocket;
+    private OkHttpClient client;
+    private UserData userData;
+
+    private static final String SERVER_URL = "wss://20.104.197.24";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +73,6 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ActivityLauncher.launchActivity(ChatActivity.this, ListActivity.class);
-
             }
         });
 
@@ -94,53 +103,167 @@ public class ChatActivity extends AppCompatActivity {
                 popupMenu.show();
             }
         });
+        userData = SharedPrefManager.loadUserData(ChatActivity.this);
 
-        mSocket= SocketManager.getInstance().getSocket();
-
-        // Listener for successful connection
-        mSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                // You can log or show a toast here to indicate a successful connection
-                Log.d(TAG, "Socket connected");
-            }
-        });
-
-        // Listener for disconnection
-        mSocket.on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                // Log or show a toast for disconnection
-                Log.d(TAG, "Socket disconnected");
-            }
-        });
-
-        // Listener for connection errors
-        mSocket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Throwable e = (Throwable) args[0];
-                // Log or show the error
-                Log.e(TAG, "Socket connection error", e);
-            }
-        });
-
-        // Listener for other errors
-        mSocket.on(Socket.EVENT_ERROR, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Throwable e = (Throwable) args[0];
-                // Log or show the error
-                Log.e(TAG, "Socket error", e);
-            }
-        });
-
-        mSocket.connect();
+        initializeWebSocket();
+        sendTestMessage();
+        // fetchAvailableDieticians();
+        // fetchUsersForDietician(1);
+        fetchChatHistory(userData.getUID(),1);
+        Log.d(TAG, "UID" + userData.getUID());
     }
+
+
+    private void initializeWebSocket() {
+        networkManager = new NetworkManager(this);
+        client = networkManager.getClient();
+
+
+
+        Request request = new Request.Builder().url(SERVER_URL)
+                .header("actor-id", "" + userData.getUID()) // Replace with the actual actor-id
+                .header("actor-type", "user") // Replace with 'user' or 'dietician'
+                .build();
+        Log.d(TAG, "ATTEMPTING");
+        webSocket = client.newWebSocket(request, new WebSocketListener() {
+            @Override
+            public void onOpen(WebSocket webSocket, Response response) {
+                super.onOpen(webSocket, response);
+                // Handle successful connection
+                Log.d(TAG, "CONNECTED BITCH");
+            }
+
+            @Override
+            public void onMessage(WebSocket webSocket, String text) {
+                super.onMessage(webSocket, text);
+                // Handle incoming messages
+                Log.d(TAG, "Received message: " + text);
+            }
+
+            @Override
+            public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+                super.onFailure(webSocket, t, response);
+                // Handle connection failures
+                Log.e(TAG, "WebSocket connection failed: " + t.getMessage());
+            }
+        });
+    }
+
+    private void sendTestMessage() {
+        try {
+            JSONObject message = new JSONObject();
+            message.put("UID", userData.getUID());
+            message.put("DID", 1);
+            message.put("Text", "Test for Websocket");
+            message.put("FROM_USER", 1);  // 1 denotes "from user"
+
+            if (webSocket != null) {
+                webSocket.send(message.toString());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mSocket.disconnect();
-        mSocket.off();
+    protected void onPause() {
+        super.onPause();
+        if (webSocket != null) {
+            webSocket.close(1000, "App paused");
+        }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (webSocket == null) {
+            initializeWebSocket();
+            sendTestMessage();
+        }
+    }
+
+    // This function fetches the list of available dieticians.
+    private void fetchAvailableDieticians() {
+        String url = "https://20.104.197.24/get/availableDieticians";
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Error fetching available dieticians: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Available Dieticians: " + responseBody);
+                    // TODO: Parse the response and update your UI accordingly.
+                } else {
+                    Log.e(TAG, "Error: " + response.body().string());
+                }
+            }
+        });
+    }
+
+    // This function retrieves the chat history between a user and a dietician.
+    // This function retrieves the unique users a dietician has communicated with.
+    private void fetchUsersForDietician(int DID) {
+        String url = "https://20.104.197.24/get/usersForDietician/" + DID;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Error fetching users for dietician: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Users for Dietician: " + responseBody);
+                    // TODO: Parse the response and update your UI accordingly.
+                } else {
+                    Log.e(TAG, "Error: " + response.body().string());
+                }
+            }
+        });
+    }
+
+    // This function retrieves the chat history between a user and a dietician
+    private void fetchChatHistory(int UID, int DID) {
+        String url = "https://20.104.197.24/get/chatHistory/" + UID + "/" + DID;
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "Error fetching chat history: " + e.getMessage());
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Chat History: " + responseBody);
+                    // TODO: Parse the response, update your data model and refresh the UI.
+                } else {
+                    Log.e(TAG, "Error: " + response.body().string());
+                }
+            }
+        });
+    }
+
+
+
 }
