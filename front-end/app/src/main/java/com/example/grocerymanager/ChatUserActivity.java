@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,71 +29,72 @@ public class ChatUserActivity extends AppCompatActivity {
     private WebSocket webSocket;
     private OkHttpClient client;
     private UserData userData;
+    private ImageButton backIcon;
     private static final String SERVER_URL = "wss://20.104.197.24";
-
 
     private ChatAdapter chatAdapter;
     private RecyclerView chatRecyclerView;
     private List<ChatMessage> chatHistoryList = new ArrayList<>();
 
-
+    private int curDID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_user);
-        int curDID = -1000;
+        curDID = -1000;
 
         // Initialize UI components
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         EditText inputMessage = findViewById(R.id.inputMessage);
         Button sendButton = findViewById(R.id.sendButton);
+        backIcon = findViewById(R.id.imageButton);
 
         // Set up RecyclerView with an empty adapter
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatAdapter = new ChatAdapter(chatHistoryList);
+        chatAdapter = new ChatAdapter(this,chatHistoryList);
         chatRecyclerView.setAdapter(chatAdapter);
         chatAdapter.notifyDataSetChanged();
 
-
-        // GET DIETICION FORM THE INVOKING CLASS
-        //TODO
+        //DID and UID
         curDID = getIntent().getIntExtra("selectedDietitianDID", -1000);
-        Log.d(TAG, "" + curDID);
-
-//        if (didString != null && !didString.isEmpty()) {
-//            try {
-//                 curDID = Integer.parseInt(didString);
-//            } catch (NumberFormatException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            // DID wasn't provided. Handle this case, possibly finish the activity or show an error message.
-//            Log.d(TAG,"DID is NULL");
-//        }
-
-
-
-
+        Log.d(TAG, "DID = " + curDID);
         userData = SharedPrefManager.loadUserData(ChatUserActivity.this);
-        Log.d(TAG, "UID" + userData.getUID());
+        Log.d(TAG, "UID = " + userData.getUID());
+
         initializeWebSocket();
-        sendTestMessage();
-        //fetchChatHistory(userData.getUID(),curDID);
-        fetchChatHistory(27,curDID);
+        fetchChatHistory(userData.getUID(),curDID);
+
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(ChatUserActivity.this, UserListActivity.class);
+                //finish();
+            }
+        });
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String message = inputMessage.getText().toString();
+                if(!message.isEmpty()){
+                    sendMessage(userData.getUID(), curDID, message);
+                    fetchChatHistory(userData.getUID(),curDID);
+                    inputMessage.setText("");
+                }
+            }
+        });
     }
     private void initializeWebSocket() {
         networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
-
-
         Request request = new Request.Builder().url(SERVER_URL)
                 .header("actor-id", "" + userData.getUID()) // Replace with the actual actor-id
                 .header("actor-type", "user") // Replace with 'user' or 'dietician'
                 .build();
-        Log.d(TAG, "ATTEMPTING");
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
@@ -138,9 +141,10 @@ public class ChatUserActivity extends AppCompatActivity {
                     Log.d(TAG, "ChatHistory: " + responseBody);
 
                     try {
+                        chatHistoryList.clear();
                         // String responseBody = response.body().string();
                         JSONArray jsonArray = new JSONArray(responseBody);
-                        for (int i = 0; i < jsonArray.length(); i++) {
+                        for (int i = jsonArray.length() - 1; i >= 0; i--) {
                             JSONObject jsonObject = jsonArray.getJSONObject(i);
                             int fromUserBuffer = jsonObject.getJSONObject("FROM_USER").getJSONArray("data").getInt(0);
                             ChatMessage chatMessage = new ChatMessage(jsonObject.getString("Text"),
@@ -148,13 +152,14 @@ public class ChatUserActivity extends AppCompatActivity {
                                     jsonObject.getInt("UID"),
                                     jsonObject.getInt("DID")
                             );
-                            Log.d(TAG, "MESSAGE" + chatMessage.toString());
+                            Log.d(TAG, "chatMessage = " + chatMessage.getMessage());
                             chatHistoryList.add(chatMessage);
                         }
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d(TAG, "notifyData");
                                 chatAdapter.notifyDataSetChanged();
                             }
                         });
@@ -168,12 +173,12 @@ public class ChatUserActivity extends AppCompatActivity {
         });
     }
 
-    private void sendTestMessage() {
+    private void sendMessage(int UID, int DID, String Text) {
         try {
             JSONObject message = new JSONObject();
-            message.put("UID", 27);
-            message.put("DID", 2);
-            message.put("Text", "Test for Websocket");
+            message.put("UID", UID);
+            message.put("DID", DID);
+            message.put("Text", Text);
             message.put("FROM_USER", 1);  // 1 denotes "from user"
 
             if (webSocket != null) {

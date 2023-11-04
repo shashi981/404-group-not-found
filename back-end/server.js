@@ -187,7 +187,7 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
     const UID = req.params.UID;
     const DID = req.params.DID;
     const offset = req.query.offset || 0;  // for pagination
-    const limit = 50;  // max number of messages to return
+    const limit = 10;  // max number of messages to return
 
     const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ? OFFSET ?';
 
