@@ -59,7 +59,9 @@
             android:exported="false" />
         <activity
             android:name=".BarcodeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

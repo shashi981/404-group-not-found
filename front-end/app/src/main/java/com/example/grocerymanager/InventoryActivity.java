@@ -51,7 +51,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
     private ImageButton scannerIcon;
     private List<Integer> itemIdList;
     private List<Integer> itemIdListEdit;
-    private List<Integer> itemUPCList;
+    private List<Long> itemUPCList;
     private List<String> itemExpiryList;
     private List<Integer> itemCountList;
 

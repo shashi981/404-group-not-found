@@ -39,48 +39,35 @@ import okhttp3.Response;
 
 public class BarcodeActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
     final static String TAG = "BarcodeActivity";
-    private ImageButton backIcon1;
-    private String expiryDateString1;
-    private Button itemExpiryButton1;
-    private Button addItemButton1;
-    private EditText itemQuantity1;
+    private ImageButton backIcon;
+    private String expiryDateString;
+    private Button itemExpiryButton;
+    private Button addItemButton;
+    private EditText itemQuantity;
     private String upcCode;
-    private Button addItemsInventoryButton1;
-    private List<String> expiryDateList1;
-    private List<Integer> upcList;
-    private List<Integer> quantityList1;
-    private List<Item> itemList1;
-    private OkHttpClient client1;
+    private Button addItemsInventoryButton;
+    private List<String> expiryDateList;
+    private List<Long> upcList;
+    private List<Integer> quantityList;
+    private List<Item> itemList;
+    private OkHttpClient client;
     private Button scanBarButton;
 
-    private NetworkManager networkManager1;
+    private NetworkManager networkManager;
 
-//    ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result ->{
-//        if (result.getContents() != null) {
-//
-//            String upcCode = result.getContents();
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(BarcodeActivity.this);
-//            builder.setMessage(result.getContents());
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i){
-//                    dialogInterface.dismiss();
-//                }
-//            }).show();
-//        }
-//    });
 
     ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
             // UPC code was successfully retrieved
             upcCode = result.getContents();
-//            upcCode = "00123456789012"
+//            upcCode = "11123456789012";
             // You can proceed with handling the UPC code or launching another activity if needed
             handleUPCCode(upcCode);
+            setUPCCodeToText(upcCode);
         } else {
             // No UPC code was retrieved
-            redirectToAnotherActivity();
+            ActivityLauncher.launchActivity(BarcodeActivity.this, AddItemsActivity.class);
+            finish();
         }
     });
 
@@ -89,87 +76,87 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
-        expiryDateList1 = new ArrayList<>();
+        expiryDateList = new ArrayList<>();
         upcList = new ArrayList<>();
-        quantityList1 = new ArrayList<>();
+        quantityList = new ArrayList<>();
 
-        itemExpiryButton1 = findViewById(R.id.set_expiry_date1);
-        itemExpiryButton1.setOnClickListener(new View.OnClickListener() {
+        itemExpiryButton = findViewById(R.id.set_expiry_date_barcode);
+        itemExpiryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showDatePickerDialog();
             }
         });
 
-        backIcon1 = findViewById(R.id.back_icon_add1);
-        backIcon1.setOnClickListener(new View.OnClickListener() {
+        backIcon = findViewById(R.id.back_icon_barcode);
+        backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-        itemQuantity1 = findViewById(R.id.item_quantity1);
+        itemQuantity = findViewById(R.id.item_quantity_barcode);
 
-        itemList1 = new ArrayList<>();
-        addItemButton1 = findViewById(R.id.add_item_to_list1);
-        addItemButton1.setOnClickListener(view -> {
-            if (expiryDateString1.isEmpty() || itemQuantity1.getText().toString().isEmpty()) {
+        itemList = new ArrayList<>();
+        addItemButton = findViewById(R.id.add_item_to_barcode);
+        addItemButton.setOnClickListener(view -> {
+            if (expiryDateString.isEmpty() || itemQuantity.getText().toString().isEmpty() || upcCode.isEmpty() || upcCode == null) {
 
             } else {
-                int upc = Integer.parseInt(upcCode);
-                String itemQuantityStr = itemQuantity1.getText().toString();
-                Item newItem = new Item("", expiryDateString1, Integer.parseInt(itemQuantityStr), -1, upc);
-                itemList1.add(newItem);
-                addItemToInventory1(newItem);
-                Log.d(TAG, itemList1.toString());
+                long upc = Long.parseLong(upcCode);
+                String itemQuantityStr = itemQuantity.getText().toString();
+                Item newItem = new Item("", expiryDateString, Integer.parseInt(itemQuantityStr), -1, upc);
+                itemList.add(newItem);
+                addItemToInventory(newItem);
+                Log.d(TAG, itemList.toString());
 
-                expiryDateString1="";
-                itemQuantity1.getText().clear();
+                expiryDateString="";
+                itemQuantity.getText().clear();
+                upcCode = "";
 
 
             }
         });
 
 
-        networkManager1 = new NetworkManager(this);
-        client1 = networkManager1.getClient();
+        networkManager = new NetworkManager(this);
+        client = networkManager.getClient();
 
         String serURL = "https://20.104.197.24/";
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         UserData userData = SharedPrefManager.loadUserData(BarcodeActivity.this);
 
-        addItemsInventoryButton1 = findViewById(R.id.add_items_to_inventory1);
-        addItemsInventoryButton1.setOnClickListener(new View.OnClickListener() {
+        addItemsInventoryButton = findViewById(R.id.save_items_to_inventory_barcode);
+        addItemsInventoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (itemList1.isEmpty()){
+                if (itemList.isEmpty()){
                     launchInventoryIntent();
                 }
                 else {
-                    for (Item item : itemList1){
-                        expiryDateList1.add(item.getExpiry());
+                    for (Item item : itemList){
+                        expiryDateList.add(item.getExpiry());
                         upcList.add(item.getUPC());
-                        quantityList1.add(item.getQuantity());
+                        quantityList.add(item.getQuantity());
                     }
-                    JSONObject postData1 = new JSONObject();
+                    JSONObject postData = new JSONObject();
                     try{
-                        postData1.put("p1", userData.getUID());
-                        postData1.put("p2", new JSONArray(upcList)); // assuming upcList is a list of Integers
-                        postData1.put("p3", new JSONArray(expiryDateList1)); // assuming expiryDateList is a list of Strings
-                        postData1.put("p4", new JSONArray(quantityList1)); // assuming quantityList is a list of Integers
-                        postData1.put("p5", "");
+                        postData.put("p1", userData.getUID());
+                        postData.put("p2", new JSONArray(upcList)); // assuming upcList is a list of Integers
+                        postData.put("p3", new JSONArray(expiryDateList)); // assuming expiryDateList is a list of Strings
+                        postData.put("p4", new JSONArray(quantityList)); // assuming quantityList is a list of Integers
                     }
                     catch (JSONException e){
                         e.printStackTrace();
                     }
 
-                    RequestBody body1 = RequestBody.create(JSON, postData1.toString());
+                    RequestBody body = RequestBody.create(JSON, postData.toString());
                     Request request = new Request.Builder()
                             .url(serURL + "add/items")
-                            .post(body1)
+                            .post(body)
                             .build();
 
-                    client1.newCall(request).enqueue(new Callback() {
+                    client.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             // Handle failure
@@ -206,20 +193,21 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             }
         });
 
+        scanCode();
 
     }
 
-    private void addItemToInventory1(Item item) {
+    private void addItemToInventory(Item item) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.item_display_template, null);
 
-//        TextView itemNameTextView = view.findViewById(R.id.item_name_text_view);
+        TextView itemNameTextView = view.findViewById(R.id.item_name_text_view);
         TextView expiryDateTextView = view.findViewById(R.id.expiry_date_text_view);
         TextView quantityTextView = view.findViewById(R.id.quantity_text_view);
         Button editButton = view.findViewById(R.id.edit_button);
         Button deleteButton = view.findViewById(R.id.delete_button);
 
-//        itemNameTextView.setText(item.getName());
+        itemNameTextView.setText(Long.toString(item.getUPC()));
         expiryDateTextView.setText("Expiry Date: " + item.getExpiry());
         quantityTextView.setText("Quantity: " + item.getQuantity());
 
@@ -228,8 +216,8 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             public void onClick(View v) {
                 //need to implement editing
                 displayEditPopup(item);
-                itemList1.remove(item);
-                LinearLayout mainLayout = findViewById(R.id.inventory_container);
+                itemList.remove(item);
+                LinearLayout mainLayout = findViewById(R.id.inventory_container_barcode);
                 mainLayout.removeView(view);
 
             }
@@ -239,13 +227,13 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             @Override
             public void onClick(View v) {
                 //need to implement for delete
-                itemList1.remove(item);
-                LinearLayout mainLayout = findViewById(R.id.inventory_container);
+                itemList.remove(item);
+                LinearLayout mainLayout = findViewById(R.id.inventory_container_barcode);
                 mainLayout.removeView(view);
             }
         });
 
-        LinearLayout mainLayout = findViewById(R.id.inventory_container);
+        LinearLayout mainLayout = findViewById(R.id.inventory_container_barcode);
         mainLayout.addView(view);
 
     }
@@ -262,10 +250,10 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         editExpiryDateButton.setOnClickListener(v -> showDatePickerDialog());
         saveButton.setOnClickListener(v -> {
             int updatedQuantity = Integer.parseInt(quantityEditText.getText().toString());
-            if(expiryDateString1 != null && !expiryDateString1.isEmpty() && updatedQuantity > 0){
+            if(expiryDateString != null && !expiryDateString.isEmpty() && updatedQuantity > 0){
                 item.setQuantity(updatedQuantity);
-                item.setExpiry(expiryDateString1);
-                addItemToInventory1(item);
+                item.setExpiry(expiryDateString);
+                addItemToInventory(item);
                 dialog.dismiss();
 
 
@@ -284,7 +272,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
     @Override
     public void onDateSet(int year, int month, int day) {
         // Use the selected date here as needed
-        expiryDateString1 = String.format("%d-%02d-%02d", year, month + 1, day);
+        expiryDateString = String.format("%d-%02d-%02d", year, month + 1, day);
     }
 
     private void scanCode() {
@@ -297,9 +285,13 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
     }
 
     private void launchInventoryIntent() {
-        Intent inventoryIntent = new Intent(BarcodeActivity.this, InventoryActivity.class);
-        startActivity(inventoryIntent);
+        ActivityLauncher.launchActivity(BarcodeActivity.this, InventoryActivity.class);
         finish();
+    }
+
+    private void setUPCCodeToText(String upcCode){
+        TextView upcCodeTextView = findViewById(R.id.upc_code_text);
+        upcCodeTextView.setText("UPC: " + upcCode);
     }
 
 
@@ -315,28 +307,4 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             }
         }).show();
     }
-
-    private void redirectToAnotherActivity() {
-        // Code to redirect to another activity when no data is retrieved
-        // For example, you can start a new activity here
-        Intent intent = new Intent(BarcodeActivity.this, AddItemsActivity.class);
-        startActivity(intent);
-    }
-
-
-//    ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result ->{
-//        if (result.getContents() != null) {
-//
-////            String upcCode = result.getContents();
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(BarcodeActivity.this);
-//            builder.setMessage(result.getContents());
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i){
-//                    dialogInterface.dismiss();
-//                }
-//            }).show();
-//        }
-//    });
 }

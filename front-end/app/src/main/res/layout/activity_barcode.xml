@@ -10,15 +10,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        app:layout_constraintBottom_toTopOf="@+id/add_items_to_inventory1"
+        app:layout_constraintBottom_toTopOf="@+id/save_items_to_inventory_barcode"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/set_expiry_date1"
+        app:layout_constraintTop_toBottomOf="@+id/set_expiry_date_barcode"
         app:layout_constraintVertical_bias="0.89">
 
         <LinearLayout
-            android:id="@+id/inventory_container"
+            android:id="@+id/inventory_container_barcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -29,7 +29,7 @@
 
 
     <ImageButton
-        android:id="@+id/back_icon_add1"
+        android:id="@+id/back_icon_barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="#00FFFFFF"
@@ -47,7 +47,7 @@
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
         android:textColor="@color/faded_white"
-        android:id="@+id/add_item_to_list1"
+        android:id="@+id/add_item_to_barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_item_to_list"
@@ -61,7 +61,7 @@
     <EditText
         android:textColor="@color/dark_blue"
         android:textColorHint="@color/dark_blue"
-        android:id="@+id/item_quantity1"
+        android:id="@+id/item_quantity_barcode"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:autofillHints="@string/enter_quantity_hint"
@@ -79,7 +79,7 @@
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
         android:textColor="@color/faded_white"
-        android:id="@+id/add_items_to_inventory1"
+        android:id="@+id/save_items_to_inventory_barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_items_to_inventory"
@@ -94,7 +94,7 @@
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
         android:textColor="@color/faded_white"
-        android:id="@+id/set_expiry_date1"
+        android:id="@+id/set_expiry_date_barcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/enter_expiry"
@@ -106,14 +106,33 @@
         app:layout_constraintVertical_bias="0.307" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/scanBarButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan Barcode"
-        app:layout_constraintBottom_toTopOf="@+id/add_item_to_list1"
-        app:layout_constraintEnd_toEndOf="@+id/add_item_to_list1"
-        app:layout_constraintStart_toStartOf="@+id/add_item_to_list1"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Scan Another Item"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:textSize="24sp"
+        android:layout_width="300dp"
+        android:id="@+id/upc_code_text"
+        android:layout_height="wrap_content"
+        android:text="UPC: "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.235" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
