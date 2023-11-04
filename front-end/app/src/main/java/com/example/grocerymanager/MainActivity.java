@@ -323,16 +323,17 @@ public class MainActivity extends AppCompatActivity {
                                                             DietitianData dietitianData;
 
                                                             if(account.getPhotoUrl() == null){
-
                                                                 dietitianData = new DietitianData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, DID);
+                                                                Log.d(TAG, "here1");
                                                             }
                                                             else{
                                                                 dietitianData = new DietitianData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), DID);
+                                                                Log.d(TAG, "here2");
                                                             }
                                                             SharedPrefManager.saveDietitianData(MainActivity.this, dietitianData);
                                                             launchDietitianIntent();
                                                         } catch (JSONException e) {
-                                                            Log.e(TAG, "Failed to extract UID: " + e.getMessage());
+                                                            Log.e(TAG, "Failed to extract DID: " + e.getMessage());
                                                         }
                                                     }
                                                 });

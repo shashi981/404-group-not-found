@@ -9,11 +9,11 @@ public class DietitianData {
     private Uri dietitianProfilePictureUrl;
     private int DID;
 
-    public DietitianData(String firstName, String lastName, String userEmail, Uri dietitianProfilePictureUrl, int DID) {
+    public DietitianData(String firstName, String lastName, String dietitianEmail, Uri dietitianProfilePictureUrl, int DID) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dietitianEmail = dietitianEmail;
-        this.dietitianProfilePictureUrl = this.dietitianProfilePictureUrl;
+        this.dietitianProfilePictureUrl = dietitianProfilePictureUrl;
         this.DID = DID;
     }
 
@@ -36,8 +36,8 @@ public class DietitianData {
         return DID;
     }
 
-    public void setUserProfilePictureUrl(Uri userProfilePictureUrl){
-        this.dietitianProfilePictureUrl = userProfilePictureUrl;
+    public void setDietitianProfilePictureUrl(Uri dietitianProfilePictureUrl){
+        this.dietitianProfilePictureUrl = dietitianProfilePictureUrl;
     }
     public Uri getDietitianProfilePictureUrl() {
         return dietitianProfilePictureUrl;
