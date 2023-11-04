@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 const express = require("express")
 const https = require('https')
 const fs = require('fs')
-//const moment = require('moment');
+const moment = require('moment');
 const cron = require('node-cron');
 const admin = require('firebase-admin');
 /*
@@ -25,8 +25,10 @@ const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
 const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
 
 //change this to maybe minute or hourly for testing
+//maybe change this to more frequently?
 const schedule = '0 0 * * *' //per daily
 //const schedule ='*/2 * * * *' //per 2 minute
+
 
 // Initialize the app with appropriate configurations
 const serviceAccount = require('./grocerymanager_firebase.json');
@@ -34,8 +36,8 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 })
 
-//local testing use
 /*
+//local testing use
 const con = mysql.createConnection({
   host: "",
   port: "3306",
@@ -51,7 +53,6 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
   console.log("%s %s", host, port)
 
 })*/
-
 
 //server use
 const con = mysql.createConnection({
@@ -351,12 +352,12 @@ app.get("/get/items", async (req,res)=>{
 
 //add items
 //done
-app.get("/add/items", async (req,res)=>{
+app.post("/add/items", async (req,res)=>{
   try{
-    let UID=req.query.p1
-    let UPC = req.query.p2 ? req.query.p2.split(',') : []
-    let ExpireDate = req.query.p3 ? req.query.p3.split(',') : []
-    let ItemCount = req.query.p4 ? req.query.p4.split(',') : []
+    let UID=req.body.p1
+    let UPC = req.body.p2 //? req.query.p2.split(',') : []
+    let ExpireDate = req.body.p3// ? req.query.p3.split(',') : []
+    let ItemCount = req.body.p4 //? req.query.p4.split(',') : []
 
     const currentDate = new Date()
     const currentDateString = currentDate.toISOString().split('T')[0]
@@ -410,8 +411,11 @@ app.get("/add/items", async (req,res)=>{
                 
           }
         } catch (error) {
-            console.error('Error parsing JSON:', error);
+            console.error('Error parsing JSON:', error)
           }
+      }else{
+        //todo handle else case
+        values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]))
       }  
     }
     console.log(values)
@@ -422,9 +426,11 @@ app.get("/add/items", async (req,res)=>{
     }
 
     if(returnstatement === ''){
+      console.log('SUCCESS ADDED ITEMS')
       query_success(res, 'SUCCESS ADDED ITEMS')
     }
     else{
+      console.log('Values not added ' + returnstatement)
       query_success(res, 'Values not added ' + returnstatement)
     }
   }
@@ -716,7 +722,7 @@ app.get("/approve/dietReq", async (req,res)=>{
   try{
     UID=req.query.p1
     console.log(UID)
-    const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL FROM USERS u WHERE u.UID=?'
+    const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL, MessageToken) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL, u.MessageToken FROM USERS u WHERE u.UID=?'
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     const query3='DELETE FROM USERS WHERE UID IN (?)'
 
@@ -749,6 +755,42 @@ app.get("/remove/dietReq", async (req,res)=>{
     database_error(res, error.stack)
   }
 })
+
+//todo chnage this to get dietician
+//done test
+app.get("/get/dietician", async (req,res)=>{
+  try{
+  let Email=req.query.p1
+  let Token=req.query.p2
+
+  const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
+  const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
+
+  const [update] = await con.promise().query(updatequery, [Token, Email])
+  const [results] = await con.promise().query(query, [Email])
+
+  if (results.length === 0) {
+    return res.json({});
+  }
+
+  const dietician = results[0];
+
+  const responseObject = {
+    UID: dietician.DID,
+    FirstName: dietician.FirstName,
+    LastName: dietician.LastName,
+    Email: dietician.Email,
+    ProfileURL: dietician.ProfileURL,
+  };
+  console.log("DIETICIAN GET")
+
+  res.json(responseObject);
+  }catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
+  }
+})
+
 
 app.get("/get/users_type", async (req,res)=>{
 
@@ -971,53 +1013,54 @@ app.get("/get/recipe_info", async (req,res)=>{
   }
 })
 
-
+//processShoppingData()
 
 // Define a function to process shopping data and generate reminders
-function processShoppingData(UID) {
-  // User-defined settings
-  const reminderPeriodDays = 2;
-  const numberOfVisits = 10; // This can be changed
+async function processShoppingData() {
+  try{
+    // User-defined settings
+    const reminderPeriodDays = 2
+    const numberOfVisits = 2 // This can be changed
 
-  // Store item purchase history
-  const purchaseHistory = {};
+    // Store item purchase history
+    const purchaseHistory = {}
 
-  // Initialize current date
-  const currentDate = moment();
+    // Initialize current date
+    const currentDate = moment()
 
-  // Initialize the expected run-out date for each item
-  const expectedRunOutDates = {};
+    // Initialize the expected run-out date for each item
+    const expectedRunOutDates = {}
 
+    //Get all users UID and repeat for all UID
+    const queryUsers='SELECT UID, MessageToken FROM USERS;'
+    const [U] = await con.promise().query(queryUsers)
+    const UIDArray = U.map((temp) => temp.UID);
+    const TokenArray=U.map((store)=>store.MessageToken)
 
-  // Connect to the MySQL database
-  con.connect((err) => {
-    if (err) {
-      console.error('MySQL Connection Error:', err);
-      return;
-    }
-    
+    for(let i=0; i<UIDArray.length;i++){
     // NEED TO UPDATE
     // Query to retrieve shopping data from the database
-    const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?';
+      UID=UIDArray[i]
+      const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?'
+      const [result] = await con.promise().query(query, [UID])
 
-    // Execute the query
-    con.query(query,[UID], (queryErr, shoppingData) => {
-      if (queryErr) {
-        console.error('MySQL Query Error:', queryErr);
-        con.end(); // Close the connection
-        return;
-      }
+      const shoppingData=result.map((store)=>{
+        return {
+          item:store.Name,
+          quantity:store.ItemCount,
+          purchaseDate:store.PurchaseDate
+        }
+      })
 
-      // Close the MySQL connection
-      con.end();
+      console.log(shoppingData)
 
-      
       // Populate purchase history, also detecting anomalies
       shoppingData.forEach((shoppingEntry) => {
-        const item = shoppingEntry.item;
-        const quantity = shoppingEntry.quantity;
-        const anomalyThreshold = quantity * 3; // Anomaly detection threshold (e.g., a quantity higher than this threshold is considered an anomaly)
-        const purchaseDate = moment(shoppingEntry.purchase_date, 'YYYY-MM-DD').toDate();
+        const item = shoppingEntry.item
+        const quantity = shoppingEntry.quantity
+        const anomalyThreshold = quantity * 3 // Anomaly detection threshold (e.g., a quantity higher than this threshold is considered an anomaly)
+       // const purchaseDate = moment(shoppingEntry.purchase_date, 'YYYY-MM-DD').toDate();
+        const purchaseDate=shoppingEntry.purchaseDate
 
         // Check for anomalies based on the threshold
         if (quantity > anomalyThreshold) {
@@ -1027,38 +1070,57 @@ function processShoppingData(UID) {
 
         // Updating purchase history
         if (item in purchaseHistory) {
-          purchaseHistory[item].push(purchaseDate);
+          purchaseHistory[item].push(purchaseDate)
         } else {
-          purchaseHistory[item] = [purchaseDate];
+          purchaseHistory[item] = [purchaseDate]
         }
 
         // Calculate expected run-out date based on time frame
         if (!(item in expectedRunOutDates)) {
-          expectedRunOutDates[item] = moment(purchaseDate).add(numberOfVisits, 'weeks').toDate();
+          expectedRunOutDates[item] = moment(purchaseDate).add(numberOfVisits, 'weeks').toDate()
         }
-      });
+      })
 
+      console.log("algorithm tiggered")
+      console.log(expectedRunOutDates)
+      console.log(purchaseHistory)
       // Generate reminders
       for (const item in purchaseHistory) {
-        const purchaseDates = purchaseHistory[item];
+        const purchaseDates = purchaseHistory[item]
 
         // Calculate the average purchase frequency
-        const purchaseFrequency = purchaseDates.length / numberOfVisits; // Number of times purchased per week
+        const purchaseFrequency = purchaseDates.length / numberOfVisits // Number of times purchased per week
 
         // Calculate the expected run-out date
-        const expectedRunOutDate = expectedRunOutDates[item];
+        const expectedRunOutDate = expectedRunOutDates[item]
 
         // Calculate the reminder date
-        const reminderDate = moment(expectedRunOutDate).subtract(reminderPeriodDays, 'days');
+        const reminderDate = moment(expectedRunOutDate).subtract(reminderPeriodDays, 'days')
 
         // TO BE IMPLEMENTED IN FIREBASE
         // Check if it's time to send a reminder 
         if (currentDate.isSameOrAfter(reminderDate)) {
-          console.log(`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`);
+          console.log(`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`)
+          //todo maybe change this to send message for evrey two??
+          text=`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`
+
+          const jsonContent = {
+            notification: {
+              title: 'Reminder for buying items',
+              body: text,
+            },
+            token: TokenArray[i],
+          }
+          Messaging(jsonContent)
         }
       }
-    });
-  });
+    }
+    //})
+  //})
+  }catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
+  }
 }
 
 // Call the function to process shopping data and generate reminders
@@ -1073,88 +1135,93 @@ cron.schedule(schedule, () => {
 //SendExpiryReminder()
 async function SendExpiryReminder(){
   //get all users that have items about to expiry
-  const currentDate = new Date()
+  try{
+    const currentDate = new Date()
 
-  const DisableSafeMode='SET SQL_SAFE_UPDATES = 0;'
-  const queryupdate='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;'
-  const EnableSafeMode='SET SQL_SAFE_UPDATES = 1;'
+    const DisableSafeMode='SET SQL_SAFE_UPDATES = 0;'
+    const queryupdate='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;'
+    const EnableSafeMode='SET SQL_SAFE_UPDATES = 1;'
 
-  const [disable] = await con.promise().query(DisableSafeMode)
-  const [results] = await con.promise().query(queryupdate)
-  const [enable] = await con.promise().query(EnableSafeMode)
+    const [disable] = await con.promise().query(DisableSafeMode)
+    const [results] = await con.promise().query(queryupdate)
+    const [enable] = await con.promise().query(EnableSafeMode)
 
-  const queryselect='SELECT DISTINCT UID FROM OWNS WHERE AboutExpire=1'
-  const [store] = await con.promise().query(queryselect)
-  const UIDArray = store.map((temp) => temp.UID);
-  console.log(UIDArray)
-  
-  //for each users
-  for(let i=0; i<UIDArray.length; i++){
-    UID=UIDArray[i]
-    const queryToken='SELECT u.MessageToken FROM USERS u WHERE UID=?'
-    const queryItems='SELECT DISTINCT g.Name, g.Brand, o.ExpireDate, o.ItemCount FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1;'
-
-    //send notification for all items and the date left
-    //get the token using uid and call firebase using that
-    // Define the message payload
-
-    const t=await con.promise().query(queryToken, [UID])
-    const [Items]=await con.promise().query(queryItems, [UID])
-    const token=t[0].map((storetoken) => storetoken.MessageToken);
-    console.log(t)
-    console.log(token)
-
-    const ItemArray = Items.map((item) => {
-      const itemData = {
-        Name: item.Name,
-        DatesToExpire: Math.ceil((item.ExpireDate - currentDate) / (1000 * 60 * 60 * 24)), // Calculate days until expiration
-        Quantity: item.ItemCount
-      }
+    const queryselect='SELECT DISTINCT UID FROM OWNS WHERE AboutExpire=1'
+    const [store] = await con.promise().query(queryselect)
+    const UIDArray = store.map((temp) => temp.UID);
+    console.log(UIDArray)
     
-      if (item.Brand !== null) {
-        itemData.Brand = item.Brand
-      }
-    
-      return itemData
+    //for each users
+    for(let i=0; i<UIDArray.length; i++){
+      UID=UIDArray[i]
+      const queryToken='SELECT u.MessageToken FROM USERS u WHERE UID=?'
+      const queryItems='SELECT DISTINCT g.Name, g.Brand, o.ExpireDate, o.ItemCount FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1;'
+
+      //send notification for all items and the date left
+      //get the token using uid and call firebase using that
+      // Define the message payload
+
+      const t=await con.promise().query(queryToken, [UID])
+      const [Items]=await con.promise().query(queryItems, [UID])
+      const token=t[0].map((storetoken) => storetoken.MessageToken);
+      console.log(t)
+      console.log(token)
+
+      const ItemArray = Items.map((item) => {
+        const itemData = {
+          Name: item.Name,
+          DatesToExpire: Math.ceil((item.ExpireDate - currentDate) / (1000 * 60 * 60 * 24)), // Calculate days until expiration
+          Quantity: item.ItemCount
+        }
+      
+        if (item.Brand !== null) {
+          itemData.Brand = item.Brand
+        }
+      
+        return itemData
+      })
+
+      const itemsText = ItemArray.reduce((accumulator, item, index) => {
+        const brandText = item.Brand ? `Brand: ${item.Brand}\n` : ''
+        const daysToExpire = item.DatesToExpire
+      
+        let daysToExpireText = ''
+      
+        if (daysToExpire >= 0) {
+          daysToExpireText = `Days to Expire: ${daysToExpire}`
+        } else {
+          daysToExpireText = `Item Already Expired for ${-daysToExpire} days`
+        }
+      
+        const itemText = `Name: ${item.Name}\n${brandText}${daysToExpireText}\nQuantity: ${item.Quantity}\n`
+
+        if (index % 2 === 0) {
+          accumulator.push(itemText)
+        } else {
+          const combinedText = accumulator.pop() + itemText
+          accumulator.push(combinedText)
+        }
+
+        return accumulator
+      }, [])
+
+      const messages = itemsText.map(text => {
+        return{
+          notification: {
+            title: 'Reminder for items about to expire',
+            body: 'Items About to Expire or already expired:\n'+ text,
+          },
+          token: token[0], 
+        }
     })
-
-    const itemsText = ItemArray.reduce((accumulator, item, index) => {
-      const brandText = item.Brand ? `Brand: ${item.Brand}\n` : ''
-      const daysToExpire = item.DatesToExpire
-    
-      let daysToExpireText = ''
-    
-      if (daysToExpire >= 0) {
-        daysToExpireText = `Days to Expire: ${daysToExpire}`
-      } else {
-        daysToExpireText = `Item Already Expired for ${-daysToExpire} days`
-      }
-    
-      const itemText = `Name: ${item.Name}\n${brandText}${daysToExpireText}\nQuantity: ${item.Quantity}\n`
-
-      if (index % 2 === 0) {
-        accumulator.push(itemText)
-      } else {
-        const combinedText = accumulator.pop() + itemText
-        accumulator.push(combinedText)
-      }
-
-      return accumulator
-    }, [])
-
-    const messages = itemsText.map(text => {
-      return{
-        notification: {
-          title: 'Reminder for items about to expire',
-          body: 'Items About to Expire or already expired:\n'+ text,
-        },
-        token: token[0], 
-      }
-  })
-    console.log(messages)
-    messages.forEach(message => {
-      Messaging(message);
-    })
+      console.log(messages)
+      messages.forEach(message => {
+        Messaging(message);
+      })
+    }
+  }catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
   }
 }
 
