@@ -106,16 +106,33 @@
         app:layout_constraintVertical_bias="0.307" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/scanBarButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Scan Another Item"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_bias="0.9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.23" />
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:textColor="@color/dark_blue"
+        android:textSize="24sp"
+        android:layout_width="300dp"
+        android:id="@+id/upc_code_text"
+        android:layout_height="wrap_content"
+        android:text="UPC: "
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.235" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

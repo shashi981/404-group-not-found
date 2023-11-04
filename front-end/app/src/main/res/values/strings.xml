@@ -47,7 +47,7 @@
     <string name="receipt_scanner_button">Receipt</string>
     <string name="item_scanner_button">Item</string>
     <string name="manual_button">Manually Add Items</string>
-    <string name="barcode_scanner_button">Scan barcode</string>
+    <string name="barcode_scanner_button">Scan Item UPC Code</string>
 
     <!-- Recipe Page -->
     <!-- Chat Page -->

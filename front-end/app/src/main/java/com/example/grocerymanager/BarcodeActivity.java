@@ -55,6 +55,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
 
     private NetworkManager networkManager;
 
+
     ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
         if (result.getContents() != null) {
             // UPC code was successfully retrieved
@@ -62,9 +63,11 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
 //            upcCode = "11123456789012";
             // You can proceed with handling the UPC code or launching another activity if needed
             handleUPCCode(upcCode);
+            setUPCCodeToText(upcCode);
         } else {
             // No UPC code was retrieved
-            redirectToAnotherActivity();
+            ActivityLauncher.launchActivity(BarcodeActivity.this, AddItemsActivity.class);
+            finish();
         }
     });
 
@@ -136,21 +139,21 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
                         upcList.add(item.getUPC());
                         quantityList.add(item.getQuantity());
                     }
-                    JSONObject postData1 = new JSONObject();
+                    JSONObject postData = new JSONObject();
                     try{
-                        postData1.put("p1", userData.getUID());
-                        postData1.put("p2", new JSONArray(upcList)); // assuming upcList is a list of Integers
-                        postData1.put("p3", new JSONArray(expiryDateList)); // assuming expiryDateList is a list of Strings
-                        postData1.put("p4", new JSONArray(quantityList)); // assuming quantityList is a list of Integers
+                        postData.put("p1", userData.getUID());
+                        postData.put("p2", new JSONArray(upcList)); // assuming upcList is a list of Integers
+                        postData.put("p3", new JSONArray(expiryDateList)); // assuming expiryDateList is a list of Strings
+                        postData.put("p4", new JSONArray(quantityList)); // assuming quantityList is a list of Integers
                     }
                     catch (JSONException e){
                         e.printStackTrace();
                     }
 
-                    RequestBody body1 = RequestBody.create(JSON, postData1.toString());
+                    RequestBody body = RequestBody.create(JSON, postData.toString());
                     Request request = new Request.Builder()
                             .url(serURL + "add/items")
-                            .post(body1)
+                            .post(body)
                             .build();
 
                     client.newCall(request).enqueue(new Callback() {
@@ -190,6 +193,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             }
         });
 
+        scanCode();
 
     }
 
@@ -281,9 +285,13 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
     }
 
     private void launchInventoryIntent() {
-        Intent inventoryIntent = new Intent(BarcodeActivity.this, InventoryActivity.class);
-        startActivity(inventoryIntent);
+        ActivityLauncher.launchActivity(BarcodeActivity.this, InventoryActivity.class);
         finish();
+    }
+
+    private void setUPCCodeToText(String upcCode){
+        TextView upcCodeTextView = findViewById(R.id.upc_code_text);
+        upcCodeTextView.setText("UPC: " + upcCode);
     }
 
 
@@ -299,28 +307,4 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             }
         }).show();
     }
-
-    private void redirectToAnotherActivity() {
-        // Code to redirect to another activity when no data is retrieved
-        // For example, you can start a new activity here
-        Intent intent = new Intent(BarcodeActivity.this, AddItemsActivity.class);
-        startActivity(intent);
-    }
-
-
-//    ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result ->{
-//        if (result.getContents() != null) {
-//
-////            String upcCode = result.getContents();
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(BarcodeActivity.this);
-//            builder.setMessage(result.getContents());
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i){
-//                    dialogInterface.dismiss();
-//                }
-//            }).show();
-//        }
-//    });
 }

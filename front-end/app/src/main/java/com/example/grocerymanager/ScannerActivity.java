@@ -51,16 +51,6 @@ public class ScannerActivity extends AppCompatActivity {
             }
         });
 
-//        scannerIcon = findViewById(R.id.scan_icon_scanner);
-//        scannerIcon.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ActivityLauncher.launchActivity(ScannerActivity.this, ScannerActivity.class);
-//
-//            }
-//        });
-
-
 
         inventoryIcon = findViewById(R.id.inventory_icon_scanner);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
