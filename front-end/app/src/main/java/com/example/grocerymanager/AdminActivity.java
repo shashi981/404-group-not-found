@@ -156,14 +156,12 @@ public class AdminActivity extends AppCompatActivity {
                 dietitianUID.setText("UID: " + user.getUID());
 
                 String serverURL = "https://20.104.197.24/";
-                UserData userData = SharedPrefManager.loadUserData(AdminActivity.this);
-                int userID = userData.getUID();
 
                 approveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Request requestName = new Request.Builder()
-                                .url(serverURL + "approve/dietReq?p1=" + userID)
+                                .url(serverURL + "approve/dietReq?p1=" + user.getUID())
                                 .build();
                         client.newCall(requestName).enqueue(new Callback() {
                             @Override
@@ -189,7 +187,7 @@ public class AdminActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Request requestName = new Request.Builder()
-                                .url(serverURL + "remove/dietReq?p1=" + userID)
+                                .url(serverURL + "remove/dietReq?p1=" + user.getUID())
                                 .build();
                         client.newCall(requestName).enqueue(new Callback() {
                             @Override
@@ -211,7 +209,7 @@ public class AdminActivity extends AppCompatActivity {
                     }
                 });
 
-                LinearLayout mainLayout = findViewById(R.id.inventory_container_inventory);
+                LinearLayout mainLayout = findViewById(R.id.inventory_container_admin);
                 mainLayout.addView(view);
             }
     }

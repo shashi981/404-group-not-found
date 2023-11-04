@@ -5,9 +5,9 @@ public class Item {
     private String expiry;
     private int quantity;
     private int itemId;
-    private  long UPC;
+    private String UPC;
 
-    public Item(String name, String expiry, int quantity, int itemId, long UPC) {
+    public Item(String name, String expiry, int quantity, int itemId, String UPC) {
         this.name = name;
         this.expiry = expiry;
         this.quantity = quantity;
@@ -42,8 +42,8 @@ public class Item {
     public void setItemId(int itemId){
         this.itemId = itemId;
     }
-    public long getUPC(){return UPC;}
-    public void setUPC(long UPC){
+    public String getUPC(){return UPC;}
+    public void setUPC(String UPC){
         this.UPC = UPC;
     }
 }
