@@ -47,7 +47,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
     private String upcCode;
     private Button addItemsInventoryButton;
     private List<String> expiryDateList;
-    private List<Long> upcList;
+    private List<String> upcList;
     private List<Integer> quantityList;
     private List<Item> itemList;
     private OkHttpClient client;
@@ -60,16 +60,40 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         if (result.getContents() != null) {
             // UPC code was successfully retrieved
             upcCode = result.getContents();
+            try{
+                if(upcCode.length() == 12 && Long.parseLong(upcCode) >=0 ){
+                    handleUPCCode(upcCode);
+                    setUPCCodeToText(upcCode);
+                }
+                else{
+                    alertNotValid();
+                    upcCode = "";
+                }
+            }
+            catch (NumberFormatException e){
+                Log.e(TAG, "Invalid UPC Code: " + upcCode);
+                alertNotValid();
+                upcCode = "";
+            }
+
 //            upcCode = "11123456789012";
             // You can proceed with handling the UPC code or launching another activity if needed
-            handleUPCCode(upcCode);
-            setUPCCodeToText(upcCode);
-        } else {
-            // No UPC code was retrieved
-            ActivityLauncher.launchActivity(BarcodeActivity.this, AddItemsActivity.class);
-            finish();
+//            handleUPCCode(upcCode);
+//            setUPCCodeToText(upcCode);
         }
     });
+
+    private void alertNotValid() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("The Barcode You Have Scanned is Unrecognizable, Please Try Again.")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 
     @Override
@@ -100,21 +124,27 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         itemList = new ArrayList<>();
         addItemButton = findViewById(R.id.add_item_to_barcode);
         addItemButton.setOnClickListener(view -> {
-            if (expiryDateString.isEmpty() || itemQuantity.getText().toString().isEmpty() || upcCode.isEmpty() || upcCode == null) {
-
-            } else {
+            try{
                 long upc = Long.parseLong(upcCode);
-                String itemQuantityStr = itemQuantity.getText().toString();
-                Item newItem = new Item("", expiryDateString, Integer.parseInt(itemQuantityStr), -1, upc);
-                itemList.add(newItem);
-                addItemToInventory(newItem);
-                Log.d(TAG, itemList.toString());
+                if (expiryDateString.isEmpty() || itemQuantity.getText().toString().isEmpty() || upcCode == null || upcCode.isEmpty()) {
 
-                expiryDateString="";
-                itemQuantity.getText().clear();
-                upcCode = "";
+                } else {
+                    String itemQuantityStr = itemQuantity.getText().toString();
+                    Item newItem = new Item("", expiryDateString, Integer.parseInt(itemQuantityStr), -1, upcCode);
+                    itemList.add(newItem);
+                    addItemToInventory(newItem);
+                    Log.d(TAG, itemList.toString());
 
+                    expiryDateString="";
+                    itemQuantity.getText().clear();
+                    upcCode = "";
+                    setUPCCodeToText("");
 
+                }
+
+            }
+            catch (NumberFormatException e){
+                Log.e(TAG, "Invalid UPC Code: " + upcCode);
             }
         });
 
@@ -207,7 +237,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         Button editButton = view.findViewById(R.id.edit_button);
         Button deleteButton = view.findViewById(R.id.delete_button);
 
-        itemNameTextView.setText(Long.toString(item.getUPC()));
+        itemNameTextView.setText(item.getUPC());
         expiryDateTextView.setText("Expiry Date: " + item.getExpiry());
         quantityTextView.setText("Quantity: " + item.getQuantity());
 

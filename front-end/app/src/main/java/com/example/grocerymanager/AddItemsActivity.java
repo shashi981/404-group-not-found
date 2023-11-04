@@ -94,7 +94,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     String itemNameString = itemName.getText().toString();
                     String itemQuantityString = itemQuantity.getText().toString();
 
-                    Item newItem = new Item(itemNameString, expiryDateString, Integer.parseInt(itemQuantityString), -1, -1);
+                    Item newItem = new Item(itemNameString, expiryDateString, Integer.parseInt(itemQuantityString), -1, "-1");
                     itemList.add(newItem);
                     addItemToInventory(newItem);
                     Log.d(TAG, itemList.toString());

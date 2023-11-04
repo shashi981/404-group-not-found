@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                                         }
                                     });
                                 }
-                                else if(responseBody.trim().equals("Dietitian")){
+                                else if(responseBody.trim().equals("Dietician")){
                                     try {
                                         JSONObject responseJson = new JSONObject(responseBody);
                                         int DID = responseJson.getInt("DID");

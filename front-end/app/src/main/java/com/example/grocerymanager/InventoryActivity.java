@@ -51,7 +51,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
     private ImageButton scannerIcon;
     private List<Integer> itemIdList;
     private List<Integer> itemIdListEdit;
-    private List<Long> itemUPCList;
+    private List<String> itemUPCList;
     private List<String> itemExpiryList;
     private List<Integer> itemCountList;
 
@@ -109,7 +109,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
                             String expiryDate = jsonObject.getString("ExpireDate");
                             int quantity = jsonObject.getInt("ItemCount");
                             int itemId = jsonObject.getInt("ItemID");
-                            int itemUPC = jsonObject.getInt("UPC");
+                            String itemUPC = jsonObject.getString("UPC");
 
                             // Create an Item object
                             Item item = new Item(itemName, expiryDate, quantity, itemId, itemUPC);
