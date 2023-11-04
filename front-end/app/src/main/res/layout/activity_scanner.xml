@@ -169,61 +169,77 @@
         app:srcCompat="@drawable/menu_bar_dark_40" />
 
 
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.725"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintVertical_bias="0.711" -->
+
+
+<!--    &lt;!&ndash;        app:layout_constraintTop_toBottomOf="@+id/scanBarcodeButton"&ndash;&gt;<![CDATA[-->
+<!--        app:layout_constraintVertical_bias="0.196" />-->
+
+<!--    ]]>-->
 
     <Button
-        android:backgroundTint="@color/dark_blue"
-        android:backgroundTintMode="src_over"
-        android:textColor="@color/faded_white"
         android:id="@+id/receipt_scanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/receipt_scanner_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.278"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.711" />
-
-    <Button
+        android:layout_marginBottom="408dp"
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
+        android:text="@string/receipt_scanner_button"
         android:textColor="@color/faded_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/item_scanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/item_scanner_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.725"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.711" />
-
-    <Button
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
+        android:text="@string/item_scanner_button"
         android:textColor="@color/faded_white"
+        app:layout_constraintBottom_toTopOf="@+id/receipt_scanner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
         android:id="@+id/manual_scanner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
         android:text="@string/manual_button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="@color/faded_white"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navbar_green"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.843"
+        app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.809" />
+        app:layout_constraintTop_toBottomOf="@+id/receipt_scanner"
+        app:layout_constraintVertical_bias="0.459" />
 
     <Button
         android:id="@+id/scanBarcodeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="408dp"
         android:text="@string/barcode_scanner_button"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navbar_blue_chat"
-        app:layout_constraintEnd_toStartOf="@+id/manual_scanner"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/receipt_scanner" />
+        app:layout_constraintTop_toBottomOf="@+id/item_scanner" />
+    <!--        app:layout_constraintBottom_toTopOf="@+id/bottom_navbar_blue_chat"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/manual_scanner"-->
+<!--        app:layout_constraintHorizontal_bias="0.0"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/receipt_scanner"-->
+<!--        app:layout_constraintVertical_bias="0.0" -->
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
