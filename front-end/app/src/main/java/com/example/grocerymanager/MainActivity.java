@@ -289,29 +289,61 @@ public class MainActivity extends AppCompatActivity {
                                     });
                                 }
                                 else if(responseBody.trim().equals("Dietician")){
-                                    try {
-                                        JSONObject responseJson = new JSONObject(responseBody);
-                                        int DID = responseJson.getInt("DID");
-                                        // Now you have the UID as an integer
-                                        Log.d(TAG, "Extracted DID: " + DID);
-                                        String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
-                                        Uri defProfileUri = Uri.parse(defProfile);
-                                        DietitianData dietitianData;
+                                    Log.d(TAG, "Dietician Exists, Launching Home Intent");
+                                    Request request = new Request.Builder()
+                                            .url(serverURL + "get/dietician?p1=" + account.getEmail() + "&p2=" + tm.getToken())
+                                            .build();
 
-                                        if(account.getPhotoUrl() == null){
+                                    client.newCall(request).enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            // Handle network request failure
+                                            Log.e(TAG, "Request failed: " + e.getMessage());
+                                        }
 
-                                            dietitianData = new DietitianData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, DID);
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            if (response.isSuccessful()) {
+                                                // Get the response body as a string
+                                                String responseBody = response.body().string();
+
+                                                // Process the response on the main UI thread
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        // Update the UI or perform any other necessary actions with the response
+                                                        Log.d(TAG, "Response: " + responseBody);
+                                                        try {
+                                                            JSONObject responseJson = new JSONObject(responseBody);
+                                                            int DID = responseJson.getInt("DID");
+                                                            // Now you have the UID as an integer
+                                                            Log.d(TAG, "Extracted DID: " + DID);
+                                                            String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
+                                                            Uri defProfileUri = Uri.parse(defProfile);
+                                                            DietitianData dietitianData;
+
+                                                            if(account.getPhotoUrl() == null){
+
+                                                                dietitianData = new DietitianData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, DID);
+                                                            }
+                                                            else{
+                                                                dietitianData = new DietitianData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), DID);
+                                                            }
+                                                            SharedPrefManager.saveDietitianData(MainActivity.this, dietitianData);
+                                                            launchDietitianIntent();
+                                                        } catch (JSONException e) {
+                                                            Log.e(TAG, "Failed to extract UID: " + e.getMessage());
+                                                        }
+                                                    }
+                                                });
+                                            } else {
+                                                // Handle unsuccessful response (e.g., non-200 status code)
+                                                Log.e(TAG, "Unsuccessful response: " + response.code());
+                                                signOut();
+
+                                            }
                                         }
-                                        else{
-                                            dietitianData = new DietitianData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), DID);
-                                        }
-                                        SharedPrefManager.saveDietitianData(MainActivity.this, dietitianData);
-                                        launchHomeIntent();
-                                    } catch (JSONException e) {
-                                        Log.e(TAG, "Failed to extract DID: " + e.getMessage());
-                                    }
-                                    ActivityLauncher.launchActivity(MainActivity.this, DietitianActivity.class);
-                                    finish();
+                                    });
                                 }
                                 else if(responseBody.trim().equals("Admin")){
                                     ActivityLauncher.launchActivity(MainActivity.this, AdminActivity.class);
@@ -342,8 +374,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchHomeIntent() {
-        Intent homeIntent = new Intent(MainActivity.this, HomeActivity.class);
-        startActivity(homeIntent);
+        ActivityLauncher.launchActivity(MainActivity.this, HomeActivity.class);
+        finish();
+    }
+
+    private void launchDietitianIntent() {
+        ActivityLauncher.launchActivity(MainActivity.this, DietitianActivity.class);
         finish();
     }
 
