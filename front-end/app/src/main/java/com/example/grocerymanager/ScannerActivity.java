@@ -46,7 +46,7 @@ public class ScannerActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ActivityLauncher.launchActivity(ScannerActivity.this, ChatActivity.class);
+                ActivityLauncher.launchActivity(ScannerActivity.this, UserListActivity.class);
                 finish();
             }
         });

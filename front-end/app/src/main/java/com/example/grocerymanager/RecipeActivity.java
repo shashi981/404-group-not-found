@@ -150,7 +150,7 @@ public class RecipeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ActivityLauncher.launchActivity(RecipeActivity.this, ChatActivity.class);
+                ActivityLauncher.launchActivity(RecipeActivity.this, UserListActivity.class);
                 finish();
             }
         });

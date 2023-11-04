@@ -47,6 +47,12 @@
             android:name=".ChatActivity"
             android:exported="false" />
         <activity
+            android:name=".UserListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ChatUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".InventoryActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan"

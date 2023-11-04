@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5"
     tools:context=".ChatActivity">
-    
+
     <LinearLayout
         android:id="@+id/bottom_navbar_blue_recipe"
         android:layout_width="103dp"
@@ -227,7 +227,7 @@
             android:src="@drawable/ic_send"/>
 
     </FrameLayout>
-    
+
     <EditText
         android:id="@+id/inputMessage"
         android:layout_width="0dp"
@@ -249,8 +249,4 @@
         app:layout_constraintBottom_toBottomOf="@id/chatBox"
         app:layout_constraintEnd_toStartOf="@id/layoutSend"
         app:layout_constraintStart_toStartOf="@id/chatBox"/>
-
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

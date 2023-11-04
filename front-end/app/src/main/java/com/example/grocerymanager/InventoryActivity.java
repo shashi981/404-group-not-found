@@ -138,7 +138,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
             @Override
             public void onClick(View view) {
 
-                ActivityLauncher.launchActivity(InventoryActivity.this, ChatActivity.class);
+                ActivityLauncher.launchActivity(InventoryActivity.this, UserListActivity.class);
                 finish();
             }
         });

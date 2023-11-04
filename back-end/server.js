@@ -83,6 +83,125 @@ function query_success(response, message){
   response.status(200).send(message)
 }
 
+const WebSocket = require('ws')
+const wss = new WebSocket.Server({server})
+
+let userConnections = {};
+let dieticianConnections = {};
+
+wss.on('connection', (ws,req) => {
+    console.log('Client connected');
+    const actorId = req.headers['actor-id'];
+    const actorType = req.headers['actor-type']; // This could be 'user' or 'dietician'
+
+    if (actorType === 'user') {
+        userConnections[actorId] = ws;
+    } else if (actorType === 'dietician') {
+        dieticianConnections[actorId] = ws;
+    }
+
+    // On receiving a message from the client
+    ws.on('message', (message) => {
+        console.log('Received:', message);
+        
+        // Parse the message (assuming it's in JSON format)
+        let parsedMessage = JSON.parse(message);
+        
+        // Store in the database
+        let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)';
+        con.query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER], (error, results) => {
+            if (error) {
+                console.error('Database error:', error);
+                ws.send(JSON.stringify({ type: 'error', message: 'Error saving the message' }));
+            } else {
+                console.log('Message saved');
+                ws.send(JSON.stringify({ type: 'success', message: 'Message saved successfully' }));
+            }
+        });
+
+        if (parsedMessage.FROM_USER === 1) {
+            // Message is from a user, forward to dietician
+            forwardMessageToDietician(parsedMessage.DID, message);
+        } else {
+            // Message is from a dietician, forward to user
+            forwardMessageToUser(parsedMessage.UID, message);
+        }
+    });
+
+    // When the client closes the connection
+    ws.on('close', () => {
+        console.log('Client disconnected');
+    });
+});
+
+//Helper functions for ws
+function forwardMessageToDietician(DID, message) {
+    const dieticianWs = dieticianConnections[DID];
+    
+    if (dieticianWs) {
+        dieticianWs.send(message);
+    } else {
+        console.error(`No active connection found for dietician with ID ${DID}`);
+    }
+}
+
+function forwardMessageToUser(UID, message) {
+    const userWs = userConnections[UID];
+    
+    if (userWs) {
+        userWs.send(message);
+    } else {
+        console.error(`No active connection found for user with ID ${UID}`);
+    }
+}
+//End Helper functions for ws
+
+//END POINTS FOR WS
+app.get('/get/availableDieticians', (req, res) => {
+    const query = 'SELECT DID, FirstName, LastName, Email, ProfileURL FROM DIETICIAN';
+
+    con.query(query, (error, results) => {
+        if (error) {
+            database_error(res, error);
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+app.get('/get/usersForDietician/:dieticianId', (req, res) => {
+    const dieticianId = req.params.dieticianId;
+    const query = 'SELECT DISTINCT UID FROM CHAT WHERE DID = ?';
+
+    con.query(query, [dieticianId], (error, results) => {
+        if (error) {
+            database_error(res, error);
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+// Endpoint to retrieve chat history between a user and a dietician
+app.get('/get/chatHistory/:UID/:DID', (req, res) => {
+    const UID = req.params.UID;
+    const DID = req.params.DID;
+    const offset = req.query.offset || 0;  // for pagination
+    const limit = 50;  // max number of messages to return
+
+    const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ? OFFSET ?';
+
+    con.query(query, [UID, DID, limit, offset], (error, results) => {
+        if (error) {
+            database_error(res, error);
+        } else {
+            res.json(results);
+        }
+    });
+});
+
+//END POINTS WS END
+
 //socket
 /*
 io.on('connection', (socket) => {
