@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         googleAccount = GoogleSignIn.getLastSignedInAccount(this);
 
         if (googleAccount != null) {
-            launchHomeIntent();
+            updateUI(googleAccount);
         }
 
         signInButton = findViewById(R.id.sign_in_button_login);

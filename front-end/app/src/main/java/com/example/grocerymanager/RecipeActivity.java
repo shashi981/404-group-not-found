@@ -286,28 +286,37 @@ public class RecipeActivity extends AppCompatActivity {
     //    ChatGPT Usage: No
     private void displayRecipes() {
         Log.d(TAG, String.valueOf(recipeList.size()));
-        for(Recipe recipe : recipeList) {
-            LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = inflater.inflate(R.layout.recipe_preview_template, null);
+        if (recipeList.size() == 0) {
+            LinearLayout recipeContainer = findViewById(R.id.recipe_container_recipe);
+            TextView textView = new TextView(RecipeActivity.this);
+            textView.setText("Sorry, we do not have a recipe for you at the moment!\nPlease add more items to your inventory and come back later.");
+            textView.setTextColor(getResources().getColor(R.color.dark_blue));
+            textView.setTextSize(24);
+            recipeContainer.addView(textView);
+        } else {
+            for (Recipe recipe : recipeList) {
+                LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view = inflater.inflate(R.layout.recipe_preview_template, null);
 
-            TextView recipeName = view.findViewById(R.id.name_of_recipe);
-            TextView youtubeLink = view.findViewById(R.id.youtube_link);
-            TextView fiveIngredients = view.findViewById(R.id.five_ingredients);
-            Button selectRecipeButton = view.findViewById(R.id.select_recipe_button);
+                TextView recipeName = view.findViewById(R.id.name_of_recipe);
+                TextView youtubeLink = view.findViewById(R.id.youtube_link);
+                TextView fiveIngredients = view.findViewById(R.id.five_ingredients);
+                Button selectRecipeButton = view.findViewById(R.id.select_recipe_button);
 
-            recipeName.setText(recipe.getRecipeName());
-            youtubeLink.setText(recipe.getYouTubeLink());
-            fiveIngredients.setText(recipe.getFiveIngredientsAstString());
+                recipeName.setText(recipe.getRecipeName());
+                youtubeLink.setText(recipe.getYouTubeLink());
+                fiveIngredients.setText(recipe.getFiveIngredientsAstString());
 
-            selectRecipeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    displayFullRecipe(recipe);
-                }
-            });
+                selectRecipeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        displayFullRecipe(recipe);
+                    }
+                });
 
-            LinearLayout mainLayout = findViewById(R.id.recipe_container_recipe);
-            mainLayout.addView(view);
+                LinearLayout mainLayout = findViewById(R.id.recipe_container_recipe);
+                mainLayout.addView(view);
+            }
         }
     }
 
