@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+        ActivityLauncher.launchActivity(MainActivity.this, DietitianActivity.class);
     }
 
     @Override
