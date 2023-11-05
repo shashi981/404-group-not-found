@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
 
+
 public class DietitianListActivity extends AppCompatActivity {
     final static String TAG = "DietitianListActivity";
     private static final String SERVER_URL = "https://20.104.197.24/";
@@ -60,7 +61,7 @@ public class DietitianListActivity extends AppCompatActivity {
         fetchAvailableUsers();
     }
 
-    //CHAT GPT USAGE: PARTIAL
+    //CHAT GPT USAGE: partial
     private void fetchAvailableUsers() {
         dietitianData = SharedPrefManager.loadDietitianData(DietitianListActivity.this);
         int did = dietitianData.getDID();
