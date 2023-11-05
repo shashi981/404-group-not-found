@@ -1,4 +1,5 @@
 package com.example.grocerymanager;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,54 +24,54 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-public class ChatUserActivity extends AppCompatActivity {
-    final static String TAG = "ChatUserActivity"; //identify where log is coming from
+public class ChatDieticianActivity extends AppCompatActivity {
+
+    final static String TAG = "ChatDieticianActivity"; //identify where log is coming from
     private NetworkManager networkManager;
     private WebSocket webSocket;
     private OkHttpClient client;
-    private UserData userData;
+    private DietitianData dietitianData;
     private ImageButton backIcon;
     private static final String SERVER_URL = "wss://20.104.197.24";
 
-    private ChatAdapter chatAdapter;
+    private ChatAdapterDietician chatAdapterDietician;
     private RecyclerView chatRecyclerView;
     private List<ChatMessage> chatHistoryList = new ArrayList<>();
+    private int curUID;
 
-    private int curDID;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_user);
-        curDID = -1000;
+        setContentView(R.layout.activity_chat_dietician);
+        curUID = -1000;
 
         // Initialize UI components
-        chatRecyclerView = findViewById(R.id.chatRecyclerView);
+        chatRecyclerView = findViewById(R.id.chatRecyclerView_diet);
         EditText inputMessage = findViewById(R.id.inputMessage);
         Button sendButton = findViewById(R.id.sendButton);
         backIcon = findViewById(R.id.imageButton);
 
         // Set up RecyclerView with an empty adapter
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatAdapter = new ChatAdapter(this,chatHistoryList);
-        chatRecyclerView.setAdapter(chatAdapter);
-        chatAdapter.notifyDataSetChanged();
+        chatAdapterDietician = new ChatAdapterDietician(this,chatHistoryList);
+        chatRecyclerView.setAdapter(chatAdapterDietician);
+        chatAdapterDietician.notifyDataSetChanged();
 
         //DID and UID
-        curDID = getIntent().getIntExtra("selectedDietitianDID", -1000);
-        Log.d(TAG, "DID = " + curDID);
-        userData = SharedPrefManager.loadUserData(ChatUserActivity.this);
-        Log.d(TAG, "UID = " + userData.getUID());
-
+        curUID = getIntent().getIntExtra("selectedDietitianUID", -1000);
+        Log.d(TAG, "DID = " + curUID);
+        dietitianData = SharedPrefManager.loadDietitianData(ChatDieticianActivity.this);
+        Log.d(TAG, "UID = " + dietitianData.getDID());
+        //fetchChatHistory(dietitianData.getDID(),curUID);
         initializeWebSocket();
-        fetchChatHistory(userData.getUID(),curDID);
+        fetchChatHistory(dietitianData.getDID(),curUID);
 
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityLauncher.launchActivity(ChatUserActivity.this, UserListActivity.class);
-                //finish();
+                ActivityLauncher.launchActivity(ChatDieticianActivity.this, DietitianListActivity.class);
             }
         });
 
@@ -80,21 +81,23 @@ public class ChatUserActivity extends AppCompatActivity {
 
                 String message = inputMessage.getText().toString();
                 if(!message.isEmpty()){
-                    sendMessage(userData.getUID(), curDID, message);
-                    fetchChatHistory(userData.getUID(),curDID);
+                    sendMessage(curUID, dietitianData.getDID(), message);
+                    fetchChatHistory(curUID, dietitianData.getDID());
                     inputMessage.setText("");
                 }
             }
         });
     }
+
     private void initializeWebSocket() {
         networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         Request request = new Request.Builder().url(SERVER_URL)
-                .header("actor-id", "" + userData.getUID()) // Replace with the actual actor-id
-                .header("actor-type", "user") // Replace with 'user' or 'dietician'
+                .header("actor-id", "" + dietitianData.getDID()) // Replace with the actual actor-id
+                .header("actor-type", "dietician") // Replace with 'user' or 'dietician'
                 .build();
+
         webSocket = client.newWebSocket(request, new WebSocketListener() {
             @Override
             public void onOpen(WebSocket webSocket, Response response) {
@@ -117,7 +120,6 @@ public class ChatUserActivity extends AppCompatActivity {
                 Log.e(TAG, "WebSocket connection failed: " + t.getMessage());
             }
         });
-
     }
 
     private void fetchChatHistory(int UID, int DID) {
@@ -159,7 +161,7 @@ public class ChatUserActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 Log.d(TAG, "notifyData");
-                                chatAdapter.notifyDataSetChanged();
+                                chatAdapterDietician.notifyDataSetChanged();
                             }
                         });
                     } catch (JSONException e) {
@@ -178,7 +180,7 @@ public class ChatUserActivity extends AppCompatActivity {
             message.put("UID", UID);
             message.put("DID", DID);
             message.put("Text", Text);
-            message.put("FROM_USER", 1);  // 1 denotes "from user"
+            message.put("FROM_USER", 0);  // 1 denotes "from user"
 
             if (webSocket != null) {
                 webSocket.send(message.toString());

@@ -11,15 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+public class ChatAdapterDietician extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ChatMessage> chatMessages;
-    final static String TAG = "ChatAdapter";
-
+    final static String TAG = "ChatAdapterDietician";
     private Context context;
 
-
-    public ChatAdapter(Context context, List<ChatMessage> chatMessages) {
+    public ChatAdapterDietician(Context context, List<ChatMessage> chatMessages) {
         this.context = context;
         this.chatMessages = chatMessages;
     }
@@ -39,10 +36,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == 1) { // User message
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_message, parent, false);
-            return new UserViewHolder(view);
+            return new ChatAdapter.UserViewHolder(view);
         } else { // Dietician message
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_dietician_message, parent, false);
-            return new DieticianViewHolder(view);
+            return new ChatAdapter.DieticianViewHolder(view);
         }
     }
 
@@ -50,9 +47,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessage chatMessage = chatMessages.get(position);
         if (holder.getItemViewType() == 1) { // User message
-            ((UserViewHolder) holder).bind(chatMessage);
+            ((ChatAdapter.UserViewHolder) holder).bind(chatMessage);
         } else { // Dietician message
-            ((DieticianViewHolder) holder).bind(chatMessage);
+            ((ChatAdapter.DieticianViewHolder) holder).bind(chatMessage);
         }
     }
 
@@ -61,7 +58,6 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return chatMessages.size();
     }
 
-    // ViewHolder for user messages
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         private TextView userMessageText;
 
@@ -88,4 +84,5 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             dieticianMessageText.setText(chatMessage.getMessage());
         }
     }
+
 }
