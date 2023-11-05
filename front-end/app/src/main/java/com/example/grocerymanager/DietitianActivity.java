@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
@@ -18,6 +19,7 @@ public class DietitianActivity extends AppCompatActivity {
     private ImageButton menuIcon;
     private NetworkManager networkManager;
     private OkHttpClient client;
+    private Button chatButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,14 @@ public class DietitianActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 popupMenu.show();
+            }
+        });
+
+        chatButton = findViewById(R.id.chatDietitianUserButton);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(DietitianActivity.this, DietitianListActivity.class);
             }
         });
     }
