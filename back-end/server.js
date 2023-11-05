@@ -26,8 +26,11 @@ const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?numbe
 
 //change this to maybe minute or hourly for testing
 //maybe change this to more frequently?
-const schedule = '0 0 * * *' //per daily
-//const schedule ='*/2 * * * *' //per 2 minute
+const schedule = '0 0 * * *' //per daily midnight
+const schedule_even = '0 0 */2 * *' //run on even days
+
+//const scheduletest ='*/2 * * * *' //per 2 minute
+
 
 
 // Initialize the app with appropriate configurations
@@ -1134,6 +1137,12 @@ app.get("/get/recipe_info", async (req,res)=>{
 
 //processShoppingData()
 
+cron.schedule(schedule_even, () => {
+  console.log('Cron job triggered for shoppingdata')
+  processShoppingData()
+})
+
+//todo add in the scheduling part, forget yesterday
 // Define a function to process shopping data and generate reminders
 async function processShoppingData() {
   try{
@@ -1230,12 +1239,11 @@ async function processShoppingData() {
             },
             token: TokenArray[i],
           }
+          console.log(jsonContent)
           Messaging(jsonContent)
         }
       }
     }
-    //})
-  //})
   }catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
@@ -1247,8 +1255,8 @@ async function processShoppingData() {
 
 //expiry date reminders
 cron.schedule(schedule, () => {
-  console.log('Cron job triggered');
-  SendExpiryReminder();
+  console.log('Cron job triggered expiry date reminder')
+  SendExpiryReminder()
 });
 
 //SendExpiryReminder()
