@@ -312,7 +312,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         expiryDateString = String.format("%d-%02d-%02d", year, month + 1, day);
     }
 
-    //    ChatGPT Usage: TODO
+    //    ChatGPT Usage: Partial
     private void scanCode() {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume up to turn on flash");
@@ -334,7 +334,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         upcCodeTextView.setText("UPC: " + upcCode);
     }
 
-    //    ChatGPT Usage: TODO
+    //    ChatGPT Usage: Partial
     private void handleUPCCode(String upcCode) {
         // Handle the UPC code as needed
         // For example, store it, display it, or process it in some way
