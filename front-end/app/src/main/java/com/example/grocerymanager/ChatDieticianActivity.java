@@ -40,7 +40,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
     private int curUID;
 
 
-
+    //CHAT GPT USAGE: PARTIAL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +74,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
                 ActivityLauncher.launchActivity(ChatDieticianActivity.this, DietitianListActivity.class);
             }
         });
+
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +123,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
         });
     }
 
+    //CHAT GPT USAGE: PARTIAL
     private void fetchChatHistory(int UID, int DID) {
         String url = "https://20.104.197.24/get/chatHistory/" + UID + "/" + DID;
 
@@ -174,6 +176,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
         });
     }
 
+    //CHAT GPT USAGE: NO
     private void sendMessage(int UID, int DID, String Text) {
         try {
             JSONObject message = new JSONObject();

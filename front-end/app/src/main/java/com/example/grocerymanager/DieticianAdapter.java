@@ -18,11 +18,13 @@ public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.Diet
     final static String TAG = "DieticianAdapter"; //identify where log is coming from
     private Context context;
 
+    //CHAT GPT USAGE: NO
     public DieticianAdapter(Context context, List<DietitianData> dieticianList) {
         this.context = context;
         this.dieticianList = dieticianList;
     }
 
+    //CHAT GPT USAGE: NO
     @NonNull
     @Override
     public DieticianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -31,6 +33,7 @@ public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.Diet
         return new DieticianViewHolder(itemView, context);
     }
 
+    //CHAT GPT USAGE: NO
     @Override
     public void onBindViewHolder(@NonNull DieticianViewHolder holder, int position) {
         DietitianData dietician = dieticianList.get(position);
@@ -39,6 +42,7 @@ public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.Diet
         holder.bindDietician(dietician);  // Associate the dietician with the ViewHolder
     }
 
+    //CHAT GPT USAGE: NO
     @Override
     public int getItemCount() {
         return dieticianList.size();

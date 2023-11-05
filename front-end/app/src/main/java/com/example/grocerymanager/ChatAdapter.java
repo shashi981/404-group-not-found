@@ -19,11 +19,13 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
 
 
+    //CHAT GPT USAGE: NO
     public ChatAdapter(Context context, List<ChatMessage> chatMessages) {
         this.context = context;
         this.chatMessages = chatMessages;
     }
 
+    //CHAT GPT USAGE: NO
     @Override
     public int getItemViewType(int position) {
         ChatMessage chatMessage = chatMessages.get(position);
@@ -34,6 +36,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    //CHAT GPT USAGE: FULL
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -46,6 +49,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    //CHAT GPT USAGE: PARTIAL
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessage chatMessage = chatMessages.get(position);
@@ -56,6 +60,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    //CHAT GPT USAGE: NO
     @Override
     public int getItemCount() {
         return chatMessages.size();
@@ -76,6 +81,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     // ViewHolder for dietician messages
+    //CHAT GPT USAGE: NO
     public static class DieticianViewHolder extends RecyclerView.ViewHolder {
         private TextView dieticianMessageText;
 

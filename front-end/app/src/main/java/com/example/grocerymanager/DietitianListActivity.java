@@ -35,6 +35,7 @@ public class DietitianListActivity extends AppCompatActivity {
     private OkHttpClient client;
     private DietitianData dietitianData;
 
+    //CHAT GPT USAGE: PARTIAL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +60,7 @@ public class DietitianListActivity extends AppCompatActivity {
         fetchAvailableUsers();
     }
 
+    //CHAT GPT USAGE: PARTIAL
     private void fetchAvailableUsers() {
         dietitianData = SharedPrefManager.loadDietitianData(DietitianListActivity.this);
         int did = dietitianData.getDID();

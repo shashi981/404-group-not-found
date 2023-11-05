@@ -39,6 +39,7 @@ public class ChatUserActivity extends AppCompatActivity {
     private int curDID;
 
 
+    //CHAT GPT USAGE: PARTIAL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +88,7 @@ public class ChatUserActivity extends AppCompatActivity {
             }
         });
     }
+    //CHAT GPT USAGE: PARTIAL
     private void initializeWebSocket() {
         networkManager = new NetworkManager(this);
         client = networkManager.getClient();
@@ -120,6 +122,7 @@ public class ChatUserActivity extends AppCompatActivity {
 
     }
 
+    //CHAT GPT USAGE: FULL
     private void fetchChatHistory(int UID, int DID) {
         String url = "https://20.104.197.24/get/chatHistory/" + UID + "/" + DID;
 
@@ -172,6 +175,7 @@ public class ChatUserActivity extends AppCompatActivity {
         });
     }
 
+    //CHAT GPT USAGE: NO
     private void sendMessage(int UID, int DID, String Text) {
         try {
             JSONObject message = new JSONObject();
