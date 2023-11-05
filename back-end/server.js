@@ -1197,6 +1197,8 @@ cron.schedule(schedule, () => {
 })
 
 // Define a function to process shopping data and generate reminders
+//done 
+//ChatGPT usage: Partial
 async function processShoppingData() {
   try{
     console.log("algorithm tiggered")
@@ -1282,7 +1284,6 @@ async function processShoppingData() {
         // Calculate the reminder date
         const reminderDate = moment(expectedRunOutDate).subtract(reminderPeriodDays, 'days')
 
-        // TO BE IMPLEMENTED IN FIREBASE
         // Check if it's time to send a reminder 
         if (currentDate.isSameOrAfter(reminderDate)) {
           console.log(`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`)
