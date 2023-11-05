@@ -2,7 +2,7 @@
 CPEN321_APP
 
 ## Description: 
-## Grocery Manager is an all in one resource manager that keeps track of your groceries. In addition you can receive professional advice from certified dieticians on our platform, acquire new recipes based on your current inventory, and have reminders for when it is time to restock on items you purchase regularly. With our application, uploading is quick, simple, and you will never have to worry about food going bad again.
+Grocery Manager is an all in one resource manager that keeps track of your groceries. In addition you can receive professional advice from certified dieticians on our platform, acquire new recipes based on your current inventory, and have reminders for when it is time to restock on items you purchase regularly. With our application, uploading is quick, simple, and you will never have to worry about food going bad again.
 
 ## Language Used:
 - Frontend: Java, XML
