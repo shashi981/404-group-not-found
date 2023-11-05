@@ -171,14 +171,14 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
             }
         });
 
-        cartIcon = findViewById(R.id.shop_icon_inventory);
-        cartIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityLauncher.launchActivity(InventoryActivity.this, ListActivity.class);
-
-            }
-        });
+//        cartIcon = findViewById(R.id.shop_icon_inventory);
+//        cartIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ActivityLauncher.launchActivity(InventoryActivity.this, ListActivity.class);
+//
+//            }
+//        });
 
         menuIcon = findViewById(R.id.menu_bar_icon_inventory);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
