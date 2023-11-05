@@ -51,6 +51,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
     private OkHttpClient client;
 
 
+    //    ChatGPT Usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +78,6 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
             }
         });
         itemName = findViewById(R.id.item_name);
-//        itemExpiry = findViewById(R.id.item_expiry);
         itemQuantity = findViewById(R.id.item_quantity);
 
         itemList = new ArrayList<>();
@@ -174,6 +174,8 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         });
 
     }
+
+    //    ChatGPT Usage: Partial
     private void addItemToInventory(Item item) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.item_display_template, null);
@@ -214,6 +216,8 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         mainLayout.addView(view);
 
     }
+
+    //    ChatGPT Usage: Partial
     private void displayEditPopup(Item item) {
         Dialog dialog = new Dialog(AddItemsActivity.this);
         dialog.setContentView(R.layout.edit_item_template);
@@ -247,17 +251,21 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         dialog.show();
     }
 
+
+    //    ChatGPT Usage: No
     private void launchInventoryIntent() {
         Intent inventoryIntent = new Intent(AddItemsActivity.this, InventoryActivity.class);
         startActivity(inventoryIntent);
         finish();
     }
 
+    //    ChatGPT Usage: Partial
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
+    //    ChatGPT Usage: Partial
     @Override
     public void onDateSet(int year, int month, int day) {
         // Use the selected date here as needed

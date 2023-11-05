@@ -83,6 +83,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         }
     });
 
+    //    ChatGPT Usage: No.
     private void alertNotValid() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("The Barcode You Have Scanned is Unrecognizable, Please Try Again.")
@@ -96,6 +97,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
     }
 
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -227,6 +229,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
 
     }
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     private void addItemToInventory(Item item) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.item_display_template, null);
@@ -268,6 +271,8 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
 
     }
 
+
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     private void displayEditPopup(Item item) {
         Dialog dialog = new Dialog(BarcodeActivity.this);
         dialog.setContentView(R.layout.edit_item_template);
@@ -294,17 +299,20 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         dialog.show();
     }
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     @Override
     public void onDateSet(int year, int month, int day) {
         // Use the selected date here as needed
         expiryDateString = String.format("%d-%02d-%02d", year, month + 1, day);
     }
 
+    //    ChatGPT Usage: TODO
     private void scanCode() {
         ScanOptions options = new ScanOptions();
         options.setPrompt("Volume up to turn on flash");
@@ -314,17 +322,19 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         barcodeLauncher.launch(options);
     }
 
+    //    ChatGPT Usage: No.
     private void launchInventoryIntent() {
         ActivityLauncher.launchActivity(BarcodeActivity.this, InventoryActivity.class);
         finish();
     }
 
+    //    ChatGPT Usage: No.
     private void setUPCCodeToText(String upcCode){
         TextView upcCodeTextView = findViewById(R.id.upc_code_text);
         upcCodeTextView.setText("UPC: " + upcCode);
     }
 
-
+    //    ChatGPT Usage: TODO
     private void handleUPCCode(String upcCode) {
         // Handle the UPC code as needed
         // For example, store it, display it, or process it in some way

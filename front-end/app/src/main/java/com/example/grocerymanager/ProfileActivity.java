@@ -46,6 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
+    //    ChatGPT Usage: No
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -155,6 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    //    ChatGPT Usage: No
     private void setPreferences() {
         runOnUiThread(new Runnable() {
             @Override
@@ -170,6 +172,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    //    ChatGPT Usage: No. Adapted/reused from a similar method from a different Activity.
     private void displayPreferencePopup() {
         Dialog dialog = new Dialog(ProfileActivity.this);
         dialog.setContentView(R.layout.restriction_template);
@@ -272,6 +275,7 @@ public class ProfileActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    //    ChatGPT Usage: No.
     private void setDetails(){
         UserData userData = SharedPrefManager.loadUserData(ProfileActivity.this);
         TextView name = findViewById(R.id.google_name_profile);

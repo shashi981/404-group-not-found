@@ -35,6 +35,8 @@ public class ScannerActivity extends AppCompatActivity {
     private Button scanBarcodeButton;
     private ImageView barcodeImage;
 
+
+    //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,30 +125,5 @@ public class ScannerActivity extends AppCompatActivity {
         });
 
     }
-//
-//    private void scanCode() {
-//        ScanOptions options = new ScanOptions();
-//        options.setPrompt("Volume up to turn on flash");
-//        options.setBeepEnabled(true);
-//        options.setOrientationLocked(true);
-//        options.setCaptureActivity(CaptureAct.class);
-//        barcodeLauncher.launch(options);
-//    }
-//
-//    ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result ->{
-//        if (result.getContents() != null) {
-//
-//            String upcCode = result.getContents();
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(ScannerActivity.this);
-//            builder.setMessage(result.getContents());
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i){
-//                    dialogInterface.dismiss();
-//                }
-//            }).show();
-//        }
-//    });
 
 }

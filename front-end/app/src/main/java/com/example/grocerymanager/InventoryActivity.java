@@ -73,6 +73,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
     private String expiryDateString;
 
 
+    //    ChatGPT Usage: Partial
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,6 +216,8 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
             }
         });
     }
+
+    //    ChatGPT Usage: Partial
     private void displayItems(){
         for(Item item: itemList) {
             LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -291,6 +294,8 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
         }
 
     }
+
+    //    ChatGPT Usage: Partial
     private void displayEditPopup(Item item) {
         Dialog dialog = new Dialog(InventoryActivity.this);
         dialog.setContentView(R.layout.edit_item_template);
@@ -376,11 +381,14 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
 
         dialog.show();
     }
+
+    //    ChatGPT Usage: Yes
     public void showDatePickerDialog() {
         DatePickerFragment newFragment = new DatePickerFragment();
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
+    //    ChatGPT Usage: Yes
     @Override
     public void onDateSet(int year, int month, int day) {
         // Use the selected date here as needed

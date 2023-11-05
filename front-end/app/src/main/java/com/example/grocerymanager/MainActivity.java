@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+    //    ChatGPT Usage: Partial.
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +81,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
+    //    ChatGPT Usage: No.
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    //    ChatGPT Usage: No. Reused from M1 tutorial & assignment
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //    ChatGPT Usage: No. Reused from M1 tutorial & assignment
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -114,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
             updateUI(null);
         }
     }
+
+    //    ChatGPT Usage: No. Reused from M1 tutorial & assignment
     private void updateUI(GoogleSignInAccount account) {
         if(account == null){
             Log.d(TAG, "There is no user signed in!");
@@ -365,25 +369,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-
-
-            //Send token to back-end
-            //Move to other activity
-//            account.getIdToken();
-//            launchInfoIntent();
         }
     }
 
+    //  ChatGPT Usage: No.
     private void launchHomeIntent() {
         ActivityLauncher.launchActivity(MainActivity.this, HomeActivity.class);
         finish();
     }
 
+    //  ChatGPT Usage: No.
     private void launchDietitianIntent() {
         ActivityLauncher.launchActivity(MainActivity.this, DietitianActivity.class);
         finish();
     }
 
+    //    ChatGPT Usage: No. Reused from M1 tutorial & assignment
     private void signOut() {
         mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {

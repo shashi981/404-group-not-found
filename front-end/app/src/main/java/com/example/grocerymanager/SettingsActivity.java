@@ -48,6 +48,7 @@ public class SettingsActivity extends AppCompatActivity {
     private OkHttpClient client;
     private UserData userData;
 
+    //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         userData = SharedPrefManager.loadUserData(SettingsActivity.this);
@@ -97,6 +98,8 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+
+    //    ChatGPT Usage: No.
     private void dietitianDialogue() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("If you are a certified Dietitian, please send your credentials to 404groupnotfound@gmail.com. Please include your userID: " + userData.getUID())
@@ -115,6 +118,7 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.
     private void declareDietitian() {
         networkManager = new NetworkManager(this);
         client = networkManager.getClient();
@@ -151,7 +155,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-
+    //    ChatGPT Usage: No.
     private void signOut() {
         mGoogleSignInClient.signOut()
             .addOnCompleteListener(this, new OnCompleteListener<Void>() {
@@ -163,12 +167,16 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
     }
+
+    //    ChatGPT Usage: No.
     private void launchMainIntent() {
         Intent mainIntent = new Intent(SettingsActivity.this, MainActivity.class);
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(mainIntent);
         finishAffinity();
     }
+
+    //    ChatGPT Usage: No.
     private void deleteConfirmation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to delete your account? This action is irreversible. Once deleted, you will be redirected to the login page.")
@@ -188,6 +196,7 @@ public class SettingsActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    //    ChatGPT Usage: No.
     private void deleteAccount() {
         // need to connect this to database by deleting entries
         networkManager = new NetworkManager(this);

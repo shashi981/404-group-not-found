@@ -18,6 +18,8 @@ public class NotificationService extends FirebaseMessagingService {
 
     final static String TAG = "FirebaseMessagingService"; //identify where log is coming from
 
+
+    //    ChatGPT Usage: No. Help from https://www.youtube.com/watch?v=aQ-v4gw9AnY&list=PLam6bY5NszYOhXkY7jOS4EQAKcQwkXrp4&index=2
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
@@ -26,6 +28,7 @@ public class NotificationService extends FirebaseMessagingService {
         tokenManager.saveToken(token);
     }
 
+    //    ChatGPT Usage: No. Help from https://www.youtube.com/watch?v=aQ-v4gw9AnY&list=PLam6bY5NszYOhXkY7jOS4EQAKcQwkXrp4&index=2
     @Override
     public void onMessageReceived(@NonNull RemoteMessage message) {
         super.onMessageReceived(message);

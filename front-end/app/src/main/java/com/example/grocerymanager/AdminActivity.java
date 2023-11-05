@@ -41,6 +41,7 @@ public class AdminActivity extends AppCompatActivity {
     private OkHttpClient client;
 
 
+    //    ChatGPT Usage: No. Created from previous knowledge
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +83,7 @@ public class AdminActivity extends AppCompatActivity {
         getRequests();
     }
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     private void getRequests() {
         String serverURL = "https://20.104.197.24/";
         Request requestName = new Request.Builder()
@@ -142,6 +144,7 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     private void displayRequests(){
         for(UserData user : requestUserList){
                 LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

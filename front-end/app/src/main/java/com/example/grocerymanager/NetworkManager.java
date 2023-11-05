@@ -29,14 +29,18 @@ public class NetworkManager {
     private Context context;
 
 
+    //    ChatGPT Usage: Yes
     private NetworkManager() {
         makeNetworkRequestWithSSL();
     }
+
+    //    ChatGPT Usage: Yes
     public NetworkManager(Context context) {
         this.context = context;
         makeNetworkRequestWithSSL();
     }
 
+    //    ChatGPT Usage: Yes
     public static synchronized NetworkManager getInstance() {
         if (instance == null) {
             instance = new NetworkManager();
@@ -44,6 +48,7 @@ public class NetworkManager {
         return instance;
     }
 
+    //    ChatGPT Usage: Yes
     private void makeNetworkRequestWithSSL() {
         try {
             inputStream = context.getResources().openRawResource(R.raw.certificate);
@@ -73,11 +78,13 @@ public class NetworkManager {
     }
 
 
+    //    ChatGPT Usage: Yes
     private Certificate readCertificate(InputStream inputStream) throws CertificateException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         return certificateFactory.generateCertificate(inputStream);
     }
 
+    //    ChatGPT Usage: Yes
     public OkHttpClient getClient() {
         return client;
     }

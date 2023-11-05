@@ -12,6 +12,7 @@ public class ListActivity extends AppCompatActivity {
 
     private ImageButton backIcon;
 
+    //    ChatGPT Usage: No. Activity Never Used Functionally.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

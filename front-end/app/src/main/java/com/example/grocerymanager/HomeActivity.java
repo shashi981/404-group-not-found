@@ -24,6 +24,7 @@ public class HomeActivity extends AppCompatActivity {
     private ImageButton cartIcon;
     private ImageButton menuIcon;
 
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +151,8 @@ public class HomeActivity extends AppCompatActivity {
 
         setGreeting();
     }
+
+    //    ChatGPT Usage: No.
     private void setGreeting(){
         UserData userData = SharedPrefManager.loadUserData(HomeActivity.this);
         TextView salutations = findViewById(R.id.salutations_name_home);

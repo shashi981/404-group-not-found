@@ -53,6 +53,7 @@ public class RecipeActivity extends AppCompatActivity {
     private Map<Integer, Recipe> recipeMap;
 
 
+    //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -219,6 +220,8 @@ public class RecipeActivity extends AppCompatActivity {
             }
         });
     }
+
+    //    ChatGPT Usage: Partial - Atomic aspect of this
     private void recipeMoreDetails() {
         int numberOfRecipes = recipeList.size();
         AtomicInteger completedRequests = new AtomicInteger(0);
@@ -272,11 +275,15 @@ public class RecipeActivity extends AppCompatActivity {
         }
     }
 
+    //    ChatGPT Usage: Yes
+
     private synchronized void compareRequests(int totalRequests, int completedRequests) {
         if (completedRequests == totalRequests) {
             runOnUiThread(this::displayRecipes);
         }
     }
+
+    //    ChatGPT Usage: No
     private void displayRecipes() {
         Log.d(TAG, String.valueOf(recipeList.size()));
         for(Recipe recipe : recipeList) {
@@ -304,6 +311,8 @@ public class RecipeActivity extends AppCompatActivity {
         }
     }
 
+
+    //    ChatGPT Usage: No
     private void displayFullRecipe(Recipe recipe){
         Dialog dialog = new Dialog(RecipeActivity.this);
         dialog.setContentView(R.layout.full_recipe_popup_template);

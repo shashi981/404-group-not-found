@@ -12,9 +12,12 @@ import java.util.Calendar;
 public class DatePickerFragment extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
+    //  ChatGPT Usage: Yes.
     public interface DatePickerListener {
         void onDateSet(int year, int month, int day);
     }
+
+    //  ChatGPT Usage: Yes.
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker.
@@ -27,6 +30,7 @@ public class DatePickerFragment extends DialogFragment
         return new DatePickerDialog(requireContext(), this, year, month, day);
     }
 
+    //  ChatGPT Usage: Yes.
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Implement the DatePickerListener interface and send the selected date back to the activity
         DatePickerListener listener = (DatePickerListener) getActivity();

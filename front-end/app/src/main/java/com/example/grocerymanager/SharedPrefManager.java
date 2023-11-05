@@ -14,6 +14,8 @@ public class SharedPrefManager {
     private static final String UID_KEY = "uid";
     private static final String DID_KEY = "did";
 
+
+    //    ChatGPT Usage: Yes.
     public static void saveUserData(Context context, UserData userData) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -25,6 +27,7 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+    //    ChatGPT Usage: Yes.
     public static UserData loadUserData(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
         String firstName = sharedPref.getString(FIRST_NAME_KEY, "Default First Name");
@@ -36,6 +39,7 @@ public class SharedPrefManager {
         return userData;
     }
 
+    //    ChatGPT Usage: TODO
     public static void saveDietitianData(Context context, DietitianData dietitianData) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -47,6 +51,9 @@ public class SharedPrefManager {
         editor.apply();
     }
 
+
+
+    //    ChatGPT Usage: TODO
     public static DietitianData loadDietitianData(Context context) {
         SharedPreferences sharedPref = context.getSharedPreferences(SHARED_PREFS_KEY, Context.MODE_PRIVATE);
         String firstName = sharedPref.getString(FIRST_NAME_KEY, "Default First Name");

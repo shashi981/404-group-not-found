@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 public class ViewRecipeActivity extends AppCompatActivity {
 
+    //    ChatGPT Usage: No. Activity Never Used.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -20,6 +20,8 @@ public class DietitianActivity extends AppCompatActivity {
     private NetworkManager networkManager;
     private OkHttpClient client;
     private Button chatButton;
+
+    //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
