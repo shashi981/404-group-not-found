@@ -22,6 +22,8 @@ const con = mysql.createConnection({
     database: 'grocerymanger'
 });
 
+
+//ChatGPT usage: Yes
 function fetchDataForSearchTerm(searchTerm) {
     const url = baseurl + searchTerm
 
@@ -49,6 +51,8 @@ function fetchDataForSearchTerm(searchTerm) {
     })
 }
 
+
+//ChatGPT usage: Yes
 async function insertDataIntoDatabase(jsonData) {
   
     try{
@@ -76,7 +80,9 @@ async function insertDataIntoDatabase(jsonData) {
     }
 }
 
-//save the content as file to ensure its extracted correctly
+//save the content as file to ensure its extracted correctly enable when needed
+//ChatGPT usage: Yes
+/*
 function saveDataToFile(jsonData, filename) {
     const jsonStr = JSON.stringify(jsonData, null, 2)
   
@@ -93,4 +99,4 @@ function saveDataToFile(jsonData, filename) {
 
 searchTerms.forEach((searchTerm) => {
     fetchDataForSearchTerm(searchTerm)
-})
+})*/

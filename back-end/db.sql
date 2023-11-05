@@ -1,3 +1,4 @@
+-- begin of create tables
 CREATE TABLE USERS(
 	UID MEDIUMINT NOT NULL AUTO_INCREMENT,
     FirstName VARCHAR(25) NOT NULL,
@@ -125,6 +126,9 @@ CREATE TABLE Vegan_exclude (
     Ingredient VARCHAR(50) NOT NULL PRIMARY KEY
 );
 
+-- end of create tables
+
+-- start of inserting required data
 INSERT INTO 
 Vegetarian_exclude (Ingredient)
 VALUES
@@ -182,17 +186,22 @@ VALUES
 ("Ham"),
 ("Egg");
 
-
-CREATE VIEW nondairy AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Nondairy_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
-CREATE VIEW vegetarian AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Vegetarian_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
-CREATE VIEW vegan AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Vegan_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
-
 INSERT INTO 
 PREF_LIST (Pref) 
 VALUES 
 ( "Vegetarian"), 
 ("Non-dairy"),
 ("Vegan");
+
+-- end of inserting required data
+
+-- start of creating views
+
+CREATE VIEW nondairy AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Nondairy_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
+CREATE VIEW vegetarian AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Vegetarian_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
+CREATE VIEW vegan AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHERE r2.RID NOT IN (SELECT DISTINCT r.RID FROM RECIPE r, Vegan_exclude e WHERE LOWER(r.Ingredient) LIKE CONCAT('%', LOWER(e.Ingredient), '%')));
+
+-- end of createing views
 
 -- data for testing and query testing
 INSERT INTO
@@ -363,6 +372,7 @@ SET SQL_SAFE_UPDATES = 1;
 ALTER TABLE USERS
 ADD COLUMN MessageToken VARCHAR(200) NOT NULL;
 SELECT DISTINCT UID FROM OWNS WHERE AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END
+
 /*
 -- Get a list of all tables in the database and generate DROP TABLE statements for each one.
 SELECT CONCAT('DROP TABLE IF EXISTS `', table_name, '`;') 

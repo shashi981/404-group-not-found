@@ -26,10 +26,10 @@ const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?numbe
 
 //change this to maybe minute or hourly for testing
 //maybe change this to more frequently?
-const schedule = '0 0 * * *' //per daily midnight
-const schedule_even = '0 0 */2 * *' //run on even days
-
-const scheduletest ='*/1 * * * *' //per 2 minute
+//const schedule = '0 0 * * *' //per daily midnight
+//const schedule_even = '0 0 */2 * *' //run on even days
+const schedule='*/20 * * * *' // M4 submission use
+//const scheduletest ='*/2 * * * *' //per 2 minute testing use
 
 
 
@@ -58,6 +58,7 @@ const server=app.listen(8081,"0.0.0.0", (req,res)=>{
 })*/
 
 //server use
+//ChatGPT usage: Partial
 const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
@@ -66,14 +67,16 @@ const con = mysql.createConnection({
   database: 'grocerymanger'
 });
 
-
+//ChatGPT usage: Yes
 const certs = {
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./certificate.pem')
 }
 
+//ChatGPT usage: Yes
 const server = https.createServer(certs, app)
 
+//ChatGPT usage: Yes
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
 })
@@ -324,6 +327,7 @@ app.get('/get/chatHistory', async (req, res) => {
 
 //get users
 //done
+//ChatGPT usage: Partial
 app.get("/get/users", async (req,res)=>{
   try{
   let Email=req.query.p1
@@ -359,6 +363,7 @@ app.get("/get/users", async (req,res)=>{
 
 //add users
 //done
+////ChatGPT usage: Partial
 app.post("/add/users", async (req,res)=>{
   try{
 
@@ -389,6 +394,7 @@ app.post("/add/users", async (req,res)=>{
 
 //delete users
 //done
+//ChatGPT usage: No
 app.get("/delete/users", async (req,res)=>{
   try{
 
@@ -412,6 +418,7 @@ app.get("/delete/users", async (req,res)=>{
 
 //update user
 //done
+//ChatGPT usage: No
 app.get("/update/users", async (req,res)=>{
   try{
     let UID=req.query.p1
@@ -434,6 +441,7 @@ app.get("/update/users", async (req,res)=>{
 
 //get items
 //done
+//ChatGPT usage: Partial
 app.get("/get/items", async (req,res)=>{
   try{
 
@@ -473,6 +481,7 @@ app.get("/get/items", async (req,res)=>{
 
 //add items
 //done
+//ChatGPT usage: Partial
 app.post("/add/items", async (req,res)=>{
   try{
     let UID=req.body.p1
@@ -561,6 +570,8 @@ app.post("/add/items", async (req,res)=>{
   }
 })
 
+//get data from the UPC API
+//ChatGPT usage: Yes
 function fetchDataFromAPI(url) {
   return new Promise((resolve, reject) => {
     https.get(url, (response) => {
@@ -588,6 +599,7 @@ function fetchDataFromAPI(url) {
 
 //add items manually
 //done
+//ChatGPT usage: No
 app.post("/add/items_man", async (req,res)=>{
   try{
 
@@ -635,6 +647,7 @@ app.post("/add/items_man", async (req,res)=>{
 
 //delete items
 //done
+//ChatGPT usage: Partial
 app.post("/delete/items", async (req,res)=>{
   try{
     let UID=req.body.p1
@@ -659,6 +672,7 @@ app.post("/delete/items", async (req,res)=>{
 
 //done
 //update items
+//ChatGPT usage: Partial
 app.post("/update/items", (req,res)=>{
   try{
     let UID=req.body.p1
@@ -696,6 +710,7 @@ app.post("/update/items", (req,res)=>{
 
 //add pref
 //done
+//ChatGPT usage: No
 app.post("/add/pref", async (req,res)=>{
 
   try{
@@ -725,6 +740,7 @@ app.post("/add/pref", async (req,res)=>{
 
 //delete pref
 //done
+//ChatGPT usage: No
 app.get("/delete/pref", async (req,res)=>{
   try{
     let UID=req.query.p1
@@ -743,6 +759,7 @@ app.get("/delete/pref", async (req,res)=>{
 
 //get preference
 //done
+//ChatGPT usage: No
 app.get("/get/pref", async (req,res)=>{
   try{
     
@@ -771,6 +788,7 @@ app.get("/get/pref", async (req,res)=>{
 
 //get available preference from database
 //done
+//ChatGPT usage: Partial
 app.get("/get/pref_list", async (req,res)=>{
   try{
     const query = 'SELECT * FROM PREF_LIST'
@@ -789,6 +807,7 @@ app.get("/get/pref_list", async (req,res)=>{
 
 //request for being a dietician
 //done
+//ChatGPT usage: No
 app.get("/add/dietReq", async (req,res)=>{
 
   try{
@@ -807,6 +826,7 @@ app.get("/add/dietReq", async (req,res)=>{
 
 //get all request for being a dietician
 //done
+//ChatGPT usage: Partial
 app.get("/get/dietReq", async (req,res)=>{
   try {
     const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
@@ -839,6 +859,7 @@ app.get("/get/dietReq", async (req,res)=>{
 
 //approve request for being a dietician, add to dietician table and remove the request
 //done
+//ChatGPT usage: Partial
 app.get("/approve/dietReq", async (req,res)=>{
   try{
     UID=req.query.p1
@@ -860,6 +881,9 @@ app.get("/approve/dietReq", async (req,res)=>{
   }
 })
 
+//remove request for being a dietician 
+//done
+//ChatGPT usage: No
 app.get("/remove/dietReq", async (req,res)=>{
   try{
     UID=req.query.p1
@@ -877,8 +901,10 @@ app.get("/remove/dietReq", async (req,res)=>{
   }
 })
 
-//todo chnage this to get dietician
-//done test
+
+//get dieitician with the email and also update the firebase token as well
+//done
+//ChatGPT usage: No
 app.get("/get/dietician", async (req,res)=>{
   try{
   let Email=req.query.p1
@@ -912,7 +938,9 @@ app.get("/get/dietician", async (req,res)=>{
   }
 })
 
-
+//give the user type of the email if exist: admin, dietician or user else return does not exist
+//done
+//ChatGPT usage: Partial
 app.get("/get/users_type", async (req,res)=>{
 
   try {
@@ -954,6 +982,7 @@ app.get("/get/users_type", async (req,res)=>{
 
 //get recipe for items about to expiry based on preference and use uid
 //done
+//ChatGPT usage: Partial
 app.get("/get/recipe", async (req,res)=>{
   try {
     // todo use the api to get extra recipes when the no recipe matches on db
@@ -1103,6 +1132,7 @@ app.get("/get/recipe", async (req,res)=>{
 
 // get recipe info using rid
 //done
+//ChatGPT usage: No
 app.get("/get/recipe_info", async (req,res)=>{
   try{
     
@@ -1134,20 +1164,19 @@ app.get("/get/recipe_info", async (req,res)=>{
   }
 })
 
-//processShoppingData()
-
-cron.schedule(scheduletest, () => {
+//the schedule for shopping reminder algorithm 
+//ChatGPT usage: No
+cron.schedule(schedule, () => {
   console.log('Cron job triggered for shoppingdata')
   processShoppingData()
 })
 
-//todo add in the scheduling part, forget yesterday
 // Define a function to process shopping data and generate reminders
 async function processShoppingData() {
   try{
     console.log("algorithm tiggered")
     // User-defined settings
-    const reminderPeriodDays = 7
+    const reminderPeriodDays = 5
     const numberOfVisits = 2 // This can be changed
 
     // Store item purchase history
@@ -1255,15 +1284,17 @@ async function processShoppingData() {
 }
 
 // Call the function to process shopping data and generate reminders
-//processShoppingData();
-
-//expiry date reminders
+//expiry date reminders schedule
+//done
+//ChatGPT usage: Yes
 cron.schedule(schedule, () => {
   console.log('Cron job triggered expiry date reminder')
   SendExpiryReminder()
 });
 
-//SendExpiryReminder()
+//send notification to uses for items that is about to expire in 2 days or already expired for x days
+//done
+//ChatGPT usage: Partial
 async function SendExpiryReminder(){
   //get all users that have items about to expiry
   try{
@@ -1356,6 +1387,9 @@ async function SendExpiryReminder(){
   }
 }
 
+//the firebase notification function 
+//done
+//ChatGPT usage: No
 async function Messaging(message){
 // Send the message
   admin.messaging().send(message)
