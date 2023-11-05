@@ -29,7 +29,7 @@ const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?numbe
 const schedule = '0 0 * * *' //per daily midnight
 const schedule_even = '0 0 */2 * *' //run on even days
 
-//const scheduletest ='*/2 * * * *' //per 2 minute
+const scheduletest ='*/1 * * * *' //per 2 minute
 
 
 
@@ -1136,7 +1136,7 @@ app.get("/get/recipe_info", async (req,res)=>{
 
 //processShoppingData()
 
-cron.schedule(schedule_even, () => {
+cron.schedule(scheduletest, () => {
   console.log('Cron job triggered for shoppingdata')
   processShoppingData()
 })
@@ -1145,29 +1145,36 @@ cron.schedule(schedule_even, () => {
 // Define a function to process shopping data and generate reminders
 async function processShoppingData() {
   try{
+    console.log("algorithm tiggered")
     // User-defined settings
-    const reminderPeriodDays = 2
+    const reminderPeriodDays = 7
     const numberOfVisits = 2 // This can be changed
 
     // Store item purchase history
-    const purchaseHistory = {}
 
     // Initialize current date
     const currentDate = moment()
 
     // Initialize the expected run-out date for each item
-    const expectedRunOutDates = {}
 
     //Get all users UID and repeat for all UID
     const queryUsers='SELECT UID, MessageToken FROM USERS;'
     const [U] = await con.promise().query(queryUsers)
-    const UIDArray = U.map((temp) => temp.UID);
-    const TokenArray=U.map((store)=>store.MessageToken)
+    const UIDTokenArray = U.map((temp) => {
+      return {
+        UID:temp.UID,
+        Token:temp.MessageToken
+      }
+    });
 
-    for(let i=0; i<UIDArray.length;i++){
+    UIDTokenArray.forEach(async (entry)=>{
     // NEED TO UPDATE
+    const purchaseHistory = {}
+    const expectedRunOutDates = {}
     // Query to retrieve shopping data from the database
-      UID=UIDArray[i]
+      UID=entry.UID
+      console.log(UID)
+      console.log(entry.Token)
       const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?'
       const [result] = await con.promise().query(query, [UID])
 
@@ -1207,10 +1214,7 @@ async function processShoppingData() {
           expectedRunOutDates[item] = moment(purchaseDate).add(numberOfVisits, 'weeks').toDate()
         }
       })
-
-      console.log("algorithm tiggered")
-      console.log(expectedRunOutDates)
-      console.log(purchaseHistory)
+    
       // Generate reminders
       for (const item in purchaseHistory) {
         const purchaseDates = purchaseHistory[item]
@@ -1236,13 +1240,14 @@ async function processShoppingData() {
               title: 'Reminder for buying items',
               body: text,
             },
-            token: TokenArray[i],
+            token: entry.Token,
           }
+          console.log("\n")
           console.log(jsonContent)
           Messaging(jsonContent)
         }
       }
-    }
+    })
   }catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
