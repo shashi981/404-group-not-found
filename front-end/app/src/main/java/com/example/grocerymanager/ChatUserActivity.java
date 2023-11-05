@@ -70,8 +70,7 @@ public class ChatUserActivity extends AppCompatActivity {
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityLauncher.launchActivity(ChatUserActivity.this, UserListActivity.class);
-                //finish();
+                finish();
             }
         });
 

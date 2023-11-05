@@ -66,12 +66,12 @@ public class ChatDieticianActivity extends AppCompatActivity {
         Log.d(TAG, "UID = " + dietitianData.getDID());
         //fetchChatHistory(dietitianData.getDID(),curUID);
         initializeWebSocket();
-        fetchChatHistory(dietitianData.getDID(),curUID);
+        fetchChatHistory(curUID, dietitianData.getDID());
 
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityLauncher.launchActivity(ChatDieticianActivity.this, DietitianListActivity.class);
+                finish();
             }
         });
 

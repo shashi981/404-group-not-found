@@ -22,6 +22,9 @@
         app:srcCompat="@drawable/menu_bar_dark_40" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/chatDietitianUserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
