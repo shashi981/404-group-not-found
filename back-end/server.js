@@ -1,17 +1,19 @@
 //TODO check connection with front end
-const mysql = require('mysql2');
+const mysql = require('mysql2')
 const express = require("express")
 const https = require('https')
 const fs = require('fs')
-const moment = require('moment');
-const cron = require('node-cron');
-const admin = require('firebase-admin');
-/*
-const { Server } = require('socket.io');
-const io = new Server(server);*/
+const moment = require('moment')
+const cron = require('node-cron')
+const admin = require('firebase-admin')
+const WebSocket = require('ws')
 
 let onlineUsers = {}; // { userId: socketId, ... }
 let onlineDieticians = {}; // { dieticianId: socketId, ... }
+
+const wss = new WebSocket.Server({server})
+let userConnections = {}
+let dieticianConnections = {}
 
 //app
 const app=express()
@@ -31,34 +33,14 @@ const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?numbe
 const schedule='*/20 * * * *' // M4 submission use
 //const scheduletest ='*/2 * * * *' //per 2 minute testing use
 
-
+const serviceAccount = require('./grocerymanager_firebase.json')
 
 // Initialize the app with appropriate configurations
-const serviceAccount = require('./grocerymanager_firebase.json');
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 })
 
-/*
-//local testing use
-const con = mysql.createConnection({
-  host: "",
-  port: "3306",
-  user: "root",
-  password: "",
-  database: 'grocerymanger'
-});
-
-const server=app.listen(8081,"0.0.0.0", (req,res)=>{
-  const host=server.address().address
-  const port=server.address().port
-
-  console.log("%s %s", host, port)
-
-})*/
-
 //server use
-//ChatGPT usage: Partial
 const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
@@ -67,35 +49,30 @@ const con = mysql.createConnection({
   database: 'grocerymanger'
 });
 
-//ChatGPT usage: Yes
+
 const certs = {
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./certificate.pem')
 }
 
-//ChatGPT usage: Yes
 const server = https.createServer(certs, app)
 
-//ChatGPT usage: Yes
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
 })
 
+//ChatGPT usage: No
 function database_error(response, error) {
   response.status(500).send('Error querying the database'+error)
 }
 
+//ChatGPT usage: No
 function query_success(response, message){
   response.status(200).send(message)
 }
 
-const WebSocket = require('ws')
-const wss = new WebSocket.Server({server})
-
-let userConnections = {};
-let dieticianConnections = {};
-
-wss.on('connection', (ws,req) => {
+//ChatGPT usage: Partial
+wss.on('connection', async (ws,req) => {
     console.log('Client connected');
     const actorId = req.headers['actor-id'];
     const actorType = req.headers['actor-type']; // This could be 'user' or 'dietician'
@@ -107,31 +84,71 @@ wss.on('connection', (ws,req) => {
     }
 
     // On receiving a message from the client
-    ws.on('message', (message) => {
+    ws.on('message', async (message) => {
+      try{
+     
         console.log('Received:', message);
         
         // Parse the message (assuming it's in JSON format)
         let parsedMessage = JSON.parse(message);
-        
+        const UID=parsedMessage.UID
+        const DID =parsedMessage.DID
         // Store in the database
-        let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)';
-        con.query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER], (error, results) => {
-            if (error) {
-                console.error('Database error:', error);
-                ws.send(JSON.stringify({ type: 'error', message: 'Error saving the message' }));
-            } else {
-                console.log('Message saved');
-                ws.send(JSON.stringify({ type: 'success', message: 'Message saved successfully' }));
-            }
-        });
+        let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)'
+        const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
+
+        console.log('Message saved');
+        ws.send(JSON.stringify({ type: 'success', message: 'Message saved successfully' }))
+
+        if (parsedMessage.FROM_USER === 1) {
+          //send notification to dietician
+
+          const queryToken='SELECT d.MessageToken FROM DIETICIAN d WHERE d.DID=?'
+          const t=await con.promise().query(queryToken, [DID])
+          const token=t[0].map((storetoken) => storetoken.MessageToken)
+          const text= "you have a new message from user with "+ UID
+
+          const message = {
+            notification: {
+              title: 'Chat notification',
+              body: text,
+            },
+              token: token[0]
+          }
+
+          console.log(message)
+          Messaging(message)
+        }
+        else{
+          //send notification to user
+
+          const queryToken='SELECT u.MessageToken FROM USERS u WHERE UID=?'
+          const t=await con.promise().query(queryToken, [UID])
+          const token=t[0].map((storetoken) => storetoken.MessageToken)
+          const text= "you have a new message from dietition with "+ DID
+
+          const message = {
+            notification: {
+              title: 'Chat notification',
+              body: text,
+            },
+            token: token[0]
+          }
+          console.log(message)
+          Messaging(message)
+        }
 
         if (parsedMessage.FROM_USER === 1) {
             // Message is from a user, forward to dietician
-            forwardMessageToDietician(parsedMessage.DID, message);
+            forwardMessageToDietician(parsedMessage.DID, message)
         } else {
             // Message is from a dietician, forward to user
-            forwardMessageToUser(parsedMessage.UID, message);
+            forwardMessageToUser(parsedMessage.UID, message)
         }
+      } catch(error){
+          console.error('Database error:', error)
+          ws.send(JSON.stringify({ type: 'error', message: 'Error saving the message' }))
+      }
     });
 
     // When the client closes the connection
@@ -141,28 +158,31 @@ wss.on('connection', (ws,req) => {
 });
 
 //Helper functions for ws
+//ChatGPT usage: Partial
 function forwardMessageToDietician(DID, message) {
     const dieticianWs = dieticianConnections[DID];
     
     if (dieticianWs) {
-        dieticianWs.send(message);
+        dieticianWs.send(message)
     } else {
-        console.error(`No active connection found for dietician with ID ${DID}`);
+        console.log(`No active connection found for dietician with ID ${DID}`)
     }
 }
 
+//ChatGPT usage: Partial
 function forwardMessageToUser(UID, message) {
-    const userWs = userConnections[UID];
+    const userWs = userConnections[UID]
     
     if (userWs) {
-        userWs.send(message);
+        userWs.send(message)
     } else {
-        console.error(`No active connection found for user with ID ${UID}`);
+        console.log(`No active connection found for user with ID ${UID}`)
     }
 }
 //End Helper functions for ws
 
 //END POINTS FOR WS
+//ChatGPT usage: Partial
 app.get('/get/availableDieticians', (req, res) => {
     const query = 'SELECT DID, FirstName, LastName, Email, ProfileURL FROM DIETICIAN';
 
@@ -175,6 +195,7 @@ app.get('/get/availableDieticians', (req, res) => {
     });
 });
 
+//ChatGPT usage: Partial
 app.get('/get/usersForDietician/:dieticianId', (req, res) => {
   const dieticianId = req.params.dieticianId;
 
@@ -195,7 +216,7 @@ app.get('/get/usersForDietician/:dieticianId', (req, res) => {
   });
 });
 
-
+//ChatGPT usage: Partial
 app.get('/get/messageToken/:DID', (req, res) => {
   const DID = req.params.DID; // Extract the DID from the URL
 
@@ -214,6 +235,7 @@ app.get('/get/messageToken/:DID', (req, res) => {
 });
 
 // Endpoint to retrieve chat history between a user and a dietician
+//ChatGPT usage: Partial
 app.get('/get/chatHistory/:UID/:DID', (req, res) => {
     const UID = req.params.UID;
     const DID = req.params.DID;
@@ -231,94 +253,6 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 });
 
 //END POINTS WS END
-
-//socket
-/*
-io.on('connection', (socket) => {
-    
-    // Identification for online tracking
-    socket.on('identify', (data) => {
-        if (data.type === 'user') {
-            onlineUsers[data.id] = socket.id;
-        } else if (data.type === 'dietician') {
-            onlineDieticians[data.id] = socket.id;
-        }
-    });
-
-    // Typing notifications
-    socket.on('typing_start', (data) => {
-        const dieticianSocketId = onlineDieticians[data.toDID];
-        if (dieticianSocketId) {
-            io.to(dieticianSocketId).emit('typing_start', { fromUID: data.fromUID });
-        }
-    });
-
-    socket.on('typing_end', (data) => {
-        const dieticianSocketId = onlineDieticians[data.toDID];
-        if (dieticianSocketId) {
-            io.to(dieticianSocketId).emit('typing_end', { fromUID: data.fromUID });
-        }
-    });
-
-    // Read receipts
-    socket.on('message_read', async (data) => {
-        try {
-            const query = 'UPDATE CHAT SET Read = 1 WHERE CID = ?';
-            await con.promise().query(query, [data.CID]);
-            const senderSocketId = onlineUsers[data.fromUID];
-            if (senderSocketId) {
-                io.to(senderSocketId).emit('message_read', { CID: data.CID });
-            }
-        } catch (error) {
-            console.error('Error updating message read status:', error);
-        }
-    });
-
-    // Disconnect handling
-    socket.on('disconnect', () => {
-      let disconnectedUserId;
-      let userType;
-      for (let userId in onlineUsers) {
-          if (onlineUsers[userId] === socket.id) {
-              disconnectedUserId = userId;
-              userType = 'user';
-              delete onlineUsers[userId];
-              break;
-          }
-      }
-      for (let dieticianId in onlineDieticians) {
-          if (onlineDieticians[dieticianId] === socket.id) {
-              disconnectedUserId = dieticianId;
-              userType = 'dietician';
-              delete onlineDieticians[dieticianId];
-              break;
-          }
-      }
-      if (disconnectedUserId && userType) {
-          io.emit('user_disconnected', { id: disconnectedUserId, type: userType });
-      }
-    });
-
-    // Expanded message handling
-    socket.on('message', async (data) => {
-        try {
-            const fromUser = (data.fromType === 'user');
-            const toSocketId = fromUser ? onlineDieticians[data.toDID] : onlineUsers[data.toUID];
-            const query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, NOW(), ?)';
-            await con.promise().query(query, [data.fromUID, data.toDID, data.text, fromUser ? 1 : 0]);
-            if (toSocketId) {
-                io.to(toSocketId).emit('message', data);
-            }
-            socket.emit('message_ack', { status: 'success' });
-        } catch (error) {
-            console.error('Error handling message:', error);
-            socket.emit('message_error', { status: 'error', message: 'Failed to process message.' });
-        }
-    });
-
-    // ... (other code)
-
-});*/
 
 // END POINTS FOR SOCKET - BEGIN
 
@@ -1190,7 +1124,6 @@ app.get("/get/recipe_info", async (req,res)=>{
 })
 
 //the schedule for shopping reminder algorithm 
-//ChatGPT usage: No
 cron.schedule(schedule, () => {
   console.log('Cron job triggered for shoppingdata')
   processShoppingData()
@@ -1311,8 +1244,6 @@ async function processShoppingData() {
 
 // Call the function to process shopping data and generate reminders
 //expiry date reminders schedule
-//done
-//ChatGPT usage: Yes
 cron.schedule(schedule, () => {
   console.log('Cron job triggered expiry date reminder')
   SendExpiryReminder()
@@ -1351,7 +1282,7 @@ async function SendExpiryReminder(){
 
       const t=await con.promise().query(queryToken, [UID])
       const [Items]=await con.promise().query(queryItems, [UID])
-      const token=t[0].map((storetoken) => storetoken.MessageToken);
+      const token=t[0].map((storetoken) => storetoken.MessageToken)
       console.log(t)
       console.log(token)
 
