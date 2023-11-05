@@ -57,13 +57,12 @@ public class DietitianListActivity extends AppCompatActivity {
         userRecyclerView.setAdapter(userAdapter);
 
         fetchAvailableUsers();
-
-
     }
 
     private void fetchAvailableUsers() {
         dietitianData = SharedPrefManager.loadDietitianData(DietitianListActivity.this);
         int did = dietitianData.getDID();
+        Log.d(TAG, "DID = " + did);
         String url = SERVER_URL + "get/usersForDietician/"+did; ///
 
         Request request = new Request.Builder()

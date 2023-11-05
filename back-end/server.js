@@ -173,16 +173,41 @@ app.get('/get/availableDieticians', (req, res) => {
 });
 
 app.get('/get/usersForDietician/:dieticianId', (req, res) => {
-    const dieticianId = req.params.dieticianId;
-    const query = 'SELECT DISTINCT UID FROM CHAT WHERE DID = ?';
+  const dieticianId = req.params.dieticianId;
 
-    con.query(query, [dieticianId], (error, results) => {
-        if (error) {
-            database_error(res, error);
-        } else {
-            res.json(results);
-        }
-    });
+  // Adjusted the query to join with the USERS table and fetch user details
+  const query = `
+      SELECT DISTINCT U.*
+      FROM USERS U
+      JOIN CHAT C ON U.UID = C.UID
+      WHERE C.DID = ?
+  `;
+
+  con.query(query, [dieticianId], (error, results) => {
+      if (error) {
+          database_error(res, error); // Assuming database_error is a function that handles database errors
+      } else {
+          res.json(results);
+      }
+  });
+});
+
+
+app.get('/get/messageToken/:DID', (req, res) => {
+  const DID = req.params.DID; // Extract the DID from the URL
+
+  // Construct and execute a MySQL query to retrieve the MessageToken
+  const query = 'SELECT MessageToken FROM DIETICIAN WHERE DID = ?';
+  db.query(query, [DID], (err, results) => {
+      if (err) {
+          console.error('Error executing MySQL query: ' + err);
+          res.status(500).send('Internal Server Error');
+      } else if (results.length === 0) {
+          res.status(404).send('Dietitian not found');
+      } else {
+          res.json({ MessageToken: results[0].MessageToken });
+      }
+  });
 });
 
 // Endpoint to retrieve chat history between a user and a dietician

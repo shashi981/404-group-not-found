@@ -3,6 +3,7 @@ package com.example.grocerymanager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>{
-    private List<UserData> userList;
+    private static List<UserData> userList;
+
+    final static String TAG = "UserAdapter"; //identify where log is coming from
     private Context context;
 
     public UserAdapter(Context context, List<UserData> userList) {
@@ -62,8 +65,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-//                Intent intent = new Intent(context, ChatDietitianActivity.class); ///
-//                context.startActivity(intent);
+                Log.d(TAG, "" + userList.get(position).getUID());
+                Intent intent = new Intent(context, ChatDieticianActivity.class);
+                intent.putExtra("selectedDietitianUID", userList.get(position).getUID());
+                context.startActivity(intent);
             }
         }
     }

@@ -59,6 +59,7 @@ public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.Diet
         }
 
         public void bindDietician(DietitianData dietician) {
+
             this.currentDietician = dietician;
         }
 
