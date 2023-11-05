@@ -189,12 +189,11 @@ app.get('/get/usersForDietician/:dieticianId', (req, res) => {
 app.get('/get/chatHistory/:UID/:DID', (req, res) => {
     const UID = req.params.UID;
     const DID = req.params.DID;
-    const offset = req.query.offset || 0;  // for pagination
     const limit = 10;  // max number of messages to return
 
-    const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ? OFFSET ?';
+    const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ?';
 
-    con.query(query, [UID, DID, limit, offset], (error, results) => {
+    con.query(query, [UID, DID, limit], (error, results) => {
         if (error) {
             database_error(res, error);
         } else {
