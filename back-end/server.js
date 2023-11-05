@@ -11,7 +11,6 @@ const WebSocket = require('ws')
 let onlineUsers = {}; // { userId: socketId, ... }
 let onlineDieticians = {}; // { dieticianId: socketId, ... }
 
-const wss = new WebSocket.Server({server})
 let userConnections = {}
 let dieticianConnections = {}
 
@@ -27,11 +26,7 @@ const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
 const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
 
 //change this to maybe minute or hourly for testing
-//maybe change this to more frequently?
-//const schedule = '0 0 * * *' //per daily midnight
-//const schedule_even = '0 0 */2 * *' //run on even days
 const schedule='*/20 * * * *' // M4 submission use
-//const scheduletest ='*/2 * * * *' //per 2 minute testing use
 
 const serviceAccount = require('./grocerymanager_firebase.json')
 
@@ -60,6 +55,8 @@ const server = https.createServer(certs, app)
 server.listen(443, () => {
   console.log(`Server is running on port 443`)
 })
+
+const wss = new WebSocket.Server({server})
 
 //ChatGPT usage: No
 function database_error(response, error) {
