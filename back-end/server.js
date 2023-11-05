@@ -257,12 +257,14 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 // END POINTS FOR SOCKET - BEGIN
 
 //New endpoint to get the actiev users fro the chat function
+//ChatGPT usage: Partial
 app.get('/get/activeUsers', (req, res) => {
   const activeUsersList = Object.keys(onlineUsers);
   const activeDieticiansList = Object.keys(onlineDieticians);
   res.json({ users: activeUsersList, dieticians: activeDieticiansList });
 });
 
+//ChatGPT usage: Partial
 app.get('/get/chatHistory', async (req, res) => {
   const userId = req.query.userId;
   const dieticianId = req.query.dieticianId;
