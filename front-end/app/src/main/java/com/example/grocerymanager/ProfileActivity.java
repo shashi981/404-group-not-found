@@ -166,6 +166,7 @@ public class ProfileActivity extends AppCompatActivity {
                 for (String preference : loadPreferences) {
                     TextView preferenceTextView = new TextView(ProfileActivity.this);
                     preferenceTextView.setText(preference);
+                    preferenceTextView.setTextColor(getResources().getColor(R.color.dark_blue));
                     preferencesContainer.addView(preferenceTextView);
                 }
             }

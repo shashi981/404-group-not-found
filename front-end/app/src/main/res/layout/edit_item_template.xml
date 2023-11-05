@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="#F5F5F5"
     android:padding="16dp">
 
-    <EditText
 
+    <EditText
+        android:textColor="@color/dark_blue"
         android:id="@+id/edit_quantity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,12 +16,18 @@
         android:inputType="number" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/edit_expiry_date_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Edit Expiry Date" />
 
     <Button
+        android:backgroundTint="@color/dark_blue"
+        android:backgroundTintMode="src_over"
+        android:textColor="@color/faded_white"
         android:id="@+id/save_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
