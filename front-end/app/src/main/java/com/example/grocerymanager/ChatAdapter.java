@@ -1,6 +1,5 @@
 package com.example.grocerymanager;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ChatMessage> chatMessages;
     final static String TAG = "ChatAdapter";
 
-    private Context context;
-
 
     //CHAT GPT USAGE: NO
-    public ChatAdapter(Context context, List<ChatMessage> chatMessages) {
-        this.context = context;
+    public ChatAdapter(List<ChatMessage> chatMessages) {
         this.chatMessages = chatMessages;
     }
 

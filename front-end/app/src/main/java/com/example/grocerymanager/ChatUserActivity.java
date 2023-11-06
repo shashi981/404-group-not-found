@@ -46,7 +46,7 @@ public class ChatUserActivity extends AppCompatActivity {
 
         // Set up RecyclerView with an empty adapter
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatAdapter = new ChatAdapter(this,chatHistoryList);
+        chatAdapter = new ChatAdapter(chatHistoryList);
         chatRecyclerView.setAdapter(chatAdapter);
         chatAdapter.notifyDataSetChanged();
 
