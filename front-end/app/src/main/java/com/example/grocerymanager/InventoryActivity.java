@@ -36,7 +36,6 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
 
     final static String TAG = "InventoryActivity"; //identify where log is coming from
     private OkHttpClient client;
-    private List<Integer> itemIdList;
     private List<Integer> itemIdListEdit;
     private List<String> itemUPCList;
     private List<String> itemExpiryList;

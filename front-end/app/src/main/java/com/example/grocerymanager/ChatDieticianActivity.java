@@ -48,7 +48,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
 
         // Set up RecyclerView with an empty adapter
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatAdapterDietician = new ChatAdapterDietician(this,chatHistoryList);
+        chatAdapterDietician = new ChatAdapterDietician(chatHistoryList);
         chatRecyclerView.setAdapter(chatAdapterDietician);
         chatAdapterDietician.notifyDataSetChanged();
 

@@ -1,6 +1,5 @@
 package com.example.grocerymanager;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +13,8 @@ import java.util.List;
 public class ChatAdapterDietician extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<ChatMessage> chatMessages;
     final static String TAG = "ChatAdapterDietician";
-    private Context context;
 
-    public ChatAdapterDietician(Context context, List<ChatMessage> chatMessages) {
-        this.context = context;
+    public ChatAdapterDietician(List<ChatMessage> chatMessages) {
         this.chatMessages = chatMessages;
     }
 
