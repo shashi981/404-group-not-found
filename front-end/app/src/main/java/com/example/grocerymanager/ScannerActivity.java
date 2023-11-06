@@ -13,14 +13,6 @@ public class ScannerActivity extends AppCompatActivity {
 
     final static String TAG = "ScannerActivity"; //identify where log is coming from
 
-    private ImageButton chatIcon;
-    private ImageButton inventoryIcon;
-    private ImageButton recipeIcon;
-    private ImageButton menuIcon;
-    private Button addItemsButton;
-
-    private Button scanBarcodeButton;
-
 
     //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.
     @Override

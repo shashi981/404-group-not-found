@@ -36,12 +36,6 @@ import okhttp3.Response;
 public class RecipeActivity extends AppCompatActivity {
 
     final static String TAG = "RecipeActivity"; //identify where log is coming from
-    private ImageButton chatIcon;
-    private ImageButton scannerIcon;
-    private ImageButton inventoryIcon;
-    private ImageButton menuIcon;
-
-    private NetworkManager networkManager;
     private OkHttpClient client;
 
     private List<Recipe> recipeList;

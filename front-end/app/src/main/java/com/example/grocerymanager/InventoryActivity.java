@@ -221,7 +221,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
                     String serverURL = "https://20.104.197.24/";
                     MediaType JSON = MediaType.parse("application/json; charset=utf-8");
                     itemList.remove(item);
-                    itemIdList = new ArrayList<>();
+                    List<Integer> itemIdList = new ArrayList<>();
                     itemIdList.add(item.getItemId());
                     JSONObject postData = new JSONObject();
                     try {
