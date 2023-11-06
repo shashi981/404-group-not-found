@@ -1,54 +1,53 @@
-const https = require('https')
-const mysql = require('mysql2')
-const fs = require('fs')
+const https = require("https");
+const mysql = require("mysql2")
+const fs = require("fs")
 
-const baseurl = 'https://www.themealdb.com/api/json/v1/1/search.php?s='
+const baseurl = "https://www.themealdb.com/api/json/v1/1/search.php?s="
 
 const startChar = 'a'.charCodeAt(0)
 const endChar = 'z'.charCodeAt(0)
 
-const searchTerms = []
+const searchTerms = [];
 
 for (let charCode = startChar; charCode <= endChar; charCode++) {
-    const char = String.fromCharCode(charCode);
-    searchTerms.push(char)
-};
+  const char = String.fromCharCode(charCode);
+  searchTerms.push(char)
+}
 
 const con = mysql.createConnection({
-    host: "localhost",
-    port: "3306",
-    user: "404GroupNotFound",
-    password: "404Group",
-    database: 'grocerymanger'
+  host: "localhost",
+  port: "3306",
+  user: "404GroupNotFound",
+  password: "404Group",
+  database: "grocerymanger"
 });
 
 
 //ChatGPT usage: Yes
 function fetchDataForSearchTerm(searchTerm) {
-    const url = baseurl + searchTerm
+  const url = baseurl + searchTerm
 
-    https.get(url, (response) => {
-        let data = ''
+  https.get(url, (response) => {
+    let data = ""
 
-        response.on('data', (chunk) => {
-        data += chunk;
-        })
+    response.on('data', (chunk) => {
+    data += chunk;
+    });
 
-        response.on('end', () => {
-            try {
-                const jsonData = JSON.parse(data)
-                
-                const filename = `output_${searchTerm}.json`
-                saveDataToFile(jsonData, filename)
-
-                insertDataIntoDatabase(jsonData)
-            } catch (error) {
-                console.error('Error parsing JSON:', error)
-            }
-        });
-    }).on('error', (error) => {
-        console.error('Error making the request:', error)
-    })
+    response.on("end", () => {
+      try {
+        const jsonData = JSON.parse(data)
+        const filename = `output_${searchTerm}.json`;
+        saveDataToFile(jsonData, filename);
+        
+        insertDataIntoDatabase(jsonData);
+      } catch (error) {
+        console.error('Error parsing JSON:', error)
+      }
+    });
+  }).on('error', (error) => {
+    console.error('Error making the request:', error)
+  })
 }
 
 
@@ -66,7 +65,7 @@ async function insertDataIntoDatabase(jsonData) {
                 const ingredientKey = `strIngredient${i}`
                 const measureKey = `strMeasure${i}`
 
-                if (meal[ingredientKey] !== '') {
+                if (meal[ingredientKey] !== "") {
                     const recipeQuery = `INSERT IGNORE INTO RECIPE (RID, Ingredient, Amount) VALUES (?, ?, ?);`
                     const [results] = await con.promise().query(recipeQuery, [meal.idMeal, meal[ingredientKey], meal[measureKey]])
 
