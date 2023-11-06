@@ -1,25 +1,25 @@
 //TODO check connection with front end
-const mysql = require('mysql2')
-const express = require("express")
-const https = require('https')
-const fs = require('fs')
-const moment = require('moment')
-const cron = require('node-cron')
-const admin = require('firebase-admin')
-const WebSocket = require('ws')
+const mysql = require("mysql2")
+const express = require("express");
+const https = require("https")
+const fs = require("fs");
+const moment = require("moment")
+const cron = require("node-cron")
+const admin = require("firebase-admin")
+const WebSocket = require("ws")
 
 let onlineUsers = {}; // { userId: socketId, ... }
 let onlineDieticians = {}; // { dieticianId: socketId, ... }
 
-let userConnections = {}
-let dieticianConnections = {}
+let userConnections = {};
+let dieticianConnections = {};
 
 //app
-const app=express()
-app.use(express.json())
+const app = express()
+app.use(express.json());
 
-const UPCAPIKey='?apikey=05E1D91D8E518F2F15B235B4E473F34F'
-const UPCAPIURL= 'https://api.upcdatabase.org/product/'
+const UPCAPIKey= "?apikey=05E1D91D8E518F2F15B235B4E473F34F"
+const UPCAPIURL= "https://api.upcdatabase.org/product/"
 
 //use this to get more recipes when have the time to do so
 const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
@@ -41,7 +41,7 @@ const con = mysql.createConnection({
   port: "3306",
   user: "404GroupNotFound",
   password: "404Group",
-  database: 'grocerymanger'
+  database: "grocerymanger"
 });
 
 
@@ -337,7 +337,7 @@ app.post("/add/users", async (req,res)=>{
     const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
     const [results2] = await con.promise().query(query2, [Email])
 
-    console.log('USER ADDED') 
+    console.log("USER ADDED") 
 
     const formattedResults = results2.map((r) => {
         return `${r.UID}`

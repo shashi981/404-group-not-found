@@ -2,7 +2,7 @@ const https = require("https");
 const mysql = require("mysql2")
 const fs = require("fs")
 
-const baseurl = "https://www.themealdb.com/api/json/v1/1/search.php?s="
+const baseurl = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 
 const startChar = 'a'.charCodeAt(0)
 const endChar = 'z'.charCodeAt(0)
