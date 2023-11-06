@@ -960,12 +960,12 @@ app.get("/get/recipe", async (req,res)=>{
     const Expiryitems = Itemstemp.map((Items) => Items.Name);
     
     console.log(Expiryitems)
-    if(Expiryitems.length===0){
+    if(Expiryitems.length === 0){
       return res.json({});
     }
 
-    if(Pref.length != 0){
-      if(Pref.length==1){
+    if(Pref.length !== 0){
+      if(Pref.length === 1){
         if (Pref[0] === 'Vegetarian') {
           excludeTable = 'vegetarian';
         } else if (Pref[0] === 'Non-dairy') {
@@ -1010,7 +1010,7 @@ app.get("/get/recipe", async (req,res)=>{
     }
 
   storequery=query
-  if(Expiryitems.length==1){
+  if(Expiryitems.length === 1){
     temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[0]}%`+'\')')
     query=temp
     tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
@@ -1018,7 +1018,7 @@ app.get("/get/recipe", async (req,res)=>{
   }
   else{
     for(let j=0; j< Expiryitems.length; j++){
-      if(j==0){
+      if(j === 0){
         temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
       }
