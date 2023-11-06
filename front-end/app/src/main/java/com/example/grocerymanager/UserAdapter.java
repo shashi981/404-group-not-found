@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>{
-    private static List<UserData> userList;
+    private List<UserData> userList;
 
     final static String TAG = "UserAdapter"; //identify where log is coming from
     private Context context;
@@ -27,7 +27,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_user, parent, false);
-        return new UserViewHolder(itemView, context);
+        return new UserViewHolder(itemView, context, userList);
     }
 
     @Override
@@ -48,12 +48,15 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         public TextView userEmail;
         private UserData currentUser;
         private Context context;
+        private List<UserData> userList;
 
-        public UserViewHolder(View view, Context context) {
+
+        public UserViewHolder(View view, Context context, List<UserData> userList) {
             super(view);
             this.context = context;
             userName = view.findViewById(R.id.userName);
             userEmail = view.findViewById(R.id.userEmail);
+            this.userList = userList;
             view.setOnClickListener(this);
         }
 

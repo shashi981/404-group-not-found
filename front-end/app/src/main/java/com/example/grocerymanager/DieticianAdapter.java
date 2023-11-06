@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.DieticianViewHolder> {
 
-    private static List<DietitianData> dieticianList;
+    private List<DietitianData> dieticianList;
     final static String TAG = "DieticianAdapter"; //identify where log is coming from
     private Context context;
 
@@ -30,7 +30,7 @@ public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.Diet
     public DieticianViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_dietician, parent, false);
-        return new DieticianViewHolder(itemView, context);
+        return new DieticianViewHolder(itemView, context, dieticianList);
     }
 
     //CHAT GPT USAGE: NO
@@ -53,18 +53,20 @@ public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.Diet
         public TextView dieticianEmail;
         private DietitianData currentDietician;
         private Context context;
+        private List<DietitianData> dieticianList;
 
-        public DieticianViewHolder(View view, Context context) {
+        public DieticianViewHolder(View view, Context context, List<DietitianData> dieticianList) {
             super(view);
             this.context = context;
             dieticianName = view.findViewById(R.id.dieticianName);
             dieticianEmail = view.findViewById(R.id.dieticianEmail);
+            this.dieticianList = dieticianList;
             view.setOnClickListener(this);
         }
 
         public void bindDietician(DietitianData dietician) {
 
-            this.currentDietician = dietician;
+            currentDietician = dietician;
         }
 
         @Override
