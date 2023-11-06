@@ -33,11 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     final static String TAG = "SettingsActivity"; //identify where log is coming from
 
-    private ImageButton backIcon;
-    private Button signOutButton;
-    private Button deleteAccountButton;
-    private Button dietitianButton;
-
     private GoogleSignInClient mGoogleSignInClient;
 
     private GoogleSignInAccount googleAccount;
@@ -52,7 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        backIcon = findViewById(R.id.back_icon_settings);
+        ImageButton backIcon = findViewById(R.id.back_icon_settings);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         googleAccount = GoogleSignIn.getLastSignedInAccount(this);
 
-        signOutButton = findViewById(R.id.sign_out_settings);
+        Button signOutButton = findViewById(R.id.sign_out_settings);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,14 +74,14 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
-        deleteAccountButton = findViewById(R.id.delete_account_settings);
+        Button deleteAccountButton = findViewById(R.id.delete_account_settings);
         deleteAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 deleteConfirmation();
             }
         });
-        dietitianButton = findViewById(R.id.request_dietitian_settings);
+        Button dietitianButton = findViewById(R.id.request_dietitian_settings);
         dietitianButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -34,19 +34,14 @@ import okhttp3.Response;
 public class AddItemsActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
     final static String TAG = "AddItemsActivity"; //identify where log is coming from
-    private Button addItemButton;
     private EditText itemName;
-    private Button itemExpiryButton;
     private EditText itemQuantity;
-    private Button addItemsInventoryButton;
 
     private List<Item> itemList;
     private String expiryDateString;
     private List<String> expiryDateList;
     private List<String> itemNameList;
     private List<Integer> quantityList;
-    private NetworkManager networkManager;
-    private OkHttpClient client;
 
 
     //    ChatGPT Usage: Partial
@@ -58,7 +53,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         itemNameList = new ArrayList<>();
         quantityList = new ArrayList<>();
 
-        itemExpiryButton = findViewById(R.id.set_expiry_date);
+        Button itemExpiryButton = findViewById(R.id.set_expiry_date);
         itemExpiryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,7 +76,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         itemList = new ArrayList<>();
 
 
-        addItemButton = findViewById(R.id.add_item_to_list);
+        Button addItemButton = findViewById(R.id.add_item_to_list);
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,14 +100,14 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
 
         });
 
-        networkManager = new NetworkManager(this);
-        client = networkManager.getClient();
+        NetworkManager networkManager = new NetworkManager(this);
+        OkHttpClient client = networkManager.getClient();
 
         String serverURL = "https://20.104.197.24/";
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         UserData userData = SharedPrefManager.loadUserData(AddItemsActivity.this);
 
-        addItemsInventoryButton = findViewById(R.id.add_items_to_inventory);
+        Button addItemsInventoryButton = findViewById(R.id.add_items_to_inventory);
         addItemsInventoryButton.setOnClickListener(new View.OnClickListener() {
 
 

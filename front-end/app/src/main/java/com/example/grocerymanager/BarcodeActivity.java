@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,21 +38,13 @@ import okhttp3.Response;
 
 public class BarcodeActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
     final static String TAG = "BarcodeActivity";
-    private ImageButton backIcon;
     private String expiryDateString;
-    private Button itemExpiryButton;
-    private Button addItemButton;
     private EditText itemQuantity;
     private String upcCode;
-    private Button addItemsInventoryButton;
     private List<String> expiryDateList;
     private List<String> upcList;
     private List<Integer> quantityList;
     private List<Item> itemList;
-    private OkHttpClient client;
-    private Button scanBarButton;
-
-    private NetworkManager networkManager;
 
 
     ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(), result -> {
@@ -106,7 +97,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         upcList = new ArrayList<>();
         quantityList = new ArrayList<>();
 
-        itemExpiryButton = findViewById(R.id.set_expiry_date_barcode);
+        Button itemExpiryButton = findViewById(R.id.set_expiry_date_barcode);
         itemExpiryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +105,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
             }
         });
 
-        backIcon = findViewById(R.id.back_icon_barcode);
+        ImageButton backIcon = findViewById(R.id.back_icon_barcode);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +115,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         itemQuantity = findViewById(R.id.item_quantity_barcode);
 
         itemList = new ArrayList<>();
-        addItemButton = findViewById(R.id.add_item_to_barcode);
+        Button addItemButton = findViewById(R.id.add_item_to_barcode);
         addItemButton.setOnClickListener(view -> {
             try{
                 if (expiryDateString.isEmpty() || itemQuantity.getText().toString().isEmpty() || upcCode == null || upcCode.isEmpty()) {
@@ -150,14 +141,14 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         });
 
 
-        networkManager = new NetworkManager(this);
-        client = networkManager.getClient();
+        NetworkManager networkManager = new NetworkManager(this);
+        OkHttpClient client = networkManager.getClient();
 
         String serURL = "https://20.104.197.24/";
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         UserData userData = SharedPrefManager.loadUserData(BarcodeActivity.this);
 
-        addItemsInventoryButton = findViewById(R.id.save_items_to_inventory_barcode);
+        Button addItemsInventoryButton = findViewById(R.id.save_items_to_inventory_barcode);
         addItemsInventoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -216,7 +207,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
 
 
 
-        scanBarButton = findViewById(R.id.scanBarButton);
+        Button scanBarButton = findViewById(R.id.scanBarButton);
         scanBarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

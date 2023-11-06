@@ -33,9 +33,7 @@ public class AdminActivity extends AppCompatActivity {
 
 
     final static String TAG = "AdminActivity"; //identify where log is coming from
-    private ImageButton menuIcon;
     private List<UserData> requestUserList;
-    private NetworkManager networkManager;
     private OkHttpClient client;
 
 
@@ -45,12 +43,12 @@ public class AdminActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
 
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         requestUserList = new ArrayList<>();
 
-        menuIcon = findViewById(R.id.menu_bar_icon_admin);
+        ImageButton menuIcon = findViewById(R.id.menu_bar_icon_admin);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
         popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
