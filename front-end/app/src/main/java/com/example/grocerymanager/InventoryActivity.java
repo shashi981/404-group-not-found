@@ -36,18 +36,11 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
 
     final static String TAG = "InventoryActivity"; //identify where log is coming from
     private OkHttpClient client;
-    private ImageButton chatIcon;
-    private ImageButton scannerIcon;
     private List<Integer> itemIdList;
     private List<Integer> itemIdListEdit;
     private List<String> itemUPCList;
     private List<String> itemExpiryList;
     private List<Integer> itemCountList;
-    private ImageButton recipeIcon;
-    private ImageButton menuIcon;
-
-    private Button addItemsButton;
-    private NetworkManager networkManager;
     private List<Item> itemList;
     private UserData userData;
     private String expiryDateString;
@@ -58,7 +51,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
         itemList = new ArrayList<>();
 
@@ -114,7 +107,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
             }
         });
 
-        chatIcon = findViewById(R.id.chat_icon_inventory);
+        ImageButton chatIcon = findViewById(R.id.chat_icon_inventory);
         chatIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +117,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
             }
         });
 
-        scannerIcon = findViewById(R.id.scan_icon_inventory);
+        ImageButton scannerIcon = findViewById(R.id.scan_icon_inventory);
         scannerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,7 +135,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
 //            }
 //        });
 
-        recipeIcon = findViewById(R.id.recipe_icon_inventory);
+        ImageButton recipeIcon = findViewById(R.id.recipe_icon_inventory);
         recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,7 +153,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
 //            }
 //        });
 
-        menuIcon = findViewById(R.id.menu_bar_icon_inventory);
+        ImageButton menuIcon = findViewById(R.id.menu_bar_icon_inventory);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
         popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
@@ -188,7 +181,7 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
             }
         });
 
-        addItemsButton = findViewById(R.id.add_items_inventory);
+        Button addItemsButton = findViewById(R.id.add_items_inventory);
         addItemsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

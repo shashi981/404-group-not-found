@@ -58,7 +58,7 @@ public class RecipeActivity extends AppCompatActivity {
         recipeMap = new HashMap<>();
 
 
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         String serverURL = "https://20.104.197.24/";
@@ -141,7 +141,7 @@ public class RecipeActivity extends AppCompatActivity {
 
 
 
-        chatIcon = findViewById(R.id.chat_icon_recipe);
+        ImageButton chatIcon = findViewById(R.id.chat_icon_recipe);
         chatIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,7 +151,7 @@ public class RecipeActivity extends AppCompatActivity {
             }
         });
 
-        scannerIcon = findViewById(R.id.scan_icon_recipe);
+        ImageButton scannerIcon = findViewById(R.id.scan_icon_recipe);
         scannerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,7 +160,7 @@ public class RecipeActivity extends AppCompatActivity {
             }
         });
 
-        inventoryIcon = findViewById(R.id.inventory_icon_recipe);
+        ImageButton inventoryIcon = findViewById(R.id.inventory_icon_recipe);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -187,7 +187,7 @@ public class RecipeActivity extends AppCompatActivity {
 //            }
 //        });
 
-        menuIcon = findViewById(R.id.menu_bar_icon_recipe);
+        ImageButton menuIcon = findViewById(R.id.menu_bar_icon_recipe);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
         popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());

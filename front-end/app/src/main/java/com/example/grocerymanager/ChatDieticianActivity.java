@@ -44,7 +44,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
         curUID = -1000;
 
         // Initialize UI components
-        chatRecyclerView = findViewById(R.id.chatRecyclerView_diet);
+        RecyclerView chatRecyclerView = findViewById(R.id.chatRecyclerView_diet);
         EditText inputMessage = findViewById(R.id.inputMessage);
         Button sendButton = findViewById(R.id.sendButton);
         backIcon = findViewById(R.id.imageButton);
@@ -87,7 +87,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
     }
 
     private void initializeWebSocket() {
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         Request request = new Request.Builder().url(SERVER_URL)

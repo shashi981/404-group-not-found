@@ -11,7 +11,6 @@ import java.io.IOException;
 public class ChatActivity extends AppCompatActivity {
 
     final static String TAG = "ChatUserActivity"; //identify where log is coming from
-    private NetworkManager networkManager;
     private WebSocket webSocket;
     private OkHttpClient client;
     private UserData userData;
@@ -32,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
     private void initializeWebSocket() {
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
 

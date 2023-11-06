@@ -28,7 +28,6 @@ public class DietitianListActivity extends AppCompatActivity {
     private List<UserData> userList = new ArrayList<>();
 
     private ImageButton backButton;
-    private NetworkManager networkManager;
     private OkHttpClient client;
     private DietitianData dietitianData;
 
@@ -46,7 +45,7 @@ public class DietitianListActivity extends AppCompatActivity {
             }
         });
 
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         userRecyclerView = findViewById(R.id.user_recyclerview_diet);
@@ -59,7 +58,7 @@ public class DietitianListActivity extends AppCompatActivity {
 
     //CHAT GPT USAGE: partial
     private void fetchAvailableUsers() {
-        dietitianData = SharedPrefManager.loadDietitianData(DietitianListActivity.this);
+        DietitianData dietitianData = SharedPrefManager.loadDietitianData(DietitianListActivity.this);
         int did = dietitianData.getDID();
         Log.d(TAG, "DID = " + did);
         String url = SERVER_URL + "get/usersForDietician/"+did; ///

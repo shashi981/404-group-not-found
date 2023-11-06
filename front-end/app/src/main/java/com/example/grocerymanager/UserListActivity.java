@@ -22,18 +22,9 @@ import org.json.JSONArray;
 
 public class UserListActivity extends AppCompatActivity {
     final static String TAG = "UserListActivity"; //identify where log is coming from
-
-    private ImageButton scannerIcon;
-    private ImageButton inventoryIcon;
-    private ImageButton recipeIcon;
-    private ImageButton cartIcon;
-    private ImageButton menuIcon;
-    private NetworkManager networkManager;
     private OkHttpClient client;
 
     private static final String SERVER_URL = "https://20.104.197.24/";
-
-    private RecyclerView dieticianRecyclerView;
     private DieticianAdapter dieticianAdapter;
     private List<DietitianData> dieticianList = new ArrayList<>();
 
@@ -43,7 +34,7 @@ public class UserListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_main);
-        scannerIcon = findViewById(R.id.scan_icon_chat);
+        ImageButton scannerIcon = findViewById(R.id.scan_icon_chat);
         scannerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,7 +43,7 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
 
-        inventoryIcon = findViewById(R.id.inventory_icon_chat);
+        ImageButton inventoryIcon = findViewById(R.id.inventory_icon_chat);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +52,7 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
 
-        recipeIcon = findViewById(R.id.recipe_icon_chat);
+        ImageButton recipeIcon = findViewById(R.id.recipe_icon_chat);
         recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,7 +61,7 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
 
-        cartIcon = findViewById(R.id.shop_icon_chat);
+        ImageButton cartIcon = findViewById(R.id.shop_icon_chat);
         cartIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,7 +69,7 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
 
-        menuIcon = findViewById(R.id.menu_bar_icon_chat);
+        ImageButton menuIcon = findViewById(R.id.menu_bar_icon_chat);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
         popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
@@ -106,10 +97,10 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
 
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
-        dieticianRecyclerView = findViewById(R.id.dietician_recyclerview);
+        RecyclerView dieticianRecyclerView = findViewById(R.id.dietician_recyclerview);
         dieticianRecyclerView.setLayoutManager(new LinearLayoutManager(this)); // Set LayoutManager
         dieticianAdapter = new DieticianAdapter(this, dieticianList);
         dieticianRecyclerView.setAdapter(dieticianAdapter);

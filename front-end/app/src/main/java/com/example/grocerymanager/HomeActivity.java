@@ -12,17 +12,6 @@ import android.widget.TextView;
 public class HomeActivity extends AppCompatActivity {
 
     final static String TAG = "HomeActivity"; //identify where log is coming from
-    private Button scanGroceriesButton;
-    private Button manageInventoryButton;
-    private Button consultDietitianButton;
-    private Button suggestedRecipesButton;
-
-    private ImageButton chatIcon;
-    private ImageButton scannerIcon;
-    private ImageButton inventoryIcon;
-    private ImageButton recipeIcon;
-    private ImageButton cartIcon;
-    private ImageButton menuIcon;
 
     //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
     @Override
@@ -31,7 +20,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
 
-        scanGroceriesButton = findViewById(R.id.scan_groceries_button_home);
+        Button scanGroceriesButton = findViewById(R.id.scan_groceries_button_home);
         scanGroceriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -40,7 +29,7 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
-        manageInventoryButton = findViewById(R.id.manage_inventory_button_home);
+        Button manageInventoryButton = findViewById(R.id.manage_inventory_button_home);
         manageInventoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,7 +39,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        consultDietitianButton = findViewById(R.id.consult_dietitian_button_home);
+        Button consultDietitianButton = findViewById(R.id.consult_dietitian_button_home);
         consultDietitianButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,7 +50,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        suggestedRecipesButton = findViewById(R.id.suggested_recipes_button_home);
+        Button suggestedRecipesButton = findViewById(R.id.suggested_recipes_button_home);
         suggestedRecipesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
-        chatIcon = findViewById(R.id.chat_icon_home);
+        ImageButton chatIcon = findViewById(R.id.chat_icon_home);
         chatIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +73,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        scannerIcon = findViewById(R.id.scan_icon_home);
+        ImageButton scannerIcon = findViewById(R.id.scan_icon_home);
         scannerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -94,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        inventoryIcon = findViewById(R.id.inventory_icon_home);
+        ImageButton inventoryIcon = findViewById(R.id.inventory_icon_home);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,7 +92,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        recipeIcon = findViewById(R.id.recipe_icon_home);
+        ImageButton recipeIcon = findViewById(R.id.recipe_icon_home);
         recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,16 +101,16 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        cartIcon = findViewById(R.id.shop_icon_home);
-        cartIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityLauncher.launchActivity(HomeActivity.this, ListActivity.class);
+//        ImageButton cartIcon = findViewById(R.id.shop_icon_home);
+//        cartIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                ActivityLauncher.launchActivity(HomeActivity.this, ListActivity.class);
+//
+//            }
+//        });
 
-            }
-        });
-
-        menuIcon = findViewById(R.id.menu_bar_icon_home);
+        ImageButton menuIcon = findViewById(R.id.menu_bar_icon_home);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
         popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
