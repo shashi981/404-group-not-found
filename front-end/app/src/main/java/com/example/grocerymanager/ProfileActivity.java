@@ -35,12 +35,8 @@ import okhttp3.Response;
 public class ProfileActivity extends AppCompatActivity {
 
     final static String TAG = "ProfileActivity"; //identify where log is coming from
-
-    private ImageButton backIcon;
-    private Button editPreferenceButton;
     private List<String> savePreferences;
     private List<String> loadPreferences;
-    private NetworkManager networkManager;
     private UserData userData;
     private OkHttpClient client;
 
@@ -55,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         loadPreferences = new ArrayList<>();
 
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         String serverURL = "https://20.104.197.24/";
@@ -103,7 +99,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-        backIcon = findViewById(R.id.back_icon_profile);
+        ImageButton backIcon = findViewById(R.id.back_icon_profile);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,7 +109,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        editPreferenceButton = findViewById(R.id.edit_dietary_restrictions);
+        Button editPreferenceButton = findViewById(R.id.edit_dietary_restrictions);
         editPreferenceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

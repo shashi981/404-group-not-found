@@ -35,15 +35,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
-
-    private Button signInButton;
     final static String TAG = "MainActivity"; //identify where log is coming from
 
     private GoogleSignInClient mGoogleSignInClient;
 
     private GoogleSignInAccount googleAccount;
     private int RC_SIGN_IN = 1;
-    private NetworkManager networkManager;
     private OkHttpClient client;
     private TokenManager tm;
 
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             updateUI(googleAccount);
         }
 
-        signInButton = findViewById(R.id.sign_in_button_login);
+        Button signInButton = findViewById(R.id.sign_in_button_login);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
             tm = new TokenManager(MainActivity.this);
 
-            networkManager = new NetworkManager(this);
+            NetworkManager networkManager = new NetworkManager(this);
             client = networkManager.getClient();
 
 

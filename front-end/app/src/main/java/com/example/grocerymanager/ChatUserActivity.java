@@ -20,15 +20,12 @@ import java.util.List;
 
 public class ChatUserActivity extends AppCompatActivity {
     final static String TAG = "ChatUserActivity"; //identify where log is coming from
-    private NetworkManager networkManager;
     private WebSocket webSocket;
     private OkHttpClient client;
     private UserData userData;
-    private ImageButton backIcon;
     private static final String SERVER_URL = "wss://20.104.197.24";
 
     private ChatAdapter chatAdapter;
-    private RecyclerView chatRecyclerView;
     private List<ChatMessage> chatHistoryList = new ArrayList<>();
 
     private int curDID;
@@ -42,10 +39,10 @@ public class ChatUserActivity extends AppCompatActivity {
         curDID = -1000;
 
         // Initialize UI components
-        chatRecyclerView = findViewById(R.id.chatRecyclerView);
+        RecyclerView chatRecyclerView = findViewById(R.id.chatRecyclerView);
         EditText inputMessage = findViewById(R.id.inputMessage);
         Button sendButton = findViewById(R.id.sendButton);
-        backIcon = findViewById(R.id.imageButton);
+        ImageButton backIcon = findViewById(R.id.imageButton);
 
         // Set up RecyclerView with an empty adapter
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -84,7 +81,7 @@ public class ChatUserActivity extends AppCompatActivity {
     }
     //CHAT GPT USAGE: PARTIAL
     private void initializeWebSocket() {
-        networkManager = new NetworkManager(this);
+        NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
         Request request = new Request.Builder().url(SERVER_URL)

@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 
 public class ScannerActivity extends AppCompatActivity {
@@ -30,7 +29,7 @@ public class ScannerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scanner);
 
 
-        chatIcon = findViewById(R.id.chat_icon_scanner);
+        ImageButton chatIcon = findViewById(R.id.chat_icon_scanner);
         chatIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -41,7 +40,7 @@ public class ScannerActivity extends AppCompatActivity {
         });
 
 
-        inventoryIcon = findViewById(R.id.inventory_icon_scanner);
+        ImageButton inventoryIcon = findViewById(R.id.inventory_icon_scanner);
         inventoryIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,7 +49,7 @@ public class ScannerActivity extends AppCompatActivity {
             }
         });
 
-        recipeIcon = findViewById(R.id.recipe_icon_scanner);
+        ImageButton recipeIcon = findViewById(R.id.recipe_icon_scanner);
         recipeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,7 +67,7 @@ public class ScannerActivity extends AppCompatActivity {
 //            }
 //        });
 
-        menuIcon = findViewById(R.id.menu_bar_icon_scanner);
+        ImageButton menuIcon = findViewById(R.id.menu_bar_icon_scanner);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
         popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
@@ -95,7 +94,8 @@ public class ScannerActivity extends AppCompatActivity {
                 popupMenu.show();
             }
         });
-        scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
+
+        Button scanBarcodeButton = findViewById(R.id.scanBarcodeButton);
         scanBarcodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,7 +103,7 @@ public class ScannerActivity extends AppCompatActivity {
             }
         });
 
-        addItemsButton = findViewById(R.id.manual_scanner);
+        Button addItemsButton = findViewById(R.id.manual_scanner);
         addItemsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

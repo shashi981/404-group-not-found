@@ -20,12 +20,6 @@ public class NetworkManager {
     private static NetworkManager instance;
 
     private OkHttpClient client;
-    private InputStream inputStream;
-    private Certificate certificate;
-    private KeyStore keyStore;
-    private TrustManagerFactory trustManagerFactory;
-    private TrustManager[] trustManagers;
-    private SSLContext sslContext;
     private Context context;
 
 
@@ -51,19 +45,19 @@ public class NetworkManager {
     //    ChatGPT Usage: Yes
     private void makeNetworkRequestWithSSL() {
         try {
-            inputStream = context.getResources().openRawResource(R.raw.certificate);
-            certificate = readCertificate(inputStream);
+            InputStream inputStream = context.getResources().openRawResource(R.raw.certificate);
+            Certificate certificate = readCertificate(inputStream);
 
-            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(null, null);
             keyStore.setCertificateEntry("ca", certificate);
 
-            trustManagerFactory = TrustManagerFactory.getInstance(
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
                     TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init(keyStore);
-            trustManagers = trustManagerFactory.getTrustManagers();
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
 
-            sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustManagers, new SecureRandom());
 
             client = new OkHttpClient.Builder()
