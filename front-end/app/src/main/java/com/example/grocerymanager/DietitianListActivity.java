@@ -22,14 +22,9 @@ import org.json.JSONArray;
 public class DietitianListActivity extends AppCompatActivity {
     final static String TAG = "DietitianListActivity";
     private static final String SERVER_URL = "https://20.104.197.24/";
-
-    private RecyclerView userRecyclerView;
     private UserAdapter userAdapter;
     private List<UserData> userList = new ArrayList<>();
-
-    private ImageButton backButton;
     private OkHttpClient client;
-    private DietitianData dietitianData;
 
     //CHAT GPT USAGE: PARTIAL
     @Override
@@ -37,7 +32,7 @@ public class DietitianListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dietitian_list);
 
-        backButton = findViewById(R.id.backButton_diet);
+        ImageButton backButton = findViewById(R.id.backButton_diet);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,7 +43,7 @@ public class DietitianListActivity extends AppCompatActivity {
         NetworkManager networkManager = new NetworkManager(this);
         client = networkManager.getClient();
 
-        userRecyclerView = findViewById(R.id.user_recyclerview_diet);
+        RecyclerView userRecyclerView = findViewById(R.id.user_recyclerview_diet);
         userRecyclerView.setLayoutManager(new LinearLayoutManager(this)); // Set LayoutManager
         userAdapter = new UserAdapter(this, userList);
         userRecyclerView.setAdapter(userAdapter);

@@ -10,7 +10,6 @@ public class ListActivity extends AppCompatActivity {
 
     final static String TAG = "ListActivity"; //identify where log is coming from
 
-    private ImageButton backIcon;
 
     //    ChatGPT Usage: No. Activity Never Used Functionally.
     @Override
@@ -18,7 +17,7 @@ public class ListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        backIcon = findViewById(R.id.back_icon_list);
+        ImageButton backIcon = findViewById(R.id.back_icon_list);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

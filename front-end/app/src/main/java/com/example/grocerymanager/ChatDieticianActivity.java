@@ -23,15 +23,12 @@ import java.util.List;
 public class ChatDieticianActivity extends AppCompatActivity {
 
     final static String TAG = "ChatDieticianActivity"; //identify where log is coming from
-    private NetworkManager networkManager;
     private WebSocket webSocket;
     private OkHttpClient client;
     private DietitianData dietitianData;
-    private ImageButton backIcon;
     private static final String SERVER_URL = "wss://20.104.197.24";
 
     private ChatAdapterDietician chatAdapterDietician;
-    private RecyclerView chatRecyclerView;
     private List<ChatMessage> chatHistoryList = new ArrayList<>();
     private int curUID;
 
@@ -47,7 +44,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
         RecyclerView chatRecyclerView = findViewById(R.id.chatRecyclerView_diet);
         EditText inputMessage = findViewById(R.id.inputMessage);
         Button sendButton = findViewById(R.id.sendButton);
-        backIcon = findViewById(R.id.imageButton);
+        ImageButton backIcon = findViewById(R.id.imageButton);
 
         // Set up RecyclerView with an empty adapter
         chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));

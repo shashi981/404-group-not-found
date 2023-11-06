@@ -111,7 +111,7 @@ public class AdminActivity extends AppCompatActivity {
                             String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
                             Uri defProfileUri = Uri.parse(defProfile);
                             UserData user;
-                            if(userUriString.isEmpty() || userUriString == null){
+                            if(userUriString == null || userUriString.isEmpty()){
                                  user = new UserData(firstName, lastName, userEmail, defProfileUri, UID);
                             }
                             else{
