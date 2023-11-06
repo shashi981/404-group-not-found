@@ -127,7 +127,6 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         addItemButton = findViewById(R.id.add_item_to_barcode);
         addItemButton.setOnClickListener(view -> {
             try{
-                long upc = Long.parseLong(upcCode);
                 if (expiryDateString.isEmpty() || itemQuantity.getText().toString().isEmpty() || upcCode == null || upcCode.isEmpty()) {
 
                 } else {

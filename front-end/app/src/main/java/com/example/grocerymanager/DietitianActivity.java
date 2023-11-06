@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 
-import java.util.ArrayList;
-
 import okhttp3.OkHttpClient;
 
 public class DietitianActivity extends AppCompatActivity {
@@ -18,7 +16,6 @@ public class DietitianActivity extends AppCompatActivity {
     final static String TAG = "DietitianActivity"; //identify where log is coming from
     private ImageButton menuIcon;
     private NetworkManager networkManager;
-    private OkHttpClient client;
     private Button chatButton;
 
     //    ChatGPT Usage: No. Adapted from previous implementation from different activity.
@@ -28,7 +25,7 @@ public class DietitianActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dietitian);
 
         networkManager = new NetworkManager(this);
-        client = networkManager.getClient();
+        OkHttpClient client = networkManager.getClient();
 
         menuIcon = findViewById(R.id.menu_bar_icon_dietitian);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);

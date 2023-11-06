@@ -1,11 +1,7 @@
 package com.example.grocerymanager;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
-import android.graphics.drawable.BitmapDrawable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,26 +10,17 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 
-import com.google.mlkit.vision.barcode.BarcodeScanner;
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
-import com.google.mlkit.vision.barcode.BarcodeScanning;
-import com.journeyapps.barcodescanner.ScanContract;
-import com.journeyapps.barcodescanner.ScanOptions;
-
 public class ScannerActivity extends AppCompatActivity {
 
     final static String TAG = "ScannerActivity"; //identify where log is coming from
 
     private ImageButton chatIcon;
-    private ImageButton scannerIcon;
     private ImageButton inventoryIcon;
     private ImageButton recipeIcon;
-    private ImageButton cartIcon;
     private ImageButton menuIcon;
     private Button addItemsButton;
 
     private Button scanBarcodeButton;
-    private ImageView barcodeImage;
 
 
     //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.

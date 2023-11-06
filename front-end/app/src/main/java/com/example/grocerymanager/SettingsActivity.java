@@ -24,10 +24,8 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -43,7 +41,6 @@ public class SettingsActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     private GoogleSignInAccount googleAccount;
-    private int RC_SIGN_IN = 1;
     private NetworkManager networkManager;
     private OkHttpClient client;
     private UserData userData;

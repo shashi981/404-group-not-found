@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -30,10 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class RecipeActivity extends AppCompatActivity {
@@ -42,8 +39,6 @@ public class RecipeActivity extends AppCompatActivity {
     private ImageButton chatIcon;
     private ImageButton scannerIcon;
     private ImageButton inventoryIcon;
-    private ImageButton recipeIcon;
-    private ImageButton cartIcon;
     private ImageButton menuIcon;
 
     private NetworkManager networkManager;
