@@ -1,7 +1,5 @@
 package com.example.grocerymanager;
 
-import java.sql.Timestamp;
-
 public class ChatMessage {
     private String message;
     private int fromUserFlag; // 1 if from user, 0 if from dietician

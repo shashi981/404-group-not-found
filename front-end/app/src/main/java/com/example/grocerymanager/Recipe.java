@@ -75,7 +75,7 @@ public class Recipe {
 
     //    ChatGPT Usage: No
     public String getIngredientsAsString(){
-        String ingredientsString = new String();
+        String ingredientsString = "";
         for(Pair<String, String> ingredientPair : ingredients){
             ingredientsString = ingredientsString + ingredientPair.first + ": " + ingredientPair.second + "\n";
         }
@@ -84,7 +84,7 @@ public class Recipe {
 
     //    ChatGPT Usage: No
     public String getFiveIngredientsAstString(){
-        String ingredientsString = new String();
+        String ingredientsString = "";
         int i = 0;
         for(Pair<String, String> ingredientPair : ingredients){
             if(i > 4){

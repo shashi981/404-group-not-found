@@ -21,19 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.SecureRandom;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -54,19 +43,10 @@ public class InventoryActivity extends AppCompatActivity implements DatePickerFr
     private List<String> itemUPCList;
     private List<String> itemExpiryList;
     private List<Integer> itemCountList;
-
-    private ImageButton inventoryIcon;
     private ImageButton recipeIcon;
-    private ImageButton cartIcon;
     private ImageButton menuIcon;
 
     private Button addItemsButton;
-    private InputStream inputStream;
-    private Certificate certificate;
-    private KeyStore keyStore;
-    private TrustManagerFactory trustManagerFactory;
-    private TrustManager[] trustManagers;
-    private SSLContext sslContext;
     private NetworkManager networkManager;
     private List<Item> itemList;
     private UserData userData;

@@ -34,10 +34,8 @@ import okhttp3.Response;
 public class AddItemsActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
     final static String TAG = "AddItemsActivity"; //identify where log is coming from
-    private ImageButton backIcon;
     private Button addItemButton;
     private EditText itemName;
-    private EditText itemExpiry;
     private Button itemExpiryButton;
     private EditText itemQuantity;
     private Button addItemsInventoryButton;
@@ -68,7 +66,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
             }
         });
 
-        backIcon = findViewById(R.id.back_icon_add);
+        ImageButton backIcon = findViewById(R.id.back_icon_add);
         backIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
