@@ -55,45 +55,47 @@ function fetchDataForSearchTerm(searchTerm) {
 //ChatGPT usage: Yes
 async function insertDataIntoDatabase(jsonData) {
   await Promise.all(jsonData.meals.map(async (meal) => {
-      try {
-          const recipeInfoQuery = `INSERT IGNORE INTO RECIPE_INFO (Rname, Category, RID, Instruction, YoutubeLink) VALUES (?, ?, ?, ?, ?);`;
-          const [results] = await con.promise().query(recipeInfoQuery, [meal.strMeal, meal.strCategory, meal.idMeal, meal.strInstructions, meal.strYoutube]);
+    // Removed unnecessary block
+    try {
+      const recipeInfoQuery = `INSERT IGNORE INTO RECIPE_INFO (Rname, Category, RID, Instruction, YoutubeLink) VALUES (?, ?, ?, ?, ?);`;
+      const [results] = await con.promise().query(recipeInfoQuery, [meal.strMeal, meal.strCategory, meal.idMeal, meal.strInstructions, meal.strYoutube]);
 
-          console.log('Inserted into RECIPE_INFO:', results);
+      console.log('Inserted into RECIPE_INFO:', results);
 
-          for (let i = 1; i <= 20; i++) {
-              const ingredientKey = `strIngredient${i}`;
-              const measureKey = `strMeasure${i}`;
+      for (let i = 1; i <= 20; i++) {
+        const ingredientKey = `strIngredient${i}`;
+        const measureKey = `strMeasure${i}`;
 
-              if (meal[ingredientKey] !== "") {
-                  const recipeQuery = `INSERT IGNORE INTO RECIPE (RID, Ingredient, Amount) VALUES (?, ?, ?);`;
-                  const [results] = await con.promise().query(recipeQuery, [meal.idMeal, meal[ingredientKey], meal[measureKey]]);
+        if (meal[ingredientKey] !== "") {
+          const recipeQuery = `INSERT IGNORE INTO RECIPE (RID, Ingredient, Amount) VALUES (?, ?, ?);`;
+          const [results] = await con.promise().query(recipeQuery, [meal.idMeal, meal[ingredientKey], meal[measureKey]]);
 
-                  console.log('Inserted into RECIPE:', results);
-              }
-          }
-      } catch (error) {
-          console.error('Error inserting into RECIPE:', error);
+          console.log('Inserted into RECIPE:', results);
+        }
       }
+    } catch (error) {
+      console.error('Error inserting into RECIPE:', error);
+    }
   }));
 }
 
 //save the content as file to ensure its extracted correctly enable when needed
 //ChatGPT usage: Yes
-function saveDataToFile(jsonData, filename) {
-    const jsonStr = JSON.stringify(jsonData, null, 2)
+function saveDataToFile(jsonData, searchTerm) {
+  const jsonStr = JSON.stringify(jsonData, null, 2);
+  // Sanitize the searchTerm to use as the filename, ensuring it doesn't contain directory paths
+  const sanitizedFilename = `output_${path.basename(searchTerm)}.json`;
+  const filePath = path.join(__dirname, sanitizedFilename);
 
-    const filePath = path.join(__dirname, filename); // Use path.join for secure file path construction
-  
-    fs.writeFile(filePath, jsonStr, (err) => {
-      if (err) {
-        console.error('Error saving data to the file:', err)
-      } else {
-        console.log('JSON data has been saved to', filePath)
-      }
-    })
-  }
+  fs.writeFile(filePath, jsonStr, (err) => {
+    if (err) {
+      console.error('Error saving data to file:', err);
+    } else {
+      console.log('JSON data has been saved to', filePath);
+    }
+  });
+}
 
 searchTerms.forEach((searchTerm) => {
-    fetchDataForSearchTerm(searchTerm)
-})
+  fetchDataForSearchTerm(searchTerm); 
+});
