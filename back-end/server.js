@@ -312,11 +312,11 @@ app.get("/get/users", async (req, res) => {
 app.post("/add/users", async (req,res)=>{
   try{
 
-    let FirstName=req.body.p1
-    let LastName=req.body.p2
-    let Email=req.body.p3
-    let ProfileURL=req.body.p4
-    let Token=req.body.p5
+    const FirstName=req.body.p1
+    const LastName=req.body.p2
+    const Email=req.body.p3
+    const ProfileURL=req.body.p4
+    const Token=req.body.p5
 
     const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL, MessageToken) VALUES (?, ?, ?, ?, ?);'
     const query2='SELECT UID FROM USERS WHERE Email=?'
@@ -344,7 +344,7 @@ app.post("/add/users", async (req,res)=>{
 app.get("/delete/users", async (req,res)=>{
   try{
 
-    let UID=req.query.p1
+    const UID=req.query.p1
 
     const query = 'DELETE FROM USERS WHERE UID=?;'
     const [results] = await con.promise().query(query, [UID])
@@ -367,11 +367,11 @@ app.get("/delete/users", async (req,res)=>{
 //ChatGPT usage: No
 app.get("/update/users", async (req,res)=>{
   try{
-    let UID=req.query.p1
-    let FirstName=req.query.p2
-    let LastName=req.query.p3
-    let Email=req.query.p4
-    let ProfileURL=req.query.p5
+    const UID=req.query.p1
+    const FirstName=req.query.p2
+    const LastName=req.query.p3
+    const Email=req.query.p4
+    const ProfileURL=req.query.p5
 
     const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?;'
     await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
@@ -392,7 +392,7 @@ app.get("/update/users", async (req,res)=>{
 app.get("/get/items", async (req,res)=>{
   try{
 
-    let UID=req.query.p1
+    const UID=req.query.p1
 
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
     const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? ORDER BY o.ItemID ASC;'
@@ -437,16 +437,16 @@ app.post("/add/items", async (req, res) => {
     const ExpireDates = req.body.p3;
     const ItemCounts = req.body.p4;
 
-    if (UPCs.length !== ExpireDates.length || UPCs.length !== ItemCounts.length) {
-      return res.status(400).send('Array lengths must match.');
-    }
-
     const currentDate = new Date();
     const currentDateString = currentDate.toISOString().split('T')[0];
     console.log(currentDateString);
 
     let returnStatement = '';
-    let values = [];
+    const values = [];
+
+    if (UPCs.length !== ExpireDates.length || UPCs.length !== ItemCounts.length) {
+      return res.status(400).send('Array lengths must match.');
+    }
 
     for (let i = 0; i < UPCs.length; i++) {
       const UPC = UPCs[i];
@@ -461,7 +461,7 @@ app.post("/add/items", async (req, res) => {
             await con.promise().query(insertGroceryQuery, [UPC, productData.title, productData.brand, productData.title]);
             values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate]);
           } else {
-            returnStatement += `${UPC} `;
+            returnStatement += UPC + " ";
             console.error(`Product not found for UPC: ${UPC}`);
           }
         } catch (error) {
@@ -524,11 +524,11 @@ function fetchDataFromAPI(url) {
 app.post("/add/items_man", async (req,res)=>{
   try{
 
-    let UID=req.body.p1
-    let UPC = req.body.p2 // should be -1
-    let ExpireDate = req.body.p3 
-    let ItemCount = req.body.p4
-    let ItemName = req.body.p5 
+    const UID=req.body.p1
+    const UPC = req.body.p2 // should be -1
+    const ExpireDate = req.body.p3 
+    const ItemCount = req.body.p4
+    const ItemName = req.body.p5 
     if ( ExpireDate.length !== ItemCount.length || ItemCount.length !== ItemName.length) {
       return res.status(400).send('Arrays should have the same length')
     }
@@ -573,8 +573,8 @@ app.post("/add/items_man", async (req,res)=>{
 //ChatGPT usage: Partial
 app.post("/delete/items", async (req,res)=>{
   try{
-    let UID=req.body.p1
-    let ItemID=req.body.p2 
+    const UID=req.body.p1
+    const ItemID=req.body.p2 
 
     const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
 
@@ -598,11 +598,11 @@ app.post("/delete/items", async (req,res)=>{
 //ChatGPT usage: Partial
 app.post("/update/items", (req,res)=>{
   try{
-    let UID=req.body.p1
-    let ItemID=req.body.p2 
-    let UPC = req.body.p3 
-    let ExpireDate = req.body.p4 
-    let ItemCount = req.body.p5 
+    const UID=req.body.p1
+    const ItemID=req.body.p2 
+    const UPC = req.body.p3 
+    const ExpireDate = req.body.p4 
+    const ItemCount = req.body.p5 
 
     if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length || ItemID.length !== UPC.length) {
       return res.status(400).send('Arrays should have the same length')
@@ -638,8 +638,8 @@ app.post("/update/items", (req,res)=>{
 app.post("/add/pref", async (req,res)=>{
 
   try{
-  let UID=req.body.p1
-  let Pref = req.body.p2 
+  const UID=req.body.p1
+  const Pref = req.body.p2 
   const values = [];
   for (let i = 0; i <Pref.length; i++) {
     if(i<Pref.length-1){
@@ -669,7 +669,7 @@ app.post("/add/pref", async (req,res)=>{
 //ChatGPT usage: No
 app.get("/delete/pref", async (req,res)=>{
   try{
-    let UID=req.query.p1
+    const UID=req.query.p1
 
     const query = 'DELETE FROM PREFERENCE WHERE UID= ?'
     await con.promise().query(query, [UID])
@@ -691,7 +691,7 @@ app.get("/delete/pref", async (req,res)=>{
 app.get("/get/pref", async (req,res)=>{
   try{
     
-    let UID=req.query.p1
+    const UID=req.query.p1
 
     const query = 'SELECT Pref FROM PREFERENCE WHERE UID= ?'
     const [results] = await con.promise().query(query, [UID])
@@ -739,7 +739,7 @@ app.get("/get/pref_list", async (req,res)=>{
 app.get("/add/dietReq", async (req,res)=>{
 
   try{
-    let UID=req.query.p1
+    const UID=req.query.p1
     const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
     await con.promise().query(query, [UID])
 
@@ -843,8 +843,8 @@ app.get("/remove/dietReq", async (req,res)=>{
 //ChatGPT usage: No
 app.get("/get/dietician", async (req,res)=>{
   try{
-  let Email=req.query.p1
-  let Token=req.query.p2
+  const Email=req.query.p1
+  const Token=req.query.p2
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
@@ -925,7 +925,7 @@ app.get("/get/recipe", async (req,res)=>{
   try {
     // todo use the api to get extra recipes when the no recipe matches on db
 
-    let UID=req.query.p1
+    const UID=req.query.p1
     let storequery=''
     let query=''
     const store=[]
@@ -1073,7 +1073,7 @@ app.get("/get/recipe", async (req,res)=>{
 app.get("/get/recipe_info", async (req,res)=>{
   try{
     
-    let RID=req.query.p1 ? req.query.p1.split(',') : []
+    const RID=req.query.p1 ? req.query.p1.split(',') : []
 
     const query = 'SELECT * FROM RECIPE_INFO WHERE RID IN (?)'
     const [results] = await con.promise().query(query, [RID])
