@@ -83,9 +83,15 @@ async function insertDataIntoDatabase(jsonData) {
 //ChatGPT usage: Yes
 function saveDataToFile(jsonData, searchTerm) {
   const jsonStr = JSON.stringify(jsonData, null, 2);
-  // Sanitize the searchTerm to use as the filename, ensuring it doesn't contain directory paths
-  const sanitizedFilename = `output_${path.basename(searchTerm)}.json`;
-  const filePath = path.join(__dirname, sanitizedFilename);
+  const baseFilename = path.basename(searchTerm).replace(/[^a-zA-Z0-9_]/g, '');
+  let filePath = path.join(__dirname, 'data', `output_${baseFilename}.json`);
+  filePath = path.normalize(filePath);
+
+  // Ensure filePath still points to a file within the intended directory
+  const intendedDir = path.resolve(__dirname, 'data');
+  if (!filePath.startsWith(intendedDir + path.sep)) {
+    throw new Error('Invalid file path detected');
+  }
 
   fs.writeFile(filePath, jsonStr, (err) => {
     if (err) {
@@ -96,6 +102,7 @@ function saveDataToFile(jsonData, searchTerm) {
   });
 }
 
+// This loop iterates over the searchTerms array and calls fetchDataForSearchTerm for each searchTerm
 searchTerms.forEach((searchTerm) => {
   fetchDataForSearchTerm(searchTerm); 
 });
