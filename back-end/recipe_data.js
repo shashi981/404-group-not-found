@@ -1,7 +1,7 @@
 const https = require("https");
 const mysql = require("mysql2")
-const fs = require("fs")
-const path = require("path")
+//const fs = require("fs")
+//const path = require("path")
 
 const baseurl = "https://www.themealdb.com/api/json/v1/1/search.php?s=";
 
@@ -25,31 +25,31 @@ const con = mysql.createConnection({
 
 
 //ChatGPT usage: Yes
-function fetchDataForSearchTerm(searchTerm) {
-  const url = baseurl + searchTerm
+// function fetchDataForSearchTerm(searchTerm) {
+//   const url = baseurl + searchTerm
 
-  https.get(url, (response) => {
-    let data = ""
+//   https.get(url, (response) => {
+//     let data = ""
 
-    response.on('data', (chunk) => {
-    data += chunk;
-    });
+//     response.on('data', (chunk) => {
+//     data += chunk;
+//     });
 
-    response.on("end", () => {
-      try {
-        const jsonData = JSON.parse(data)
-        const filename = `output_${searchTerm}.json`;
-        saveDataToFile(jsonData, filename);
+//     response.on("end", () => {
+//       try {
+//         const jsonData = JSON.parse(data)
+//         //const filename = `output_${searchTerm}.json`;
+//         //saveDataToFile(jsonData, filename);
         
-        insertDataIntoDatabase(jsonData);
-      } catch (error) {
-        console.error('Error parsing JSON:', error)
-      }
-    });
-  }).on('error', (error) => {
-    console.error('Error making the request:', error)
-  })
-}
+//         insertDataIntoDatabase(jsonData);
+//       } catch (error) {
+//         console.error('Error parsing JSON:', error)
+//       }
+//     });
+//   }).on('error', (error) => {
+//     console.error('Error making the request:', error)
+//   })
+// }
 
 
 //ChatGPT usage: Yes
@@ -81,21 +81,21 @@ async function insertDataIntoDatabase(jsonData) {
 
 //save the content as file to ensure its extracted correctly enable when needed
 //ChatGPT usage: Yes
-function saveDataToFile(jsonData, searchTerm) {
-  const jsonStr = JSON.stringify(jsonData, null, 2);
-  // Sanitize the searchTerm to use as the filename, ensuring it doesn't contain directory paths
-  const sanitizedFilename = `output_${path.basename(searchTerm)}.json`;
-  const filePath = path.join(__dirname, sanitizedFilename);
+// function saveDataToFile(jsonData, searchTerm) {
+//   const jsonStr = JSON.stringify(jsonData, null, 2);
+//   // Sanitize the searchTerm to use as the filename, ensuring it doesn't contain directory paths
+//   const sanitizedFilename = `output_${path.basename(searchTerm)}.json`;
+//   const filePath = path.join(__dirname, sanitizedFilename);
 
-  fs.writeFile(filePath, jsonStr, (err) => {
-    if (err) {
-      console.error('Error saving data to file:', err);
-    } else {
-      console.log('JSON data has been saved to', filePath);
-    }
-  });
-}
+//   fs.writeFile(filePath, jsonStr, (err) => {
+//     if (err) {
+//       console.error('Error saving data to file:', err);
+//     } else {
+//       console.log('JSON data has been saved to', filePath);
+//     }
+//   });
+// }
 
-searchTerms.forEach((searchTerm) => {
-  fetchDataForSearchTerm(searchTerm); 
-});
+// searchTerms.forEach((searchTerm) => {
+//   fetchDataForSearchTerm(searchTerm); 
+// });
