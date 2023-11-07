@@ -18,13 +18,31 @@ let dieticianConnections = {};
 const app = express()
 app.use(express.json());
 
-const UPCAPIKey= "?apikey=05E1D91D8E518F2F15B235B4E473F34F"
+const UPCKeypath='./UPCKey.txt'
+let UPCAPIKey= "?apikey="
 const UPCAPIURL= "https://api.upcdatabase.org/product/"
+
+fs.readFile(UPCKeypath, 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading the file:', err)
+  } else {
+    UPCAPIKey += data
+  }
+})
 
 //use this to get more recipes when have the time to do so
 /*
-const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
-const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='*/
+const RecipeKeypath='./RecipeKey.txt'
+let RecipeAPIKey='&apiKey='
+const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
+
+fs.readFile(RecipeKeypath, 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading the file:', err)
+  } else {
+    RecipeAPIKey += data
+  }
+})*/
 
 //change this to maybe minute or hourly for testing
 const schedule='*/20 * * * *' // M4 submission use
