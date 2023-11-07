@@ -1078,6 +1078,8 @@ app.get("/get/recipe", async (req,res)=>{
       const [result2] = await con.promise().query(query2, [formattedArray])
 
       formattedResults = result2.map((result) => {
+        console.log(result)
+        
         return {
           RID: result.RID,
           Ingredient: result.Ingredient,
@@ -1231,7 +1233,7 @@ async function processShoppingData() {
     
       // Generate reminders
       for (const item in purchaseHistory) {
-        const purchaseDates = purchaseHistory[item]
+        //const purchaseDates = purchaseHistory[item]
 
         // Calculate the average purchase frequency
         //const purchaseFrequency = purchaseDates.length / numberOfVisits // Number of times purchased per week
