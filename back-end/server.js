@@ -83,10 +83,9 @@ wss.on('connection', async (ws,req) => {
 
     // On receiving a message from the client
     ws.on('message', async (message) => {
+      console.log('Received:', message)
+
       try{
-     
-        console.log('Received:', message);
-        
         // Parse the message (assuming it's in JSON format)
         let parsedMessage = JSON.parse(message);
         const UID=parsedMessage.UID
