@@ -83,15 +83,9 @@ async function insertDataIntoDatabase(jsonData) {
 //ChatGPT usage: Yes
 function saveDataToFile(jsonData, searchTerm) {
   const jsonStr = JSON.stringify(jsonData, null, 2);
-
-  // Validate searchTerm to contain only letters, numbers, or underscores
-  const validSearchTerm = searchTerm.match(/^[A-Za-z0-9_]+$/);
-  if (!validSearchTerm) {
-    throw new Error('Invalid search term for filename');
-  }
-
-  const filename = `output_${validSearchTerm[0]}.json`;
-  const filePath = path.join(__dirname, filename);
+  // Sanitize the searchTerm to use as the filename, ensuring it doesn't contain directory paths
+  const sanitizedFilename = `output_${path.basename(searchTerm)}.json`;
+  const filePath = path.join(__dirname, sanitizedFilename);
 
   fs.writeFile(filePath, jsonStr, (err) => {
     if (err) {
