@@ -103,7 +103,8 @@ ws.on('message', async (message) => {
     // Prepare notification
     let targetTable = parsedMessage.FROM_USER === 1 ? 'DIETICIAN' : 'USERS';
     let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
-    let queryToken = `SELECT MessageToken FROM ${targetTable} WHERE ${targetTable === 'DIETICIAN' ? 'DID' : 'UID'} = ?`;
+    let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
+    let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
     let [tokensResult] = await con.promise().query(queryToken, [targetID]);
     let token = tokensResult[0]?.MessageToken;
 
