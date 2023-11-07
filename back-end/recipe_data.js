@@ -81,7 +81,6 @@ async function insertDataIntoDatabase(jsonData) {
 
 //save the content as file to ensure its extracted correctly enable when needed
 //ChatGPT usage: Yes
-/*
 function saveDataToFile(jsonData, filename) {
     const jsonStr = JSON.stringify(jsonData, null, 2)
   
@@ -98,4 +97,4 @@ function saveDataToFile(jsonData, filename) {
 
 searchTerms.forEach((searchTerm) => {
     fetchDataForSearchTerm(searchTerm)
-})*/
+})
