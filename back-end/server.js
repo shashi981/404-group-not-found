@@ -273,7 +273,6 @@ app.get('/get/chatHistory', async (req, res) => {
 //done
 //ChatGPT usage: Partial
 app.get("/get/users", async (req, res) => {
-  try {
     const email = req.query.p1;
     const token = req.query.p2;
 
@@ -298,11 +297,6 @@ app.get("/get/users", async (req, res) => {
 
     console.log("USER GET");
     res.json(responseObject);
-
-  } catch (error) {
-    console.error('Error:', error);
-    database_error(res, error.stack);
-  }
 });
 
 
