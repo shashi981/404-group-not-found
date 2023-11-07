@@ -22,8 +22,9 @@ const UPCAPIKey= "?apikey=05E1D91D8E518F2F15B235B4E473F34F"
 const UPCAPIURL= "https://api.upcdatabase.org/product/"
 
 //use this to get more recipes when have the time to do so
+/*
 const RecipeAPIKey='&apiKey=f7fcaf6a4ab740feb0423910840f732f'
-const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='
+const RecipeAPIURL= 'https://api.spoonacular.com/recipes/findByIngredients?number=5&ranking=1&ingredients='*/
 
 //change this to maybe minute or hourly for testing
 const schedule='*/20 * * * *' // M4 submission use
@@ -92,7 +93,8 @@ wss.on('connection', async (ws,req) => {
         const DID =parsedMessage.DID
         // Store in the database
         let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)'
-        const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
+        //const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
+        await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
 
         console.log('Message saved');
         ws.send(JSON.stringify({ type: 'success', message: 'Message saved successfully' }))
@@ -219,7 +221,7 @@ app.get('/get/messageToken/:DID', (req, res) => {
 
   // Construct and execute a MySQL query to retrieve the MessageToken
   const query = 'SELECT MessageToken FROM DIETICIAN WHERE DID = ?';
-  db.query(query, [DID], (err, results) => {
+  con.query(query, [DID], (err, results) => {
       if (err) {
           console.error('Error executing MySQL query: ' + err);
           res.status(500).send('Internal Server Error');
@@ -294,7 +296,8 @@ app.get("/get/users", async (req,res)=>{
   const query = 'SELECT * FROM USERS WHERE Email=?;'
   const updatequery = 'UPDATE USERS SET MessageToken= ?WHERE Email=? ;'
 
-  const [update] = await con.promise().query(updatequery, [Token, Email])
+  //const [update] = await con.promise().query(updatequery, [Token, Email])
+  await con.promise().query(updatequery, [Token, Email])
   const [results] = await con.promise().query(query, [Email])
 
   if (results.length === 0) {
@@ -334,7 +337,8 @@ app.post("/add/users", async (req,res)=>{
     const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL, MessageToken) VALUES (?, ?, ?, ?, ?);'
     const query2='SELECT UID FROM USERS WHERE Email=?'
 
-    const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
+    //const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
+    await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
     const [results2] = await con.promise().query(query2, [Email])
 
     console.log("USER ADDED") 
@@ -386,7 +390,8 @@ app.get("/update/users", async (req,res)=>{
     let ProfileURL=req.query.p5
 
     const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?;'
-    const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
+    await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
+     //const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
 
     console.log('SUCCESS Update User') 
     query_success(res, 'Success update user')
@@ -408,7 +413,8 @@ app.get("/get/items", async (req,res)=>{
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
     const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? ORDER BY o.ItemID ASC;'
 
-    const [result1] = await con.promise().query(query, [UID, UID])
+    //const [result1] = await con.promise().query(query, [UID, UID])
+    await con.promise().query(query, [UID, UID])
     const [result2] = await con.promise().query(query2, [UID])        
 
     if (result2.length === 0) {
@@ -485,11 +491,12 @@ app.post("/add/items", async (req,res)=>{
             }
             console.log(brand)
             console.log(title)
-            num=UPC[i]
+            const num=UPC[i]
             console.log(num)
 
             const query2 = 'INSERT INTO GROCERIES(UPC, Name, Brand, Category) VALUES (?,?,?,?)'
-            const [addgrocery] = await con.promise().query(query2, [num,title, brand, title ])
+            //const [addgrocery] = await con.promise().query(query2, [num,title, brand, title ])
+            await con.promise().query(query2, [num,title, brand, title ])
 
           }
           else{
@@ -510,7 +517,8 @@ app.post("/add/items", async (req,res)=>{
 
     if(values.length>0){
       const query3 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?'
-      const [results] = await con.promise().query(query3, [values])
+      await con.promise().query(query3, [values])
+      //const [results] = await con.promise().query(query3, [values])
     }
 
     if(returnstatement === ''){
@@ -591,8 +599,10 @@ app.post("/add/items_man", async (req,res)=>{
     const query = 'INSERT IGNORE INTO GROCERIES (UPC, Name) VALUES ?'
     const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, Name, PurchaseDate) VALUES ?'
 
-    const [results] = await con.promise().query(query, [store])
-    const [results2] = await con.promise().query(query2, [values])
+    //const [results] = await con.promise().query(query, [store])
+    await con.promise().query(query, [store])
+    await con.promise().query(query2, [values])
+    //const [results2] = await con.promise().query(query2, [values])
 
     console.log('SUCCESS ADDED items') 
     query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
@@ -654,8 +664,9 @@ app.post("/update/items", (req,res)=>{
       const executedQuery = mysql.format(query, values)
 
       console.log('Executed Query:', executedQuery)
-      const [results1] = await con.promise().query(executedQuery)
+      //const [results1] = await con.promise().query(executedQuery)
           
+      await con.promise().query(executedQuery)
       console.log('SUCCESS Updated items')
     })
 
@@ -685,8 +696,10 @@ app.post("/add/pref", async (req,res)=>{
   }
   console.log(values)
   const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
+  await con.promise().query(query, [values])
 
-  const [results] = await con.promise().query(query, [values])
+  //const [results] = await con.promise().query(query, [values])
+
   console.log('SUCCESS ADDED Pref') 
   query_success(res, 'SUCCESS ADDED Pref')
   
@@ -704,7 +717,9 @@ app.get("/delete/pref", async (req,res)=>{
     let UID=req.query.p1
 
     const query = 'DELETE FROM PREFERENCE WHERE UID= ?'
-    const [results] = await con.promise().query(query, [UID])
+    await con.promise().query(query, [UID])
+
+    //const [results] = await con.promise().query(query, [UID])
     
     console.log('SUCCESS DELETE Pref') 
     query_success(res, 'SUCCESS DELETE Pref')
@@ -771,7 +786,9 @@ app.get("/add/dietReq", async (req,res)=>{
   try{
     let UID=req.query.p1
     const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
-    const [result1] = await con.promise().query(query, [UID])
+    await con.promise().query(query, [UID])
+
+    //const [result1] = await con.promise().query(query, [UID])
 
     console.log('Request for being dietician made!!' + con.threadId)
     query_success(res, 'Request for being dietician made!!')
@@ -820,16 +837,20 @@ app.get("/get/dietReq", async (req,res)=>{
 //ChatGPT usage: Partial
 app.get("/approve/dietReq", async (req,res)=>{
   try{
-    UID=req.query.p1
+    const UID=req.query.p1
     console.log(UID)
     const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL, MessageToken) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL, u.MessageToken FROM USERS u WHERE u.UID=?'
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     const query3='DELETE FROM USERS WHERE UID IN (?)'
-
+    /*
     const [result1] = await con.promise().query(query, [UID])
     const [result2] = await con.promise().query(query2, [UID])
-    const [result3] = await con.promise().query(query3, [UID])
-    
+    const [result3] = await con.promise().query(query3, [UID])*/
+
+    await con.promise().query(query, [UID])
+    await con.promise().query(query2, [UID])
+    await con.promise().query(query3, [UID])
+
     console.log('SUCCESS approve being dietician request') 
     query_success(res, 'SUCCESS approve being dietician request')
   
@@ -848,7 +869,9 @@ app.get("/remove/dietReq", async (req,res)=>{
     console.log(UID)
 
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
-    const [result2] = await con.promise().query(query2, [UID])
+    await con.promise().query(query2, [UID])
+
+    //const [result2] = await con.promise().query(query2, [UID])
 
     console.log('SUCCESS delete being dietician request') 
     query_success(res, 'SUCCESS delete being dietician request')
@@ -871,7 +894,9 @@ app.get("/get/dietician", async (req,res)=>{
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
 
-  const [update] = await con.promise().query(updatequery, [Token, Email])
+  //const [update] = await con.promise().query(updatequery, [Token, Email])
+
+  await con.promise().query(updatequery, [Token, Email]) 
   const [results] = await con.promise().query(query, [Email])
 
   if (results.length === 0) {
@@ -958,7 +983,8 @@ app.get("/get/recipe", async (req,res)=>{
     const Itemsquery = 'SELECT DISTINCT g.Name FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1'
     const [Itemstemp] = await con.promise().query(Itemsquery, [UID])
     const Expiryitems = Itemstemp.map((Items) => Items.Name);
-    
+    let excludeTable
+
     console.log(Expiryitems)
     if(Expiryitems.length === 0){
       return res.json({});
@@ -1011,27 +1037,27 @@ app.get("/get/recipe", async (req,res)=>{
 
   storequery=query
   if(Expiryitems.length === 1){
-    temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[0]}%`+'\')')
+    const temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[0]}%`+'\')')
     query=temp
-    tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
+    const tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
     query=tempquery
   }
   else{
     for(let j=0; j< Expiryitems.length; j++){
       if(j === 0){
-        temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
+        const temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
       }
       else if(j< Expiryitems.length-1){
         query += "INTERSECT " + storequery
-        temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
+        const temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
       }
       else{
         query += "INTERSECT " + storequery
-        temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
+        const temp=query.replace('?', 'LOWER(\''+`%${Expiryitems[j]}%`+'\')')
         query=temp
-        tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
+        const tempquery= "SELECT s.RID FROM (" + query + ") AS s ORDER BY RAND() LIMIT 5"
         query=tempquery
       }
     }
@@ -1160,7 +1186,7 @@ async function processShoppingData() {
     const purchaseHistory = {}
     const expectedRunOutDates = {}
     // Query to retrieve shopping data from the database
-      UID=entry.UID
+      const UID=entry.UID
       console.log(UID)
       console.log(entry.Token)
       const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?'
@@ -1220,7 +1246,7 @@ async function processShoppingData() {
         if (currentDate.isSameOrAfter(reminderDate)) {
           console.log(`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`)
           //todo maybe change this to send message for evrey two??
-          text=`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`
+          const text=`Reminder: Buy ${item} in the next ${reminderPeriodDays} days.`
 
           const jsonContent = {
             notification: {
@@ -1237,7 +1263,7 @@ async function processShoppingData() {
     })
   }catch(error){
     console.error('Error:', error)
-    database_error(res, error.stack)
+    //database_error(res, error.stack)
   }
 }
 
@@ -1259,10 +1285,14 @@ async function SendExpiryReminder(){
     const DisableSafeMode='SET SQL_SAFE_UPDATES = 0;'
     const queryupdate='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;'
     const EnableSafeMode='SET SQL_SAFE_UPDATES = 1;'
-
+    /*
     const [disable] = await con.promise().query(DisableSafeMode)
     const [results] = await con.promise().query(queryupdate)
-    const [enable] = await con.promise().query(EnableSafeMode)
+    const [enable] = await con.promise().query(EnableSafeMode)*/
+
+    await con.promise().query(DisableSafeMode)
+    await con.promise().query(queryupdate)
+    await con.promise().query(EnableSafeMode)
 
     const queryselect='SELECT DISTINCT UID FROM OWNS WHERE AboutExpire=1'
     const [store] = await con.promise().query(queryselect)
@@ -1271,7 +1301,7 @@ async function SendExpiryReminder(){
     
     //for each users
     for(let i=0; i<UIDArray.length; i++){
-      UID=UIDArray[i]
+      const UID=UIDArray[i]
       const queryToken='SELECT u.MessageToken FROM USERS u WHERE UID=?'
       const queryItems='SELECT DISTINCT g.Name, g.Brand, o.ExpireDate, o.ItemCount FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1;'
 
