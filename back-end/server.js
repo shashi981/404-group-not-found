@@ -311,7 +311,6 @@ app.get("/get/users", async (req, res) => {
 ////ChatGPT usage: Partial
 app.post("/add/users", async (req,res)=>{
   try{
-
     const FirstName=req.body.p1
     const LastName=req.body.p2
     const Email=req.body.p3
@@ -343,7 +342,6 @@ app.post("/add/users", async (req,res)=>{
 //ChatGPT usage: No
 app.get("/delete/users", async (req,res)=>{
   try{
-
     const UID=req.query.p1
 
     const query = 'DELETE FROM USERS WHERE UID=?;'
@@ -391,7 +389,6 @@ app.get("/update/users", async (req,res)=>{
 //ChatGPT usage: Partial
 app.get("/get/items", async (req,res)=>{
   try{
-
     const UID=req.query.p1
 
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
@@ -523,12 +520,12 @@ function fetchDataFromAPI(url) {
 //ChatGPT usage: No
 app.post("/add/items_man", async (req,res)=>{
   try{
-
     const UID=req.body.p1
     const UPC = req.body.p2 // should be -1
     const ExpireDate = req.body.p3 
     const ItemCount = req.body.p4
     const ItemName = req.body.p5 
+
     if ( ExpireDate.length !== ItemCount.length || ItemCount.length !== ItemName.length) {
       return res.status(400).send('Arrays should have the same length')
     }
@@ -638,25 +635,26 @@ app.post("/update/items", (req,res)=>{
 app.post("/add/pref", async (req,res)=>{
 
   try{
-  const UID=req.body.p1
-  const Pref = req.body.p2 
-  const values = [];
-  for (let i = 0; i <Pref.length; i++) {
-    if(i<Pref.length-1){
-      values.push(([UID, Pref[i],]));
-    }
-    else{
-      values.push(([UID, Pref[i]]));
-    }
-  }
-  console.log(values)
-  const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
-  await con.promise().query(query, [values])
+    const UID=req.body.p1
+    const Pref = req.body.p2 
+    const values = [];
 
-  //const [results] = await con.promise().query(query, [values])
+    for (let i = 0; i <Pref.length; i++) {
+      if(i<Pref.length-1){
+        values.push(([UID, Pref[i],]));
+      }
+      else{
+        values.push(([UID, Pref[i]]));
+      }
+    }
+    console.log(values)
+    const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
+    await con.promise().query(query, [values])
 
-  console.log('SUCCESS ADDED Pref') 
-  query_success(res, 'SUCCESS ADDED Pref')
+    //const [results] = await con.promise().query(query, [values])
+
+    console.log('SUCCESS ADDED Pref') 
+    query_success(res, 'SUCCESS ADDED Pref')
   
   } catch(error){
     console.error('Error:', error)
@@ -690,7 +688,6 @@ app.get("/delete/pref", async (req,res)=>{
 //ChatGPT usage: No
 app.get("/get/pref", async (req,res)=>{
   try{
-    
     const UID=req.query.p1
 
     const query = 'SELECT Pref FROM PREFERENCE WHERE UID= ?'
