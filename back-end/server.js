@@ -57,7 +57,7 @@ server.listen(443, () => {
   console.log(`Server is running on port 443`)
 })
 
-const wss = new WebSocket.Server({server})
+const ws = new WebSocket.Server({server})
 
 //ChatGPT usage: No
 function database_error(response, error) {
