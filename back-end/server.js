@@ -1077,15 +1077,11 @@ app.get("/get/recipe", async (req,res)=>{
       const query2 = 'SELECT * FROM RECIPE WHERE RID IN (?)'
       const [result2] = await con.promise().query(query2, [formattedArray])
 
-      formattedResults = result2.map((result) => {
-        console.log(result)
-        
-        return {
-          RID: result.RID,
-          Ingredient: result.Ingredient,
-          Amount: result.Amount,
-        }
-      })
+      formattedResults = result2.map((result) => ({
+        RID: result.RID,
+        Ingredient: result.Ingredient,
+        Amount: result.Amount,
+      }))
     }
 
     console.log(formattedResults)
