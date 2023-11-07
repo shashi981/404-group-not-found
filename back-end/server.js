@@ -865,7 +865,7 @@ app.get("/approve/dietReq", async (req,res)=>{
 //ChatGPT usage: No
 app.get("/remove/dietReq", async (req,res)=>{
   try{
-    UID=req.query.p1
+    const UID=req.query.p1
     console.log(UID)
 
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
@@ -1234,7 +1234,7 @@ async function processShoppingData() {
         const purchaseDates = purchaseHistory[item]
 
         // Calculate the average purchase frequency
-        const purchaseFrequency = purchaseDates.length / numberOfVisits // Number of times purchased per week
+        //const purchaseFrequency = purchaseDates.length / numberOfVisits // Number of times purchased per week
 
         // Calculate the expected run-out date
         const expectedRunOutDate = expectedRunOutDates[item]
@@ -1369,7 +1369,7 @@ async function SendExpiryReminder(){
     }
   }catch(error){
     console.error('Error:', error)
-    database_error(res, error.stack)
+    //database_error(res, error.stack)
   }
 }
 
