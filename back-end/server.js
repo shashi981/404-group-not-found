@@ -96,7 +96,7 @@ ws.on('message', async (message) => {
           title: 'Chat notification',
           body: notificationText,
         },
-        token: token
+        token
       };
 
       console.log(messagePayload);
@@ -253,39 +253,39 @@ app.get('/get/chatHistory', async (req, res) => {
 //get users
 //done
 //ChatGPT usage: Partial
-app.get("/get/users", async (req,res)=>{
-  try{
-  let Email=req.query.p1
-  let Token=req.query.p2
+app.get("/get/users", async (req, res) => {
+  try {
+    const email = req.query.p1;
+    const token = req.query.p2;
 
-  const query = 'SELECT * FROM USERS WHERE Email=?;'
-  const updatequery = 'UPDATE USERS SET MessageToken= ?WHERE Email=? ;'
+    const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
+    await con.promise().query(updateQuery, [token, email]);
 
-  //const [update] = await con.promise().query(updatequery, [Token, Email])
-  await con.promise().query(updatequery, [Token, Email])
-  const [results] = await con.promise().query(query, [Email])
+    const selectQuery = 'SELECT * FROM USERS WHERE Email = ?;';
+    const [results] = await con.promise().query(selectQuery, [email]);
 
-  if (results.length === 0) {
-    return res.json({});
+    if (results.length === 0) {
+      return res.json({});
+    }
+
+    const user = results[0];
+    const responseObject = {
+      UID: user.UID,
+      FirstName: user.FirstName,
+      LastName: user.LastName,
+      Email: user.Email,
+      ProfileURL: user.ProfileURL,
+    };
+
+    console.log("USER GET");
+    res.json(responseObject);
+
+  } catch (error) {
+    console.error('Error:', error);
+    database_error(res, error.stack);
   }
+});
 
-  const user = results[0];
-
-  const responseObject = {
-    UID: user.UID,
-    FirstName: user.FirstName,
-    LastName: user.LastName,
-    Email: user.Email,
-    ProfileURL: user.ProfileURL,
-  };
-  console.log("USER GET")
-
-  res.json(responseObject);
-  }catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
-  }
-})
 
 //add users
 //done
@@ -411,95 +411,66 @@ app.get("/get/items", async (req,res)=>{
 //add items
 //done
 //ChatGPT usage: Partial
-app.post("/add/items", async (req,res)=>{
-  try{
-    let UID=req.body.p1
-    let UPC = req.body.p2 //? req.query.p2.split(',') : []
-    let ExpireDate = req.body.p3// ? req.query.p3.split(',') : []
-    let ItemCount = req.body.p4 //? req.query.p4.split(',') : []
+app.post("/add/items", async (req, res) => {
+  try {
+    const UID = req.body.p1;
+    const UPCs = req.body.p2;
+    const ExpireDates = req.body.p3;
+    const ItemCounts = req.body.p4;
 
-    const currentDate = new Date()
-    const currentDateString = currentDate.toISOString().split('T')[0]
-
-    console.log(currentDateString)
-
-    let returnstatement=''
-
-    if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length) {
-      return res.status(400).send('Arrays should have the same length')
+    if (UPCs.length !== ExpireDates.length || UPCs.length !== ItemCounts.length) {
+      return res.status(400).send('Array lengths must match.');
     }
-  
-    const values = [];
-    for (let i = 0; i <UPC.length; i++) {
 
-      const query1 = 'SELECT * FROM GROCERIES WHERE UPC=?'
-      const [userResults] = await con.promise().query(query1, [UPC[i]])
+    const currentDate = new Date();
+    const currentDateString = currentDate.toISOString().split('T')[0];
+    console.log(currentDateString);
 
-      if (userResults.length ==0) {
-        console.log('The upc is not in the db')
-        const url = UPCAPIURL + UPC[i] + UPCAPIKey
-        let title
-        let brand
-        
+    let returnStatement = '';
+    let values = [];
+
+    for (let i = 0; i < UPCs.length; i++) {
+      const UPC = UPCs[i];
+      const [groceryResults] = await con.promise().query('SELECT * FROM GROCERIES WHERE UPC = ?', [UPC]);
+
+      if (groceryResults.length === 0) {
         try {
-          const jsonData = await fetchDataFromAPI(url);
-          if (jsonData.success) {
-            brand=jsonData.brand
-            title=jsonData.title
-
-            console.log(jsonData)
-            if(i<UPC.length-1){
-              values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]));
-            }
-            else{
-              values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i], currentDate]));
-            }
-            console.log(brand)
-            console.log(title)
-            const num=UPC[i]
-            console.log(num)
-
-            const query2 = 'INSERT INTO GROCERIES(UPC, Name, Brand, Category) VALUES (?,?,?,?)'
-            //const [addgrocery] = await con.promise().query(query2, [num,title, brand, title ])
-            await con.promise().query(query2, [num,title, brand, title ])
-
-          }
-          else{
-            returnstatement += UPC[i]
-            console.error('Product not found. Error code:', jsonData.error.code);
-            console.error('Error message:', jsonData.error.message);
-                
+          const productData = await fetchDataFromAPI(UPCAPIURL + UPC + UPCAPIKey);
+          if (productData.success) {
+            console.log(productData);
+            const insertGroceryQuery = 'INSERT INTO GROCERIES (UPC, Name, Brand, Category) VALUES (?, ?, ?, ?)';
+            await con.promise().query(insertGroceryQuery, [UPC, productData.title, productData.brand, productData.title]);
+            values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate]);
+          } else {
+            returnStatement += `${UPC} `;
+            console.error(`Product not found for UPC: ${UPC}`);
           }
         } catch (error) {
-            console.error('Error parsing JSON:', error)
-          }
-      }else{
-        //todo handle else case
-        values.push(([UID, UPC[i], ExpireDate[i], ItemCount[i],currentDate]))
-      }  
-    }
-    console.log(values)
-
-    if(values.length>0){
-      const query3 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?'
-      await con.promise().query(query3, [values])
-      //const [results] = await con.promise().query(query3, [values])
+          console.error('Error fetching product data:', error);
+        }
+      } else {
+        values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate]);
+      }
     }
 
-    if(returnstatement === ''){
-      console.log('SUCCESS ADDED ITEMS')
-      query_success(res, 'SUCCESS ADDED ITEMS')
+    if (values.length > 0) {
+      const insertOwnsQuery = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?';
+      await con.promise().query(insertOwnsQuery, [values]);
     }
-    else{
-      console.log('Values not added ' + returnstatement)
-      query_success(res, 'Values not added ' + returnstatement)
+
+    if (returnStatement === '') {
+      console.log('SUCCESS ADDED ITEMS');
+      res.json({ message: 'SUCCESS ADDED ITEMS' });
+    } else {
+      console.log('Values not added for UPCs: ' + returnStatement);
+      res.json({ message: 'Values not added for UPCs: ' + returnStatement });
     }
+  } catch (error) {
+    console.error('Error in /add/items:', error);
+    res.status(500).send('Internal Server Error');
   }
-  catch(error){
-      console.error('Error:', error)
-      database_error(res, error.stack)
-  }
-})
+});
+
 
 //get data from the UPC API
 //ChatGPT usage: Yes
