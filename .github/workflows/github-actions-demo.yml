@@ -2,22 +2,23 @@ name: Run Backend Tests
 
 on:
   push:
-    branches:
-      
-main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    
-uses: actions/checkout@v3
-name: Use Node.js 20.x
-  uses: actions/setup-node@v3
-  with:
-    node-version: 20.x
-run: npm install
-working-directory: back-end
-run: npm test
-working-directory: back-end
+      - uses: actions/checkout@v3
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+      - run: npm install || exit 1
+        working-directory: back-end
+      - run: |
+          export NODE_ENV=test
+          export PORT=3000 # Use a non-privileged port for testing
+          sudo npm test server.test.js || exit 1
+        working-directory: back-end
