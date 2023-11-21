@@ -18,14 +18,7 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install dependencies
-        run: |
-          cd back-end || exit 1  # Exit if the directory doesn't exist
-          npm install || exit 1  # Exit if npm install fails
-          working-directory: back-end
-
-      - name: Run tests
-        run: |
-          cd back-end || exit 1  # Exit if the directory doesn't exist
-          npm test server.test.js || exit 1  # Exit if npm test fails
-          working-directory: back-end
+      - run: npm install
+        working-directory: back_end
+      - run: npm test
+        working-directory: back_end
