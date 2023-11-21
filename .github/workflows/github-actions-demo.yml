@@ -18,7 +18,12 @@ jobs:
         with:
           node-version: '14'
 
-      - run: npm install
-        working-directory: back_end
-      - run: npm test
-        working-directory: back_end
+      - name: Install dependencies
+        run: |
+          cd back-end || exit 1 
+          npm install
+
+      - name: Install dependencies
+        run: |
+          cd back-end || exit 1 
+          sudo npm server.test.js || exit 1
