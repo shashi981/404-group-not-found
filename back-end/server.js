@@ -72,9 +72,13 @@ const certs = {
 
 const server = https.createServer(certs, app)
 
-server.listen(443, () => {
-  console.log(`Server is running on port 443`)
-})
+const port = process.env.NODE_ENV === 'test' ? 3001 : 443;
+
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
 const ws = new WebSocket.Server({server})
 
@@ -242,30 +246,30 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 
 //New endpoint to get the actiev users fro the chat function
 //ChatGPT usage: Partial
-app.get('/get/activeUsers', (req, res) => {
-  const activeUsersList = Object.keys(onlineUsers);
-  const activeDieticiansList = Object.keys(onlineDieticians);
-  res.json({ users: activeUsersList, dieticians: activeDieticiansList });
-});
+// app.get('/get/activeUsers', (req, res) => {
+//   const activeUsersList = Object.keys(onlineUsers);
+//   const activeDieticiansList = Object.keys(onlineDieticians);
+//   res.json({ users: activeUsersList, dieticians: activeDieticiansList });
+// });
 
 //ChatGPT usage: Partial
-app.get('/get/chatHistory', async (req, res) => {
-  const userId = req.query.userId;
-  const dieticianId = req.query.dieticianId;
+// app.get('/get/chatHistory', async (req, res) => {
+//   const userId = req.query.userId;
+//   const dieticianId = req.query.dieticianId;
 
-  if (!userId || !dieticianId) {
-      return res.status(400).send("User ID and Dietician ID are required");
-  }
+//   if (!userId || !dieticianId) {
+//       return res.status(400).send("User ID and Dietician ID are required");
+//   }
 
-  try {
-      const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ?';
-      const [rows] = await con.promise().query(query, [userId, dieticianId]);
-      res.json(rows);
-  } catch (error) {
-      console.error("Error fetching chat history:", error);
-      res.status(500).send("Internal server error");
-  }
-});
+//   try {
+//       const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ?';
+//       const [rows] = await con.promise().query(query, [userId, dieticianId]);
+//       res.json(rows);
+//   } catch (error) {
+//       console.error("Error fetching chat history:", error);
+//       res.status(500).send("Internal server error");
+//   }
+// });
 
 // END POINTS FOR SOCKET ENDS 
 
@@ -1331,3 +1335,5 @@ async function Messaging(message){
       console.log('Error sending message:', error);
     });
 }
+
+module.exports = app; 
