@@ -2,23 +2,30 @@ name: Run Backend Tests
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 20.x
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x
-      - run: npm install || exit 1
-        working-directory: back-end
-      - run: |
-          export NODE_ENV=test
-          export PORT=3000 # Use a non-privileged port for testing
-          sudo npm test server.test.js || exit 1
-        working-directory: back-end
+          node-version: '14'
+
+      - name: Install dependencies
+        run: |
+          cd back-end || exit 1  # Exit if the directory doesn't exist
+          npm install || exit 1  # Exit if npm install fails
+          working-directory: back-end
+
+      - name: Run tests
+        run: |
+          cd back-end || exit 1  # Exit if the directory doesn't exist
+          npm test server.test.js || exit 1  # Exit if npm test fails
+          working-directory: back-end
