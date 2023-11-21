@@ -19,7 +19,11 @@ jobs:
           node-version: '14'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          cd back-end  # Adjust if your backend code is in a folder called "back-end"
+          npm ci
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd back-end  # Adjust if your backend code is in a folder called "back-end"
+          npm test
