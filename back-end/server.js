@@ -45,7 +45,8 @@ fs.readFile(RecipeKeypath, 'utf8', (err, data) => {
 })*/
 
 //change this to maybe minute or hourly for testing
-const schedule='*/20 * * * *' // M4 submission use
+//const schedule='*/20 * * * *' // M4 submission use
+const schedule = '0 0 * * *' //per daily
 
 const serviceAccount = require('./grocerymanager_firebase.json')
 
