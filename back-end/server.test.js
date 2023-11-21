@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('./server'); 
-
+//test
 describe('/get/messageToken endpoint', () => {
   /**
    * Test: Retrieve message token with valid DID
