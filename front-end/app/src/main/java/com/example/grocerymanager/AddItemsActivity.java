@@ -80,7 +80,9 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
         addItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(itemName.getText().toString().isEmpty() || expiryDateString.isEmpty() || itemQuantity.getText().toString().isEmpty()){
+                if (itemName.getText() == null || itemName.getText().toString().isEmpty()
+                        || expiryDateString == null || expiryDateString.isEmpty()
+                        || itemQuantity.getText() == null || itemQuantity.getText().toString().isEmpty()) {
 
                 }
                 else{
