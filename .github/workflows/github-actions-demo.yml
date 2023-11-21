@@ -26,4 +26,4 @@ jobs:
       - name: Install dependencies
         run: |
           cd back-end || exit 1 
-          sudo npm server.test.js || exit 1
+          npm test
