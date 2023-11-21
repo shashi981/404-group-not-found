@@ -16,6 +16,6 @@ jobs:
       with:
         node-version: 20.x
     - run: npm install
-      working-directory: back_end
+      working-directory: back-end
     - run: npm test
-      working-directory: back_end
+      working-directory: back-end
