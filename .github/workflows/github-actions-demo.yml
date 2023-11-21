@@ -2,13 +2,14 @@ name: Run Backend Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  build:
 
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js 20.x
