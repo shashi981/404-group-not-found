@@ -18,12 +18,8 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install dependencies
+      - name: Install dependencies and run tests
         run: |
-          cd back-end  # Adjust if your backend code is in a folder called "back-end"
-          npm ci
-
-      - name: Run tests
-        run: |
-          cd back-end  # Adjust if your backend code is in a folder called "back-end"
-          npm test
+          cd back-end || exit 1  # Exit if the directory doesn't exist
+          npm ci || exit 1      # Exit if npm ci fails
+          sudo npm test server.test.js || exit 1    # Exit if npm test fails
