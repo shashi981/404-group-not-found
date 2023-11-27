@@ -277,9 +277,9 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 //get users
 //done
 //ChatGPT usage: Partial
-app.get("/get/users", async (req, res) => {
-    const email = req.query.p1;
-    const token = req.query.p2;
+app.post("/get/users", async (req, res) => {
+    const email = req.body.p1;
+    const token = req.body.p2;
 
     const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
     await con.promise().query(updateQuery, [token, email]);
@@ -837,10 +837,10 @@ app.get("/remove/dietReq", async (req,res)=>{
 //get dieitician with the email and also update the firebase token as well
 //done
 //ChatGPT usage: No
-app.get("/get/dietician", async (req,res)=>{
+app.post("/get/dietician", async (req,res)=>{
   try{
-  const Email=req.query.p1
-  const Token=req.query.p2
+  const Email=req.body.p1
+  const Token=req.body.p2
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
@@ -875,10 +875,10 @@ app.get("/get/dietician", async (req,res)=>{
 //give the user type of the email if exist: admin, dietician or user else return does not exist
 //done
 //ChatGPT usage: Partial
-app.get("/get/users_type", async (req,res)=>{
+app.post("/get/users_type", async (req,res)=>{
 
   try {
-    const Email = req.query.p1;
+    const Email = req.body.p1;
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
     const [userResults] = await con.promise().query(query1, [Email])
