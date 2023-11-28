@@ -95,8 +95,10 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     Log.d(TAG, itemList.toString());
 
                     itemName.getText().clear();
-                    expiryDateString = "";
                     itemQuantity.getText().clear();
+                    expiryDateString = "";
+                    TextView expiryDate = findViewById(R.id.expiry_date_text);
+                    expiryDate.setText(expiryDateString);
                 }
             }
 
@@ -237,7 +239,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     item.setExpiry(expiryDateString);
                     addItemToInventory(item);
                     dialog.dismiss();
-
+                    expiryDateString = "";
                 }
 
             }
@@ -265,6 +267,8 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
     public void onDateSet(int year, int month, int day) {
         // Use the selected date here as needed
         expiryDateString = String.format("%d-%02d-%02d", year, month + 1, day);
+        TextView expiryDate = findViewById(R.id.expiry_date_text);
+        expiryDate.setText(expiryDateString);
     }
 
 }

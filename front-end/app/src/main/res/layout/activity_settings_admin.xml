@@ -4,45 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    tools:context=".MainActivity">
+    android:background="@color/faded_white"
+    tools:context=".SettingsActivity">
 
-    <ImageView
-        android:id="@+id/backdropImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/baseline_calendar_today_24"
-        android:contentDescription="@string/front_banner"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/logo_login"
+    <ImageButton
+        android:id="@+id/back_icon_settings_admin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/front_banner"
-        android:textColor="@color/dark_blue"
-        android:textSize="30sp"
+        android:backgroundTint="#00FFFFFF"
+        android:contentDescription="@string/back_bar_icon_dark_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.345" />
+        app:layout_constraintVertical_bias="0.05"
+        app:srcCompat="@drawable/back_arrow_dark_40" />
 
     <Button
-        android:id="@+id/sign_in_button_login"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
+        android:textSize="24sp"
+        android:id="@+id/sign_out_settings_admin"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/dark_blue"
         android:backgroundTintMode="src_over"
-        android:text="@string/google_sign_in"
+        android:text="@string/sign_out_settings"
         android:textColor="@color/faded_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.60" />
+        app:layout_constraintVertical_bias="0.6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

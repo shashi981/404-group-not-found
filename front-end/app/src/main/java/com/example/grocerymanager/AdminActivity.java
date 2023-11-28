@@ -51,17 +51,13 @@ public class AdminActivity extends AppCompatActivity {
         ImageButton menuIcon = findViewById(R.id.menu_bar_icon_admin);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 
-        popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.dropdown_menu_admin, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
-                if (id == R.id.settings_dropdown) {
-                    ActivityLauncher.launchActivity(AdminActivity.this, SettingsActivity.class);
-
-                    return true;
-                } else if (id == R.id.profile_dropdown) {
-                    ActivityLauncher.launchActivity(AdminActivity.this, ProfileActivity.class);
+                if (id == R.id.sign_out_dropdown) {
+                    ActivityLauncher.launchActivity(AdminActivity.this, SettingsActivityAdmin.class);
 
                     return true;
                 }
