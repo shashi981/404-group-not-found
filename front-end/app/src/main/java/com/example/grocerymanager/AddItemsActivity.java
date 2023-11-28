@@ -1,5 +1,7 @@
 package com.example.grocerymanager;
 
+import static com.example.grocerymanager.BackendPathing.postRequest;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -18,18 +20,8 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class AddItemsActivity extends AppCompatActivity implements DatePickerFragment.DatePickerListener {
 
@@ -102,17 +94,10 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
 
         });
 
-        NetworkManager networkManager = new NetworkManager(this);
-        OkHttpClient client = networkManager.getClient();
-
-        String serverURL = "https://20.104.197.24/";
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         UserData userData = SharedPrefManager.loadUserData(AddItemsActivity.this);
 
         Button addItemsInventoryButton = findViewById(R.id.add_items_to_inventory);
         addItemsInventoryButton.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View view) {
                 if(itemList.isEmpty()){
@@ -134,37 +119,27 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-
-                    RequestBody body = RequestBody.create(JSON, postData.toString());
-
-                    Request request = new Request.Builder()
-                            .url(serverURL + "add/items_man")
-                            .post(body)
-                            .build();
-                    client.newCall(request).enqueue(new Callback() {
+                    postRequest("/add/items_man", postData, AddItemsActivity.this, new CallbackListener(){
                         @Override
-                        public void onFailure(Call call, IOException e) {
-                            // Handle failure
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            if (response.isSuccessful()) {
-                                // Handle successful response
-                                String responseData = response.body().string();
-                                Log.d(TAG, "Response: " + responseData);
-
+                        public void onSuccess(JSONObject result) {
+                            String resultStatus = result.optString("message", "");
+                            if(result.equals("SUCCESS ADDED ITEMS")){
                                 launchInventoryIntent();
-                            } else {
-                                // Handle unsuccessful response
-                                Log.e(TAG, "Unsuccessful response " + response.code());
+                            }
+                            else if(resultStatus.isEmpty()){
+                                Log.e(TAG, "Request failed: failed to work");
+                            }
+                            else{
+                                launchInventoryIntent();
+                                // add alert dialogue
                             }
                         }
+                        @Override
+                        public void onFailure(String errorMessage) {
+                            Log.e(TAG, "Request failed: " + errorMessage);
+                        }
                     });
-
                 }
-
             }
         });
 

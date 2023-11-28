@@ -274,10 +274,10 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 // END POINTS FOR SOCKET ENDS 
 
 
-//get users
+//get specific user
 //done
 //ChatGPT usage: Partial
-app.post("/get/users", async (req, res) => {
+app.put("/put/users", async (req, res) => {
     const email = req.body.p1;
     const token = req.body.p2;
 
@@ -339,7 +339,7 @@ app.post("/add/users", async (req,res)=>{
 //delete users
 //done
 //ChatGPT usage: No
-app.get("/delete/users", async (req,res)=>{
+app.delete("/delete/users", async (req,res)=>{
   try{
     const UID=req.query.p1
 
@@ -362,7 +362,7 @@ app.get("/delete/users", async (req,res)=>{
 //update user
 //done
 //ChatGPT usage: No
-app.get("/update/users", async (req,res)=>{
+app.put("/update/users", async (req,res)=>{
   try{
     const UID=req.query.p1
     const FirstName=req.query.p2
@@ -556,7 +556,8 @@ app.post("/add/items_man", async (req,res)=>{
     //const [results2] = await con.promise().query(query2, [values])
 
     console.log('SUCCESS ADDED items') 
-    query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
+    // query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
+    res.json({ message: 'SUCCESS ADDED ITEMS MANUAL' });
    
   }catch(error){
     console.error('Error:', error)
@@ -567,7 +568,7 @@ app.post("/add/items_man", async (req,res)=>{
 //delete items
 //done
 //ChatGPT usage: Partial
-app.post("/delete/items", async (req,res)=>{
+app.delete("/delete/items", async (req,res)=>{
   try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
@@ -592,7 +593,7 @@ app.post("/delete/items", async (req,res)=>{
 //done
 //update items
 //ChatGPT usage: Partial
-app.post("/update/items", (req,res)=>{
+app.put("/update/items", (req,res)=>{
   try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
@@ -631,7 +632,7 @@ app.post("/update/items", (req,res)=>{
 //add pref
 //done
 //ChatGPT usage: No
-app.post("/add/pref", async (req,res)=>{
+app.put("/add/pref", async (req,res)=>{
 
   try{
     const UID=req.body.p1
@@ -664,7 +665,7 @@ app.post("/add/pref", async (req,res)=>{
 //delete pref
 //done
 //ChatGPT usage: No
-app.get("/delete/pref", async (req,res)=>{
+app.delete("/delete/pref", async (req,res)=>{
   try{
     const UID=req.query.p1
 
@@ -732,7 +733,7 @@ app.get("/get/pref_list", async (req,res)=>{
 //request for being a dietician
 //done
 //ChatGPT usage: No
-app.get("/add/dietReq", async (req,res)=>{
+app.post("/add/dietReq", async (req,res)=>{
 
   try{
     const UID=req.query.p1
@@ -786,7 +787,7 @@ app.get("/get/dietReq", async (req,res)=>{
 //approve request for being a dietician, add to dietician table and remove the request
 //done
 //ChatGPT usage: Partial
-app.get("/approve/dietReq", async (req,res)=>{
+app.post("/approve/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
     console.log(UID)
@@ -814,7 +815,7 @@ app.get("/approve/dietReq", async (req,res)=>{
 //remove request for being a dietician 
 //done
 //ChatGPT usage: No
-app.get("/remove/dietReq", async (req,res)=>{
+app.delete("/delete/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
     console.log(UID)
@@ -837,7 +838,7 @@ app.get("/remove/dietReq", async (req,res)=>{
 //get dieitician with the email and also update the firebase token as well
 //done
 //ChatGPT usage: No
-app.post("/get/dietician", async (req,res)=>{
+app.put("/put/dietician", async (req,res)=>{
   try{
   const Email=req.body.p1
   const Token=req.body.p2
@@ -875,10 +876,10 @@ app.post("/get/dietician", async (req,res)=>{
 //give the user type of the email if exist: admin, dietician or user else return does not exist
 //done
 //ChatGPT usage: Partial
-app.post("/get/users_type", async (req,res)=>{
+app.get("/get/users_type", async (req,res)=>{
 
   try {
-    const Email = req.body.p1;
+    const Email = req.params.p1;
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
     const [userResults] = await con.promise().query(query1, [Email])
