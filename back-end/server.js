@@ -906,7 +906,7 @@ app.post("/get/users_type", async (req,res)=>{
     if (adminResults.length > 0) {
       console.log('Entry exists as admin');
     //   return query_success(res, 'Admin\n')
-    res.json({ userType: 'Adminr'})
+    res.json({ userType: 'Admin'})
         return
     }
 
