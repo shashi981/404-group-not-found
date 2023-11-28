@@ -377,8 +377,8 @@ public class MainActivity extends AppCompatActivity {
             postRequest("/get/users_type", jsonEmail, this, new CallbackListener() {
                 @Override
                 public void onSuccess(JSONObject result) {
-                    String userType = result.toString().trim();
-                    launchUser(userType, account);
+                        String userType = result.optString("userType", "");
+                        launchUser(userType, account);
                 }
 
                 @Override

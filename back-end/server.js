@@ -885,7 +885,9 @@ app.post("/get/users_type", async (req,res)=>{
 
     if (userResults.length > 0) {
       console.log('Entry exists as user')
-      return query_success(res, 'User\n')
+    //   return query_success(res, 'User\n')
+        res.json({ userType: 'User'})
+        return
     }
 
     const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
@@ -893,7 +895,9 @@ app.post("/get/users_type", async (req,res)=>{
 
     if (dieticianResults.length > 0) {
       console.log('Entry exists as dietician')
-      return query_success(res, 'Dietician\n')
+    //   return query_success(res, 'Dietician\n')
+    res.json({ userType: 'Dietician'})
+    return
     }
 
     const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
@@ -901,12 +905,16 @@ app.post("/get/users_type", async (req,res)=>{
 
     if (adminResults.length > 0) {
       console.log('Entry exists as admin');
-      return query_success(res, 'Admin\n')
+    //   return query_success(res, 'Admin\n')
+    res.json({ userType: 'Adminr'})
+        return
     }
 
     console.log('This is an entry that does not exist')
 
-    return query_success(res, 'Does not exist\n')
+    // return query_success(res, 'Does not exist\n')
+    res.json({ userType: 'Does not exist'})
+    return
   } catch (error) {
     console.error('Error:', error)
     database_error(res, error.stack)

@@ -40,9 +40,9 @@ public class BackendPathing {
 //
 //    }
 
-    public static void postRequest(String endpoint, JSONObject jsonData, Context context, final CallbackListener callbackListener){
+    public static void postRequest(String endpoint, JSONObject jsonData, Context context, final CallbackListener callbackListener) {
         NetworkManager networkManager = new NetworkManager(context);
-        client = networkManager.getClient();
+        OkHttpClient client = networkManager.getClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, jsonData.toString());
 
@@ -50,6 +50,7 @@ public class BackendPathing {
                 .url(serverURL + endpoint)
                 .post(body)
                 .build();
+
         client.newCall(requestCheck).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -59,24 +60,36 @@ public class BackendPathing {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
+            public void onResponse(Call call, Response response) {
+                try {
+                    if (!response.isSuccessful()) {
+                        // Handle unsuccessful response (e.g., non-200 status code)
+                        Log.e(TAG, "Unsuccessful response: " + response.code());
+                        callbackListener.onFailure("Unsuccessful response: " + response.code());
+                        return;
+                    }
+
+                    String responseBody = response.body().string();
+                    Log.d(TAG, "Response: " + responseBody);
+
                     try {
-                        JSONObject jsonResponse = new JSONObject(response.body().string());
-                        Log.d(TAG, "Response: " + jsonResponse.toString());
+                        JSONObject jsonResponse = new JSONObject(responseBody);
                         callbackListener.onSuccess(jsonResponse);
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing JSON: " + e.getMessage());
                         callbackListener.onFailure("Error parsing JSON");
                     }
-                }
-                else {
-                    // Handle unsuccessful response (e.g., non-200 status code)
-                    Log.e(TAG, "Unsuccessful response: " + response.code());
-                    callbackListener.onFailure("Unsuccessful response: " + response.code());
+                } catch (IOException e) {
+                    Log.e(TAG, "IOException during response: " + e.getMessage());
+                    callbackListener.onFailure("IOException during response");
+                } finally {
+                    if (response.body() != null) {
+                        response.body().close();
+                    }
                 }
             }
         });
     }
+
 
 }
