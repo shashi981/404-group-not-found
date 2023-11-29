@@ -61,14 +61,6 @@ public class UserListActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton cartIcon = findViewById(R.id.shop_icon_chat);
-        cartIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityLauncher.launchActivity(UserListActivity.this, ListActivity.class);
-            }
-        });
-
         ImageButton menuIcon = findViewById(R.id.menu_bar_icon_chat);
         PopupMenu popupMenu = new PopupMenu(this, menuIcon, 0, 0, R.style.PopupMenuStyle);
 

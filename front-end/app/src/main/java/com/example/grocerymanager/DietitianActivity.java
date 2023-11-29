@@ -28,11 +28,11 @@ public class DietitianActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.settings_dropdown) {
-                    ActivityLauncher.launchActivity(DietitianActivity.this, SettingsActivity.class);
+                    ActivityLauncher.launchActivity(DietitianActivity.this, SettingsActivityDietician.class);
 
                     return true;
                 } else if (id == R.id.profile_dropdown) {
-                    ActivityLauncher.launchActivity(DietitianActivity.this, ProfileActivity.class);
+                    ActivityLauncher.launchActivity(DietitianActivity.this, ProfileActivityDietician.class);
 
                     return true;
                 }

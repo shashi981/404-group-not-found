@@ -9,8 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -315,6 +318,11 @@ public class RecipeActivity extends AppCompatActivity {
         Dialog dialog = new Dialog(RecipeActivity.this);
         dialog.setContentView(R.layout.full_recipe_popup_template);
 
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+        
         TextView recipeName = dialog.findViewById(R.id.name_of_recipe_expanded);
         TextView ingredientsList = dialog.findViewById(R.id.ingredients_listed);
         TextView instructionsList = dialog.findViewById(R.id.instructions_listed);
@@ -322,6 +330,15 @@ public class RecipeActivity extends AppCompatActivity {
         recipeName.setText(recipe.getRecipeName());
         ingredientsList.setText(recipe.getIngredientsAsString());
         instructionsList.setText(recipe.getInstructions());
+
+        ImageView closeButton = dialog.findViewById(R.id.close_icon);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
     }
 }
