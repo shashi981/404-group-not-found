@@ -274,12 +274,12 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 // END POINTS FOR SOCKET ENDS 
 
 
-//get specific user
+//get users
 //done
 //ChatGPT usage: Partial
-app.put("/put/users", async (req, res) => {
-    const email = req.body.p1;
-    const token = req.body.p2;
+app.get("/get/users", async (req, res) => {
+    const email = req.query.p1;
+    const token = req.query.p2;
 
     const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
     await con.promise().query(updateQuery, [token, email]);
@@ -339,7 +339,7 @@ app.post("/add/users", async (req,res)=>{
 //delete users
 //done
 //ChatGPT usage: No
-app.delete("/delete/users", async (req,res)=>{
+app.get("/delete/users", async (req,res)=>{
   try{
     const UID=req.query.p1
 
@@ -362,7 +362,7 @@ app.delete("/delete/users", async (req,res)=>{
 //update user
 //done
 //ChatGPT usage: No
-app.put("/update/users", async (req,res)=>{
+app.get("/update/users", async (req,res)=>{
   try{
     const UID=req.query.p1
     const FirstName=req.query.p2
@@ -556,8 +556,7 @@ app.post("/add/items_man", async (req,res)=>{
     //const [results2] = await con.promise().query(query2, [values])
 
     console.log('SUCCESS ADDED items') 
-    // query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
-    res.json({ message: 'SUCCESS ADDED ITEMS MANUAL' });
+    query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
    
   }catch(error){
     console.error('Error:', error)
@@ -568,7 +567,7 @@ app.post("/add/items_man", async (req,res)=>{
 //delete items
 //done
 //ChatGPT usage: Partial
-app.delete("/delete/items", async (req,res)=>{
+app.post("/delete/items", async (req,res)=>{
   try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
@@ -593,7 +592,7 @@ app.delete("/delete/items", async (req,res)=>{
 //done
 //update items
 //ChatGPT usage: Partial
-app.put("/update/items", (req,res)=>{
+app.post("/update/items", (req,res)=>{
   try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
@@ -632,7 +631,7 @@ app.put("/update/items", (req,res)=>{
 //add pref
 //done
 //ChatGPT usage: No
-app.put("/add/pref", async (req,res)=>{
+app.post("/add/pref", async (req,res)=>{
 
   try{
     const UID=req.body.p1
@@ -665,7 +664,7 @@ app.put("/add/pref", async (req,res)=>{
 //delete pref
 //done
 //ChatGPT usage: No
-app.delete("/delete/pref", async (req,res)=>{
+app.get("/delete/pref", async (req,res)=>{
   try{
     const UID=req.query.p1
 
@@ -733,7 +732,7 @@ app.get("/get/pref_list", async (req,res)=>{
 //request for being a dietician
 //done
 //ChatGPT usage: No
-app.post("/add/dietReq", async (req,res)=>{
+app.get("/add/dietReq", async (req,res)=>{
 
   try{
     const UID=req.query.p1
@@ -787,7 +786,7 @@ app.get("/get/dietReq", async (req,res)=>{
 //approve request for being a dietician, add to dietician table and remove the request
 //done
 //ChatGPT usage: Partial
-app.post("/approve/dietReq", async (req,res)=>{
+app.get("/approve/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
     console.log(UID)
@@ -815,7 +814,7 @@ app.post("/approve/dietReq", async (req,res)=>{
 //remove request for being a dietician 
 //done
 //ChatGPT usage: No
-app.delete("/delete/dietReq", async (req,res)=>{
+app.get("/remove/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
     console.log(UID)
@@ -838,10 +837,10 @@ app.delete("/delete/dietReq", async (req,res)=>{
 //get dieitician with the email and also update the firebase token as well
 //done
 //ChatGPT usage: No
-app.put("/put/dietician", async (req,res)=>{
+app.get("/get/dietician", async (req,res)=>{
   try{
-  const Email=req.body.p1
-  const Token=req.body.p2
+  const Email=req.query.p1
+  const Token=req.query.p2
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
@@ -879,16 +878,14 @@ app.put("/put/dietician", async (req,res)=>{
 app.get("/get/users_type", async (req,res)=>{
 
   try {
-    const Email = req.params.p1;
+    const Email = req.query.p1;
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
     const [userResults] = await con.promise().query(query1, [Email])
 
     if (userResults.length > 0) {
       console.log('Entry exists as user')
-    //   return query_success(res, 'User\n')
-        res.json({ userType: 'User'})
-        return
+      return query_success(res, 'User\n')
     }
 
     const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
@@ -896,9 +893,7 @@ app.get("/get/users_type", async (req,res)=>{
 
     if (dieticianResults.length > 0) {
       console.log('Entry exists as dietician')
-    //   return query_success(res, 'Dietician\n')
-    res.json({ userType: 'Dietician'})
-    return
+      return query_success(res, 'Dietician\n')
     }
 
     const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
@@ -906,16 +901,12 @@ app.get("/get/users_type", async (req,res)=>{
 
     if (adminResults.length > 0) {
       console.log('Entry exists as admin');
-    //   return query_success(res, 'Admin\n')
-    res.json({ userType: 'Admin'})
-        return
+      return query_success(res, 'Admin\n')
     }
 
     console.log('This is an entry that does not exist')
 
-    // return query_success(res, 'Does not exist\n')
-    res.json({ userType: 'Does not exist'})
-    return
+    return query_success(res, 'Does not exist\n')
   } catch (error) {
     console.error('Error:', error)
     database_error(res, error.stack)
