@@ -110,7 +110,6 @@ CREATE TABLE ADMIN(
     LastName VARCHAR(25) NOT NULL,
     Email VARCHAR(100) UNIQUE NOT NULL,
     ProfileURL VARCHAR(500),
-    -- Bios VARCHAR(500),
     PRIMARY KEY (UID)
 );
 
@@ -203,7 +202,22 @@ CREATE VIEW vegan AS (SELECT r2.RID, r2.Ingredient, r2.Amount FROM RECIPE r2 WHE
 
 -- end of createing views
 
--- data for testing and query testing
+-- start of data needed for testcase to run properly
+INSERT INTO 
+USERS (FirstName, LastName, Email, ProfileURL, MessageToken) 
+VALUES ("User", "User", "user@example.com", NULL, "Token");
+
+INSERT INTO 
+DIETICIAN (FirstName, LastName, Email, ProfileURL, MessageToken) 
+VALUES ("dietician", "dietician", "dietitian@example.com", NULL, "Token");
+
+INSERT INTO
+ADMIN (FirstName, LastName, Email, ProfileURL)
+VALUES ("admin", "admin", "admin@example.com", NULL);
+
+-- end of data need for testcases
+
+-- query testing
 INSERT INTO
 USERS(FirstName, LastName, Email)
 VALUES
