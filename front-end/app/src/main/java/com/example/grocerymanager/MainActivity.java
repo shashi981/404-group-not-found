@@ -137,8 +137,8 @@ public class MainActivity extends AppCompatActivity {
         getRequest("/get/users_type?p1=" + account.getEmail(), this, new CallbackListener() {
             @Override
             public void onSuccess(JSONObject result) {
-                    String userType = result.optString("userType", "");
-                    launchUser(userType, account);
+                    String userType = result.optString("Message", "");
+                    launchUser(userType.trim(), account);
             }
 
             @Override
@@ -231,7 +231,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             jsonAccount.put("p1", account.getEmail());
             jsonAccount.put("p2", token);
-            putRequest("/put/users", jsonAccount, this, new CallbackListener() {
+            Log.d(TAG, token);
+            Log.d(TAG, account.getEmail());
+            postRequest("/get/users", jsonAccount, this, new CallbackListener() {
                 @Override
                 public void onSuccess(JSONObject result) {
                     String responseBody = result.toString().trim();
@@ -280,10 +282,11 @@ public class MainActivity extends AppCompatActivity {
     private void launchDietician(GoogleSignInAccount account) {
         String token = tm.getToken();
         JSONObject jsonAccount = new JSONObject();
+        Log.d(TAG, "here");
         try {
             jsonAccount.put("p1", account.getEmail());
             jsonAccount.put("p2", token);
-            putRequest("/put/dietician", jsonAccount, this, new CallbackListener() {
+            postRequest("/get/dietician", jsonAccount, this, new CallbackListener() {
                 @Override
                 public void onSuccess(JSONObject result) {
                     String responseBody = result.toString().trim();
