@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                ActivityLauncher.launchActivity(HomeActivity.this, ChatActivity.class);
+                ActivityLauncher.launchActivity(HomeActivity.this, UserListActivity.class);
                 finish();
 
             }
