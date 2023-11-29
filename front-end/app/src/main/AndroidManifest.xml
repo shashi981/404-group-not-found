@@ -18,6 +18,15 @@
         android:theme="@style/Theme.Grocerymanager"
         tools:targetApi="31">
         <activity
+            android:name=".SettingsActivityAdmin"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivityDietician"
+            android:exported="false" />
+        <activity
+            android:name=".ProfileActivityDietician"
+            android:exported="false" />
+        <activity
             android:name=".ChatDieticianActivity"
             android:exported="false" />
         <activity

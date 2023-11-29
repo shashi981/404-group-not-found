@@ -72,7 +72,7 @@ public class SettingsActivityDietician extends AppCompatActivity {
                 }
             }
         });
-        Button deleteAccountButton = findViewById(R.id.delete_account_settings);
+        Button deleteAccountButton = findViewById(R.id.delete_account_settings_dietician);
         deleteAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -58,7 +58,6 @@ public class AdminActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 if (id == R.id.sign_out_dropdown) {
                     ActivityLauncher.launchActivity(AdminActivity.this, SettingsActivityAdmin.class);
-
                     return true;
                 }
                 return false;
