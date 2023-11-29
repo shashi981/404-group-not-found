@@ -124,7 +124,7 @@ public class AddItemsActivity extends AppCompatActivity implements DatePickerFra
                     postRequest("/add/items_man", postData, AddItemsActivity.this, new CallbackListener(){
                         @Override
                         public void onSuccess(JSONObject result) {
-                            String resultStatus = result.optString("message", "");
+                            String resultStatus = result.optString("Message", "");
                             if(result.equals("SUCCESS ADDED ITEMS")){
                                 launchInventoryIntent();
                             }

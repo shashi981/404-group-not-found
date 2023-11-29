@@ -3,7 +3,6 @@ package com.example.grocerymanager;
 
 import static com.example.grocerymanager.BackendPathing.getRequest;
 import static com.example.grocerymanager.BackendPathing.postRequest;
-import static com.example.grocerymanager.BackendPathing.putRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

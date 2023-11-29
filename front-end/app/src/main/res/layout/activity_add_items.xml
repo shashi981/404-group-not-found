@@ -120,6 +120,7 @@
         app:layout_constraintVertical_bias="0.307" />
 
     <TextView
+        android:textColor="@color/dark_blue"
         android:id="@+id/expiry_date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
