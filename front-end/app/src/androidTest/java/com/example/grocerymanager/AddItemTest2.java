@@ -140,11 +140,4 @@ public class AddItemTest2 {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return dateFormat.format(calendar.getTime());
     }
-
-    private void mockUser(){
-        String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
-        Uri defProfileUri = Uri.parse(defProfile);
-        UserData userData = new UserData("Louie", "Tang", "louietang2013@gmail.com", defProfileUri, 2);
-        SharedPrefManager.saveUserData(this, userData);
-    }
 }

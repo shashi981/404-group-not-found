@@ -61,27 +61,27 @@ public class SettingsActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         googleAccount = GoogleSignIn.getLastSignedInAccount(this);
 
-        Button signOutButton = findViewById(R.id.sign_out_settings);
+        Button signOutButton = findViewById(R.id.sign_out_settings_user);
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(googleAccount != null){
-                    signOut();
                     launchMainIntent();
+                    signOut();
                 }
                 else{
                     launchMainIntent();
                 }
             }
         });
-        Button deleteAccountButton = findViewById(R.id.delete_account_settings);
+        Button deleteAccountButton = findViewById(R.id.delete_account_settings_user);
         deleteAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 deleteConfirmation();
             }
         });
-        Button dietitianButton = findViewById(R.id.request_dietitian_settings);
+        Button dietitianButton = findViewById(R.id.request_dietitian_settings_user);
         dietitianButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
