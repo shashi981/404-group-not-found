@@ -1468,5 +1468,4 @@ module.exports = {
   app,
   SendExpiryReminder,
   processShoppingData,
-  con
 }; 
