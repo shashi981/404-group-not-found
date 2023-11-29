@@ -43,7 +43,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
         // Initialize UI components
         RecyclerView chatRecyclerView = findViewById(R.id.chatRecyclerView_diet);
         EditText inputMessage = findViewById(R.id.inputMessage);
-        Button sendButton = findViewById(R.id.sendButton);
+        ImageButton sendButton = findViewById(R.id.sendButton);
         ImageButton backIcon = findViewById(R.id.imageButton);
 
         // Set up RecyclerView with an empty adapter
@@ -75,6 +75,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
 
                 String message = inputMessage.getText().toString();
                 if(!message.isEmpty()){
+                    Log.d(TAG, "Message sent: " + message);
                     sendMessage(curUID, dietitianData.getDID(), message);
                     fetchChatHistory(curUID, dietitianData.getDID());
                     inputMessage.setText("");

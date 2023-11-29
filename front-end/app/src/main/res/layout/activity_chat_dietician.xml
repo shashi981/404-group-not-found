@@ -23,14 +23,14 @@
 
     <FrameLayout
         android:id="@+id/chatBox"
-        android:layout_width="370dp"
-        android:layout_height="660dp"
-        android:layout_marginTop="60dp"
-        android:background="@color/mint_green"
+        android:layout_width="360dp"
+        android:layout_height="500dp"
+        android:background="@color/faded_white"
         android:visibility="visible"
         app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
@@ -43,62 +43,46 @@
             android:layout_alignParentTop="true"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/inputMessage"
-            app:layout_constraintTop_toTopOf="@id/chatBox"/>
+            app:layout_constraintTop_toTopOf="@id/chatBox" />
     </FrameLayout>
 
-    <Button
-        android:id="@+id/sendButton"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:layout_marginRight="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_12sdp"
-        android:background="@color/faded_white"
-        app:layout_constraintBottom_toBottomOf="@id/chatBox"
-        app:layout_constraintEnd_toEndOf="@id/chatBox"
-        ></Button>
+    <LinearLayout
+        android:id="@+id/userInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95">
 
-    <FrameLayout
-        android:id="@+id/layoutSend"
-        android:layout_width="@dimen/_40sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginEnd="@dimen/_16sdp"
-        android:layout_marginRight="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_12sdp"
-        android:background="@color/faded_white"
-        app:layout_constraintBottom_toBottomOf="@id/chatBox"
-        app:layout_constraintEnd_toEndOf="@id/chatBox">
+        <EditText
+            android:id="@+id/inputMessage"
+            android:textSize="16dp"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:hint="Type a Message:"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:textColor="@color/dark_blue"
+            android:textColorHint="@color/dark_blue" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/_4sdp"
-            android:layout_marginLeft="@dimen/_4sdp"
-            android:src="@drawable/ic_send"/>
-
-    </FrameLayout>
-
-    <EditText
-        android:id="@+id/inputMessage"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_marginStart="@dimen/_16ssp"
-        android:layout_marginLeft="@dimen/_16sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:layout_marginRight="@dimen/_8sdp"
-        android:layout_marginBottom="@dimen/_12sdp"
-        android:background="@color/dark_blue"
-        android:hint="Type a Message:"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:paddingStart="@dimen/_16sdp"
-        android:paddingEnd="@dimen/_16sdp"
-        android:textColor="@color/faded_white"
-        android:textColorHint="@color/faded_white"
-        app:layout_constraintBottom_toBottomOf="@id/chatBox"
-        app:layout_constraintEnd_toStartOf="@id/layoutSend"
-        app:layout_constraintStart_toStartOf="@id/chatBox"/>
+        <ImageButton
+            android:paddingStart="24dp"
+            android:id="@+id/sendButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:backgroundTint="#00FFFFFF"
+            android:contentDescription="@string/back_bar_icon_dark_description"
+            android:src="@drawable/baseline_send_24" />
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

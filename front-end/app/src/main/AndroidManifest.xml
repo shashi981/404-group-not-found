@@ -28,12 +28,11 @@
             android:exported="false" />
         <activity
             android:name=".ChatDieticianActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".DietitianListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ViewRecipeActivity"
             android:exported="false" />
         <activity
             android:name=".AdminActivity"
@@ -66,7 +65,9 @@
             android:exported="false" />
         <activity
             android:name=".ChatUserActivity"
-            android:exported="false" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".InventoryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"

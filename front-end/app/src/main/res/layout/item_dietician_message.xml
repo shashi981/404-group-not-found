@@ -6,6 +6,7 @@
     android:padding="8dp">
 
     <TextView
+        android:maxWidth="300dp"
         android:id="@+id/tvDieticianMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -13,8 +14,9 @@
         android:layout_marginEnd="8dp"
         android:padding="10dp"
         android:text="Dietician Message"
-        android:textColor="#FF9800"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/faded_white"
+        android:backgroundTint="@color/dark_blue"
+        android:background="@color/dark_blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

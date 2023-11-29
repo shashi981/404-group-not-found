@@ -41,7 +41,7 @@ public class ChatUserActivity extends AppCompatActivity {
         // Initialize UI components
         RecyclerView chatRecyclerView = findViewById(R.id.chatRecyclerView);
         EditText inputMessage = findViewById(R.id.inputMessage);
-        Button sendButton = findViewById(R.id.sendButton);
+        ImageButton sendButton = findViewById(R.id.sendButton);
         ImageButton backIcon = findViewById(R.id.imageButton);
 
         // Set up RecyclerView with an empty adapter

@@ -35,15 +35,16 @@
             android:layout_height="wrap_content"
             android:text="Ingredients"
             android:textSize="14sp" />
-    </LinearLayout>
 
     <Button
         android:backgroundTint="@color/mint_green"
         android:backgroundTintMode="src_over"
-        android:textColor="@color/faded_white"
+        android:textColor="@color/dark_blue"
         android:id="@+id/select_recipe_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Recipe"
         android:layout_marginStart="16dp"/>
+
+    </LinearLayout>
 </LinearLayout>
