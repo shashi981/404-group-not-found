@@ -1,7 +1,9 @@
 package com.example.grocerymanager;
 
 
+import static com.example.grocerymanager.BackendPathing.getRequest;
 import static com.example.grocerymanager.BackendPathing.postRequest;
+import static com.example.grocerymanager.BackendPathing.putRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -132,26 +134,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getUserType(GoogleSignInAccount account) {
-        JSONObject jsonEmail = new JSONObject();
-        try {
-            jsonEmail.put("p1", account.getEmail());
-            postRequest("/get/users_type", jsonEmail, this, new CallbackListener() {
-                @Override
-                public void onSuccess(JSONObject result) {
-                        String userType = result.optString("userType", "");
-                        launchUser(userType, account);
-                }
+        getRequest("/get/users_type?p1=" + account.getEmail(), this, new CallbackListener() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                    String userType = result.optString("userType", "");
+                    launchUser(userType, account);
+            }
 
-                @Override
-                public void onFailure(String errorMessage) {
-                    Log.e(TAG, "Request failed: " + errorMessage);
-                    signOut();
-                }
-            });
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing JSON: " + e.getMessage());
-            signOut();
-        }
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.e(TAG, "Request failed: " + errorMessage);
+                signOut();
+            }
+        });
     }
 
     private void launchUser(String userType, GoogleSignInAccount account) {
@@ -236,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             jsonAccount.put("p1", account.getEmail());
             jsonAccount.put("p2", token);
-            postRequest("/get/users", jsonAccount, this, new CallbackListener() {
+            putRequest("/put/users", jsonAccount, this, new CallbackListener() {
                 @Override
                 public void onSuccess(JSONObject result) {
                     String responseBody = result.toString().trim();
@@ -288,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             jsonAccount.put("p1", account.getEmail());
             jsonAccount.put("p2", token);
-            postRequest("/get/dietician", jsonAccount, this, new CallbackListener() {
+            putRequest("/put/dietician", jsonAccount, this, new CallbackListener() {
                 @Override
                 public void onSuccess(JSONObject result) {
                     String responseBody = result.toString().trim();

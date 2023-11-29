@@ -277,9 +277,9 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 //get users
 //done
 //ChatGPT usage: Partial
-app.post("/get/users", async (req, res) => {
-    const email = req.body.p1;
-    const token = req.body.p2;
+app.get("/get/users", async (req, res) => {
+    const email = req.query.p1;
+    const token = req.query.p2;
 
     const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
     await con.promise().query(updateQuery, [token, email]);
@@ -837,10 +837,10 @@ app.get("/remove/dietReq", async (req,res)=>{
 //get dieitician with the email and also update the firebase token as well
 //done
 //ChatGPT usage: No
-app.post("/get/dietician", async (req,res)=>{
+app.get("/get/dietician", async (req,res)=>{
   try{
-  const Email=req.body.p1
-  const Token=req.body.p2
+  const Email=req.query.p1
+  const Token=req.query.p2
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
@@ -875,19 +875,17 @@ app.post("/get/dietician", async (req,res)=>{
 //give the user type of the email if exist: admin, dietician or user else return does not exist
 //done
 //ChatGPT usage: Partial
-app.post("/get/users_type", async (req,res)=>{
+app.get("/get/users_type", async (req,res)=>{
 
   try {
-    const Email = req.body.p1;
+    const Email = req.query.p1;
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
     const [userResults] = await con.promise().query(query1, [Email])
 
     if (userResults.length > 0) {
       console.log('Entry exists as user')
-    //   return query_success(res, 'User\n')
-        res.json({ userType: 'User'})
-        return
+      return query_success(res, 'User\n')
     }
 
     const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
@@ -895,9 +893,7 @@ app.post("/get/users_type", async (req,res)=>{
 
     if (dieticianResults.length > 0) {
       console.log('Entry exists as dietician')
-    //   return query_success(res, 'Dietician\n')
-    res.json({ userType: 'Dietician'})
-    return
+      return query_success(res, 'Dietician\n')
     }
 
     const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
@@ -905,16 +901,12 @@ app.post("/get/users_type", async (req,res)=>{
 
     if (adminResults.length > 0) {
       console.log('Entry exists as admin');
-    //   return query_success(res, 'Admin\n')
-    res.json({ userType: 'Admin'})
-        return
+      return query_success(res, 'Admin\n')
     }
 
     console.log('This is an entry that does not exist')
 
-    // return query_success(res, 'Does not exist\n')
-    res.json({ userType: 'Does not exist'})
-    return
+    return query_success(res, 'Does not exist\n')
   } catch (error) {
     console.error('Error:', error)
     database_error(res, error.stack)
