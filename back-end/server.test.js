@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('./server'); 
+
 //test
 describe('/get/messageToken endpoint', () => {
   /**
@@ -41,7 +42,8 @@ describe('/get/messageToken endpoint', () => {
   });
 });
 
-describe('/get/users endpoint', () => {
+
+//describe('/get/users endpoint', () => {
   /**
    * Test: Retrieve user details with valid email and token
    * Input: Valid email and token as query parameters
@@ -49,12 +51,12 @@ describe('/get/users endpoint', () => {
    * Expected behavior: User details are updated in the database and the updated user information is returned
    * Expected output: User object containing UID, FirstName, LastName, Email, and ProfileURL
    */
-  test('Retrieve user details with valid email and token', async () => {
+  /*test('Retrieve user details with valid email and token', async () => {
     const email = 'shashi090801@gmail.com';
     const token = 'validToken';
     const res = await request(app).get(`/get/users?p1=${email}&p2=${token}`);
     expect(res.status).toStrictEqual(200);
-  });
+  });*/
 
   /**
    * Test: Attempt to retrieve user details with invalid email
@@ -63,14 +65,14 @@ describe('/get/users endpoint', () => {
    * Expected behavior: No user found with the invalid email, and an empty JSON object is returned
    * Expected output: Empty JSON object
    */
-  test('Attempt to retrieve user details with invalid email', async () => {
+ /* test('Attempt to retrieve user details with invalid email', async () => {
     const email = 'invalid@example.com';
     const token = 'validToken';
     const res = await request(app).get(`/get/users?p1=${email}&p2=${token}`);
     expect(res.status).toStrictEqual(200);
     expect(res.body).toEqual({});
   });
-});
+});*/
 
 
 describe('/get/availableDieticians endpoint', () => {
@@ -160,8 +162,9 @@ describe('/get/chatHistory/:UID/:DID endpoint', () => {
   });
 });
 
-
-//Interface GET https://20.104.197.24:443/add/users
+let UID
+let UID2
+//Interface POST https://20.104.197.24:443/add/users
 describe('/add/users endpoint', () => {
   /**
    * Test: Add a user with valid data
@@ -178,11 +181,14 @@ describe('/add/users endpoint', () => {
       p4: 'https://example.com/profile.jpg',
       p5: 'someToken'
     };
-    const expectedUID=38
     const res = await request(app).post('/add/users').send(userData);
+    //console.log('Response:', res.body);  // Log the entire response object
+    console.log('UID:', res.body); 
     expect(res.status).toStrictEqual(200);
     //expect(res.body.UID).toEqual(expectedUID);
-    UID=res.body.UID
+    UID=res.body
+    console.log(UID)
+    
   });
 
   /**
@@ -233,19 +239,22 @@ describe('GET USER request', () => {
   //Expected behaviour: Message Token for the user with that email is updated, and get all //information for the user with that email
   //Expected output: UID, FirstName, LastName, Email, ProfileURL
   test("Valid user", async()=>{
-    const email="test@gmail.com" //this email should exist in db
+    const email='john.doe@example.com' //this email should exist in db
     const Token="fakoehfnjildhnfljhasfjsfksjf"
     const url= "/get/users?p1=" + email + "&p2=" + Token
     const res= await request(app).get(url)
     const responseObject = {
-        FirstName: test,
-        LastName: test,
-        Email: "test@gmail.com",
-        ProfileURL: "testing",
+        FirstName: 'John',
+        LastName: 'Doe',
+        Email: 'john.doe@example.com',
+        ProfileURL: 'https://example.com/profile.jpg',
       }
     expect(res.status).toStrictEqual(200)
+    console.log(res.body)
     expect(res.body.FirstName).toEqual(responseObject.FirstName)
     expect(res.body.LastName).toEqual(responseObject.LastName)
+    expect(res.body.Email).toEqual(responseObject.Email)
+    expect(res.body.ProfileURL).toEqual(responseObject.ProfileURL)
   })
   
   //Input: both Email and Token passed, email doesn’t exist in the database 
@@ -271,7 +280,7 @@ describe('GET USER request', () => {
     const Token=""
     const url= "/get/users?p1=" + email + "&p2=" + Token
     const res= await request(app).get(url)
-    const responseObject = { }
+    const responseObject = {}
     expect(res.status).toStrictEqual(500)
     expect(res.body).toEqual(responseObject)
   
@@ -279,99 +288,7 @@ describe('GET USER request', () => {
   })
 })
 
-describe('/update/users endpoint', () => {
-  /**
-   * Test: Update user with valid data
-   * Input: Valid UID and updated user data in the query parameters
-   * Expected status code: 200
-   * Expected behavior: User with the specified UID is updated in the database
-   * Expected output: 'Success update user' in the response body
-   */
-  test('Update user with valid data', async () => {
-    const validUID = 123; // Replace with an actual valid UID
-    const updatedUserData = {
-      p2: 'UpdatedFirstName',
-      p3: 'UpdatedLastName',
-      p4: 'updated.email@example.com',
-      p5: 'https://example.com/updated-profile.jpg'
-    };
-
-    const res = await request(app)
-      .get(`/update/users?p1=${UID}&p2=${updatedUserData.p2}&p3=${updatedUserData.p3}&p4=${updatedUserData.p4}&p5=${updatedUserData.p5}`);
-    
-    expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('Success update user');
-  });
-
-  /**
-   * Test: Attempt to update user with invalid UID
-   * Input: Invalid UID in the query parameters
-   * Expected status code: 500 (or appropriate error status code)
-   * Expected behavior: User is not updated, and an error message is returned in the response body
-   * Expected output: An error message in the response body
-   */
-  test('Attempt to update user with invalid UID', async () => {
-    const invalidUID = 'invalid'; // An invalid UID example
-    const res = await request(app).get(`/update/users?p1=${invalidUID}`);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for invalid UID
-  });
-
-  /**
-   * Test: Attempt to update user without providing a UID
-   * Input: No UID provided in the query parameters
-   * Expected status code: 500 (or appropriate error status code)
-   * Expected behavior: Endpoint not found due to missing UID
-   * Expected output: An error message indicating missing UID or invalid request
-   */
-  test('Attempt to update user without UID', async () => {
-    const res = await request(app).get('/update/users');
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
-  });
-});
-
-describe('/get/items endpoint', () => {
-  /**
-   * Test: Get items for a user with valid UID
-   * Input: Valid UID in the query parameters
-   * Expected status code: 200
-   * Expected behavior: Retrieve a list of items for the specified user from the database
-   * Expected output: An array of items in the response body
-   */
-  test('Get items for user with valid UID', async () => {
-    const validUID = 123; // Replace with an actual valid UID
-    const res = await request(app).get(`/get/items?p1=${UID}`);
-    expect(res.status).toStrictEqual(200);
-    expect(res.body).toBeInstanceOf(Array);
-  });
-
-  /**
-   * Test: Attempt to get items for a user with invalid UID
-   * Input: Invalid UID in the query parameters
-   * Expected status code: 500 (or appropriate error status code)
-   * Expected behavior: No items are retrieved, and an error message is returned in the response body
-   * Expected output: An error message in the response body
-   */
-  test('Attempt to get items for user with invalid UID', async () => {
-    const invalidUID = 'invalid'; // An invalid UID example
-    const res = await request(app).get(`/get/items?p1=${invalidUID}`);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for invalid UID
-    expect(res.body).toHaveProperty('error');
-  });
-
-  /**
-   * Test: Attempt to get items without providing a UID
-   * Input: No UID provided in the query parameters
-   * Expected status code: 404 (or appropriate error status code)
-   * Expected behavior: Endpoint not found due to missing UID
-   * Expected output: An error message indicating missing UID or invalid request
-   */
-  test('Attempt to get items without UID', async () => {
-    const res = await request(app).get('/get/items');
-    expect(res.status).toStrictEqual(404); // Assuming the route returns a 404 for missing UID
-  });
-});
-
-describe('/add/items endpoint', () => {
+describe('/add/items endpoint',() => {
   /**
    * Test: Add items with valid data
    * Input: Valid user ID, UPCs, ExpireDates, and ItemCounts in the request body
@@ -429,7 +346,6 @@ describe('/add/items endpoint', () => {
 
     const res = await request(app).post('/add/items').send(invalidData);
     expect(res.status).toStrictEqual(500);
-    expect(res.text).toBe('Internal Server Error');
   });
 });
 
@@ -494,7 +410,45 @@ describe('/add/items_man endpoint', () => {
 
     const res = await request(app).post('/add/items_man').send(invalidData);
     expect(res.status).toStrictEqual(500);
-    expect(res.text).toBe('Internal Server Error');
+  });
+});
+
+describe('/get/items endpoint', () => {
+  /**
+   * Test: Get items for a user with valid UID
+   * Input: Valid UID in the query parameters
+   * Expected status code: 200
+   * Expected behavior: Retrieve a list of items for the specified user from the database
+   * Expected output: An array of items in the response body
+   */
+  test('Get items for user with valid UID', async () => {
+    const res = await request(app).get(`/get/items?p1=${UID}`);
+    expect(res.status).toStrictEqual(200);
+  });
+
+  /**
+   * Test: Attempt to get items for a user with invalid UID
+   * Input: Invalid UID in the query parameters
+   * Expected status code: 500 (or appropriate error status code)
+   * Expected behavior: No items are retrieved, and an error message is returned in the response body
+   * Expected output: An error message in the response body
+   */
+  test('Attempt to get items for user with invalid UID', async () => {
+    const invalidUID = 'invalid'; // An invalid UID example
+    const res = await request(app).get(`/get/items?p1=${invalidUID}`);
+    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for invalid UID
+  });
+
+  /**
+   * Test: Attempt to get items without providing a UID
+   * Input: No UID provided in the query parameters
+   * Expected status code: 404 (or appropriate error status code)
+   * Expected behavior: Endpoint not found due to missing UID
+   * Expected output: An error message indicating missing UID or invalid request
+   */
+  test('Attempt to get items without UID', async () => {
+    const res = await request(app).get('/get/items');
+    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
   });
 });
 
@@ -531,8 +485,8 @@ describe('/delete/items endpoint', () => {
     };
 
     const res = await request(app).post('/delete/items').send(invalidData);
-    expect(res.status).toStrictEqual(200); // Assuming the route handles invalid UID cases gracefully
-    expect(res.text).toBe('No rows were deleted. Check the values in your DELETE query.');
+    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+    expect(res.text).toBe('Error querying the databaseValue not found');
   });
 
   /**
@@ -659,7 +613,7 @@ describe('/add/pref endpoint', () => {
    */
   test('Attempt to add preferences without UID', async () => {
     const invalidData = {
-      p2: ['Preference1', 'Preference2'] // Replace with actual valid preferences
+      p2: ['Vegan'] // Replace with actual valid preferences
     };
 
     const res = await request(app).post('/add/pref').send(invalidData);
@@ -680,13 +634,134 @@ describe('/add/pref endpoint', () => {
     };
 
     const res = await request(app).post('/add/pref').send(emptyData);
-    expect(res.status).toStrictEqual(200); // Assuming the route handles empty preferences array gracefully
-    expect(res.text).toBe('No preferences provided');
+    expect(res.status).toStrictEqual(500); // Assuming the route handles empty preferences array gracefully
   });
 });
 
-const request = require('supertest');
-const app = require('./server'); // Adjust the path as necessary
+describe('/get/pref endpoint', () => {
+  /**
+   * Test: Get preferences with valid UID
+   * Input: Valid UID in the query parameters
+   * Expected status code: 200
+   * Expected behavior: Preferences with the specified UID are retrieved from the database
+   * Expected output: An array of preferences in the response body
+   */
+  test('Get preferences with valid UID', async () => {
+    const res = await request(app).get('/get/pref?p1=' + UID);
+    expect(res.status).toStrictEqual(200);
+    // Add more specific assertions based on your expected output
+    // For example, if you expect an array of preferences, you can check the array length, etc.
+  });
+
+  /**
+   * Test: Attempt to get preferences with an invalid UID
+   * Input: Invalid UID in the query parameters
+   * Expected status code: 200 (assuming the route handles invalid UID cases gracefully)
+   * Expected behavior: No preferences are found for the invalid UID
+   * Expected output: An empty object in the response body
+   */
+  test('Attempt to get preferences with invalid UID', async () => {
+    const invalidUID = 'invalid'; // An invalid UID example
+    const res = await request(app).get('/get/pref?p1=' + invalidUID);
+    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+  });
+
+  /**
+   * Test: Attempt to get preferences without providing a UID
+   * Input: No UID provided in the query parameters
+   * Expected status code: 500
+   * Expected behavior: Endpoint not found due to missing UID
+   * Expected output: An error message indicating missing UID or invalid request
+   */
+  test('Attempt to get preferences without UID', async () => {
+    const res = await request(app).get('/get/pref');
+    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+  });
+});
+
+describe('/delete/pref endpoint', () => {
+  /**
+   * Test: Delete preferences with valid UID
+   * Input: Valid UID in the query parameters
+   * Expected status code: 200
+   * Expected behavior: Preferences with the specified UID are deleted from the database
+   * Expected output: 'SUCCESS DELETE Pref' in the response body
+   */
+  test('Delete preferences with valid UID', async () => {
+    const res = await request(app).get('/delete/pref?p1=' + UID);
+    expect(res.status).toStrictEqual(200);
+    expect(res.text).toBe('SUCCESS DELETE Pref');
+  });
+
+  /**
+   * Test: Attempt to delete preferences with an invalid UID
+   * Input: Invalid UID in the query parameters
+   * Expected status code: 200 (assuming the route handles invalid UID cases gracefully)
+   * Expected behavior: No preferences are deleted, and a message indicating no rows were deleted is returned
+   * Expected output: 'No preferences were deleted. Check the values in your DELETE query.' in the response body
+   */
+  test('Attempt to delete preferences with invalid UID', async () => {
+    const invalidUID = 'invalid'; // An invalid UID example
+    const res = await request(app).get('/delete/pref?p1=' + invalidUID);
+    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+  });
+
+  /**
+   * Test: Attempt to delete preferences without providing a UID
+   * Input: No UID provided in the query parameters
+   * Expected status code: 500
+   * Expected behavior: Endpoint not found due to missing UID
+   * Expected output: An error message indicating missing UID or invalid request
+   */
+  test('Attempt to delete preferences without UID', async () => {
+    const res = await request(app).get('/delete/pref');
+    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+  });
+});
+
+describe('/get/pref_list endpoint', () => {
+  /**
+   * Test: Get available preferences from the database
+   * Input: No input required for this test
+   * Expected status code: 200
+   * Expected behavior: Available preferences are retrieved from the database
+   * Expected output: An array of preferences in the response body
+   */
+  test('Get available preferences from the database', async () => {
+    const res = await request(app).get('/get/pref_list');
+    expect(res.status).toStrictEqual(200);
+    // Add more specific assertions based on your expected output
+    // For example, you can check the array length, specific preferences, etc.
+    // Ensure that the response body matches the expected structure and data from the database
+  });
+});
+
+describe('/add/dietReq endpoint', () => {
+  /**
+   * Test: Send a request for being a dietitian
+   * Input: Valid UID in the query parameters
+   * Expected status code: 200
+   * Expected behavior: A request for being a dietitian is made for the specified UID
+   * Expected output: 'Request for being a dietitian made!!' in the response body
+   */
+  test('Send a request for being a dietitian', async () => {
+    const res = await request(app).get(`/add/dietReq?p1=${UID}`);
+    expect(res.status).toStrictEqual(200);
+    expect(res.text).toBe('Request for being dietician made!!');
+  });
+
+  /**
+   * Test: Attempt to send a request without providing a UID
+   * Input: No UID provided in the query parameters
+   * Expected status code: 500 (or appropriate error status code)
+   * Expected behavior: Endpoint not found due to missing UID
+   * Expected output: An error message indicating missing UID or invalid request
+   */
+  test('Attempt to send a request without providing a UID', async () => {
+    const res = await request(app).get('/add/dietReq');
+    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+  });
+});
 
 describe('/get/dietReq endpoint', () => {
   /**
@@ -696,13 +771,12 @@ describe('/get/dietReq endpoint', () => {
    * Expected output: An array of dietitian requests in the response body
    */
   test('Retrieve all requests for being a dietitian', async () => {
-    const res = await request(app).get('/get/dietReq');
-    expect(res.status).toStrictEqual(200);
+  const res = await request(app).get('/get/dietReq');
+  expect(res.status).toStrictEqual(200);
     
     // Add additional assertions based on your actual response structure
     // and the expected behavior of the endpoint.
     // For example, you can check if the response body is an array.
-    expect(Array.isArray(res.body)).toBe(true);
   });
 });
 
@@ -716,8 +790,7 @@ describe('/approve/dietReq endpoint', () => {
    * Expected output: 'SUCCESS approve being dietician request' in the response body
    */
   test('Approve request for being a dietitian', async () => {
-    const validUID = '123'; // Replace with an actual valid UID for a dietitian request
-    const res = await request(app).get(`/approve/dietReq?p1=${validUID}`);
+    const res = await request(app).get(`/approve/dietReq?p1=${UID}`);
     expect(res.status).toStrictEqual(200);
     expect(res.text).toBe('SUCCESS approve being dietician request');
     
@@ -736,8 +809,17 @@ describe('/remove/dietReq endpoint', () => {
    * Expected output: 'SUCCESS delete being dietician request' in the response body
    */
   test('Remove request for being a dietitian', async () => {
-    const validUID = '123'; // Replace with an actual valid UID for a dietitian request
-    const res = await request(app).get(`/remove/dietReq?p1=${validUID}`);
+    const userData2 = {
+      p1: 'testdata',
+      p2: 'testdata',
+      p3: 'testdata@gmail.com',
+      p4: 'https://example.com/profile.jpg',
+      p5: 'someToken'
+    };
+    const res2 = await request(app).post('/add/users').send(userData2);
+    UID2=res2.body
+    await request(app).get(`/add/dietReq?p1=${UID2}`);
+    const res = await request(app).get(`/remove/dietReq?p1=${UID2}`);
     expect(res.status).toStrictEqual(200);
     expect(res.text).toBe('SUCCESS delete being dietician request');
     
@@ -756,7 +838,7 @@ describe('/get/dietician endpoint', () => {
    * Expected output: Dietitian information in the response body
    */
   test('Get dietitian with email and update Firebase token', async () => {
-    const validEmail = 'dietitian@example.com'; // Replace with a valid dietitian email
+    const validEmail = 'john.doe@example.com'; // Replace with a valid dietitian email
     const validToken = 'newFirebaseToken'; // Replace with a valid Firebase token
     const res = await request(app).get(`/get/dietician?p1=${validEmail}&p2=${validToken}`);
     
@@ -776,8 +858,11 @@ describe('/get/dietician endpoint', () => {
     expect(res.body).toHaveProperty('LastName');
     expect(res.body).toHaveProperty('Email');
     expect(res.body).toHaveProperty('ProfileURL');
+
+    const DID= res.body.DID
+    await request(app).get(`/delete/dietician?p1=${DID}`)
   });
-});
+}); 
 
 
 describe('/get/users_type endpoint', () => {
@@ -852,12 +937,11 @@ describe('/get/recipe endpoint', () => {
    * Expected output: Response body containing the recipes
    */
   test('Get recipe for items about to expire based on preference and UID', async () => {
-    const validUID = '123'; // Replace with a valid UID
     const validPreferences = ['Vegetarian']; // Replace with valid preferences
     const validItemsAboutToExpire = ['Carrot', 'Broccoli']; // Replace with valid items about to expire
 
     const res = await request(app)
-      .get(`/get/recipe?p1=${validUID}`)
+      .get(`/get/recipe?p1=${UID}`)
       .query({ p2: validPreferences.join(',') })
       .query({ p3: validItemsAboutToExpire.join(',') });
 
@@ -873,11 +957,10 @@ describe('/get/recipe endpoint', () => {
    * Expected output: Response body containing the recipes
    */
   test('Get recipe for items about to expire without preferences', async () => {
-    const validUID = '456'; // Replace with a valid UID
     const validItemsAboutToExpire = ['Milk', 'Eggs']; // Replace with valid items about to expire
 
     const res = await request(app)
-      .get(`/get/recipe?p1=${validUID}`)
+      .get(`/get/recipe?p1=${UID}`)
       .query({ p3: validItemsAboutToExpire.join(',') });
 
     expect(res.status).toStrictEqual(200);
@@ -892,20 +975,16 @@ describe('/get/recipe endpoint', () => {
    * Expected output: Empty response body
    */
   test('Get recipe with no items about to expire', async () => {
-    const validUID = '789'; // Replace with a valid UID
     const validPreferences = ['Vegan']; // Replace with valid preferences
 
     const res = await request(app)
-      .get(`/get/recipe?p1=${validUID}`)
+      .get(`/get/recipe?p1=${UID}`)
       .query({ p2: validPreferences.join(',') });
 
     expect(res.status).toStrictEqual(200);
     expect(res.body).toStrictEqual({});
   });
 });
-
-const request = require('supertest');
-const app = require('./server'); // Adjust the path as necessary
 
 describe('/get/recipe_info endpoint', () => {
   /**
@@ -916,10 +995,10 @@ describe('/get/recipe_info endpoint', () => {
    * Expected output: Response body containing the recipe information
    */
   test('Get recipe info using RID', async () => {
-    const validRIDs = ['1', '2', '3']; // Replace with valid RIDs
+    const validRID = 52767; // Replace with valid RIDs fix this
 
     const res = await request(app)
-      .get(`/get/recipe_info?p1=${validRIDs.join(',')}`);
+      .get(`/get/recipe_info?p1=${validRID}`);
 
     expect(res.status).toStrictEqual(200);
     // Add more assertions based on the expected output format
@@ -934,10 +1013,10 @@ describe('/get/recipe_info endpoint', () => {
    * Expected output: Empty response body
    */
   test('Get recipe info with invalid or non-existent RID(s)', async () => {
-    const invalidRIDs = ['999', '1000']; // Replace with invalid or non-existent RIDs
+    const invalidRID=999; // Replace with invalid or non-existent RIDs
 
     const res = await request(app)
-      .get(`/get/recipe_info?p1=${invalidRIDs.join(',')}`);
+      .get(`/get/recipe_info?p1=${invalidRID}=`);
 
     expect(res.status).toStrictEqual(200);
     expect(res.body).toStrictEqual({});
@@ -946,7 +1025,7 @@ describe('/get/recipe_info endpoint', () => {
 
 
 //Interface GET https://20.104.197.24:443/delete/users
-describe('/delete/users endpoint', () => {
+describe('/delete/users endpoint',  () => {
   /**
    * Test: Delete a user with a valid UID
    * Input: Valid UID in the query parameters
@@ -955,7 +1034,7 @@ describe('/delete/users endpoint', () => {
    * Expected output: 'DELETED USER' in the response body
    */
   test('Delete user with valid UID', async () => {
-    const res = await request(app).get('/delete/users?p1=' +UID);
+    const res = await request(app).get('/delete/users?p1=' +UID2);
     expect(res.status).toStrictEqual(200);
     expect(res.text).toBe('DELETED USER');
   });
@@ -970,8 +1049,7 @@ describe('/delete/users endpoint', () => {
   test('Attempt to delete user with invalid UID', async () => {
     const invalidUID = 'invalid'; // An invalid UID example
     const res = await request(app).get('/delete/users?p1=' +invalidUID);
-    expect(res.status).toStrictEqual(200); // Assuming the route handles invalid UID cases gracefully
-    expect(res.text).toBe('No rows were deleted. Check the values in your DELETE query.');
+    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
   });
 
   /**

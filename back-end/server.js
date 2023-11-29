@@ -48,7 +48,7 @@ fs.readFile(RecipeKeypath, 'utf8', (err, data) => {
 //const schedule='*/20 * * * *' // M4 submission use
 const schedule = '0 0 * * *' //per daily
 
-const serviceAccount = require('./grocerymanager_firebase.json')
+const serviceAccount = require('./grocerymanager_firebase.json');
 
 // Initialize the app with appropriate configurations
 admin.initializeApp({
@@ -273,36 +273,76 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 
 // END POINTS FOR SOCKET ENDS 
 
+async function UIDcheck(UID){
+  const checkquery = 'SELECT * FROM USERS WHERE UID=?';
+  const [userResults] = await con.promise().query(checkquery, [UID]);
 
+  if (userResults.length === 0) {
+    console.log('Value not found, nothing deleted');
+    throw new Error('Value not found');
+  }
+}
+
+async function Emailcheck(Email){
+  const checkquery = 'SELECT * FROM USERS WHERE Email=?';
+  const [userResults] = await con.promise().query(checkquery, [Email]);
+
+  if (userResults.length === 0) {
+    console.log('Value not found, nothing deleted');
+    throw new Error('Value not found');
+  }
+}
+
+async function ItemIDcheck(UID, ItemID){
+  const checkquery = 'SELECT ItemID FROM OWNS WHERE UID=? AND ItemID IN (?)';
+  const [userResults] = await con.promise().query(checkquery, [UID, ItemID]);
+
+  if (userResults.length === 0) {
+    console.log('Value not found, nothing deleted');
+    throw new Error('Value not found');
+  }
+}
 //get users
 //done
 //ChatGPT usage: Partial
 app.get("/get/users", async (req, res) => {
-    const email = req.query.p1;
-    const token = req.query.p2;
-
-    const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
-    await con.promise().query(updateQuery, [token, email]);
-
-    const selectQuery = 'SELECT * FROM USERS WHERE Email = ?;';
-    const [results] = await con.promise().query(selectQuery, [email]);
-
-    if (results.length === 0) {
-      return res.json({});
+  try{
+    const email = req.query.p1
+    const token = req.query.p2
+    
+    try {
+      await Emailcheck(email)
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
     }
 
-    const user = results[0];
+    const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
+    await con.promise().query(updateQuery, [token, email])
+
+    const selectQuery = 'SELECT * FROM USERS WHERE Email = ?;'
+    const [results] = await con.promise().query(selectQuery, [email])
+
+    if (results.length === 0) {
+      return res.json({})
+    }
+
+    const user = results[0]
     const responseObject = {
       UID: user.UID,
       FirstName: user.FirstName,
       LastName: user.LastName,
       Email: user.Email,
       ProfileURL: user.ProfileURL,
-    };
+    }
 
-    console.log("USER GET");
-    res.json(responseObject);
-});
+    console.log("USER GET")
+    res.json(responseObject)
+  } catch(error){
+    console.error('Error:', error)
+    database_error(res, error.stack)
+  }
+})
 
 
 //add users
@@ -342,6 +382,14 @@ app.post("/add/users", async (req,res)=>{
 app.get("/delete/users", async (req,res)=>{
   try{
     const UID=req.query.p1
+
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
+
 
     const query = 'DELETE FROM USERS WHERE UID=?;'
     const [results] = await con.promise().query(query, [UID])
@@ -390,6 +438,14 @@ app.get("/get/items", async (req,res)=>{
   try{
     const UID=req.query.p1
 
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
+
+
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
     const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? ORDER BY o.ItemID ASC;'
 
@@ -428,63 +484,71 @@ app.get("/get/items", async (req,res)=>{
 //ChatGPT usage: Partial
 app.post("/add/items", async (req, res) => {
   try {
-    const UID = req.body.p1;
-    const UPCs = req.body.p2;
-    const ExpireDates = req.body.p3;
-    const ItemCounts = req.body.p4;
+    const UID = req.body.p1
+    const UPCs = req.body.p2
+    const ExpireDates = req.body.p3
+    const ItemCounts = req.body.p4
 
-    const currentDate = new Date();
-    const currentDateString = currentDate.toISOString().split('T')[0];
-    console.log(currentDateString);
+    const currentDate = new Date()
+    const currentDateString = currentDate.toISOString().split('T')[0]
+    console.log(currentDateString)
 
-    let returnStatement = '';
-    const values = [];
+    let returnStatement = ''
+    const values = []
+
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
+
 
     if (UPCs.length !== ExpireDates.length || UPCs.length !== ItemCounts.length) {
-      return res.status(400).send('Array lengths must match.');
+      return res.status(400).send('Array lengths must match.')
     }
 
     for (let i = 0; i < UPCs.length; i++) {
-      const UPC = UPCs[i];
-      const [groceryResults] = await con.promise().query('SELECT * FROM GROCERIES WHERE UPC = ?', [UPC]);
+      const UPC = UPCs[i]
+      const [groceryResults] = await con.promise().query('SELECT * FROM GROCERIES WHERE UPC = ?', [UPC])
 
       if (groceryResults.length === 0) {
         try {
-          const productData = await fetchDataFromAPI(UPCAPIURL + UPC + UPCAPIKey);
+          const productData = await fetchDataFromAPI(UPCAPIURL + UPC + UPCAPIKey)
           if (productData.success) {
             console.log(productData);
-            const insertGroceryQuery = 'INSERT INTO GROCERIES (UPC, Name, Brand, Category) VALUES (?, ?, ?, ?)';
-            await con.promise().query(insertGroceryQuery, [UPC, productData.title, productData.brand, productData.title]);
-            values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate]);
+            const insertGroceryQuery = 'INSERT INTO GROCERIES (UPC, Name, Brand, Category) VALUES (?, ?, ?, ?)'
+            await con.promise().query(insertGroceryQuery, [UPC, productData.title, productData.brand, productData.title])
+            values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate])
           } else {
-            returnStatement += UPC + " ";
-            console.error(`Product not found for UPC: ${UPC}`);
+            returnStatement += UPC + " "
+            console.error(`Product not found for UPC: ${UPC}`)
           }
         } catch (error) {
-          console.error('Error fetching product data:', error);
+          console.error('Error fetching product data:', error)
         }
       } else {
-        values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate]);
+        values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate])
       }
     }
 
     if (values.length > 0) {
-      const insertOwnsQuery = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?';
-      await con.promise().query(insertOwnsQuery, [values]);
+      const insertOwnsQuery = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?'
+      await con.promise().query(insertOwnsQuery, [values])
     }
 
     if (returnStatement === '') {
-      console.log('SUCCESS ADDED ITEMS');
-      res.json({ message: 'SUCCESS ADDED ITEMS' });
+      console.log('SUCCESS ADDED ITEMS')
+      res.json({ message: 'SUCCESS ADDED ITEMS' })
     } else {
-      console.log('Values not added for UPCs: ' + returnStatement);
-      res.json({ message: 'Values not added for UPCs: ' + returnStatement });
+      console.log('Values not added for UPCs: ' + returnStatement)
+      res.json({ message: 'Values not added for UPCs: ' + returnStatement })
     }
   } catch (error) {
-    console.error('Error in /add/items:', error);
-    res.status(500).send('Internal Server Error');
+    console.error('Error in /add/items:', error)
+    res.status(500).send('Internal Server Error')
   }
-});
+})
 
 
 //get data from the UPC API
@@ -572,6 +636,15 @@ app.post("/delete/items", async (req,res)=>{
     const UID=req.body.p1
     const ItemID=req.body.p2 
 
+    try {
+      await UIDcheck(UID);
+      await ItemIDcheck(UID, ItemID)
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
+
+
     const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
 
     const [results] = await con.promise().query(query, [UID, ItemID])
@@ -592,13 +665,20 @@ app.post("/delete/items", async (req,res)=>{
 //done
 //update items
 //ChatGPT usage: Partial
-app.post("/update/items", (req,res)=>{
+app.post("/update/items", async (req,res)=>{
   try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
     const UPC = req.body.p3 
     const ExpireDate = req.body.p4 
     const ItemCount = req.body.p5 
+
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
 
     if (UPC.length !== ExpireDate.length || UPC.length !== ItemCount.length || ItemID.length !== UPC.length) {
       return res.status(400).send('Arrays should have the same length')
@@ -638,6 +718,9 @@ app.post("/add/pref", async (req,res)=>{
     const Pref = req.body.p2 
     const values = [];
 
+    if(Pref.length === 0){
+      throw new Error('Empty array is passed');
+    }
     for (let i = 0; i <Pref.length; i++) {
       if(i<Pref.length-1){
         values.push(([UID, Pref[i],]));
@@ -658,7 +741,7 @@ app.post("/add/pref", async (req,res)=>{
   } catch(error){
     console.error('Error:', error)
     database_error(res, error.stack)
-  }
+  } 
 })
 
 //delete pref
@@ -667,6 +750,13 @@ app.post("/add/pref", async (req,res)=>{
 app.get("/delete/pref", async (req,res)=>{
   try{
     const UID=req.query.p1
+
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
 
     const query = 'DELETE FROM PREFERENCE WHERE UID= ?'
     await con.promise().query(query, [UID])
@@ -688,6 +778,13 @@ app.get("/delete/pref", async (req,res)=>{
 app.get("/get/pref", async (req,res)=>{
   try{
     const UID=req.query.p1
+
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
 
     const query = 'SELECT Pref FROM PREFERENCE WHERE UID= ?'
     const [results] = await con.promise().query(query, [UID])
@@ -736,6 +833,14 @@ app.get("/add/dietReq", async (req,res)=>{
 
   try{
     const UID=req.query.p1
+
+    try {
+      await UIDcheck(UID);
+    } catch (error) {
+      console.error('Error:', error);
+      return database_error(res, error.message);
+    }
+
     const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
     await con.promise().query(query, [UID])
 
@@ -870,6 +975,26 @@ app.get("/get/dietician", async (req,res)=>{
     console.error('Error:', error)
     database_error(res, error.stack)
   }
+})
+
+app.get("/delete/dietician", async (req,res)=>{
+  try{
+    const DID=req.query.p1
+
+    const query = 'DELETE FROM DIETICIAN WHERE DID=?;'
+    const [results] = await con.promise().query(query, [DID])
+  
+      if (results.affectedRows === 0) {
+        console.log('No rows were deleted. Check the values in your DELETE query.')
+        res.send('No rows were deleted. Check the values in your DELETE query.')
+      } else {
+        console.log('SUCCESS DELETED USER')
+        query_success(res, 'DELETED USER')
+      }
+    } catch(error){
+        console.error('Error:', error)
+        database_error(res, error.stack)
+    }
 })
 
 //give the user type of the email if exist: admin, dietician or user else return does not exist
