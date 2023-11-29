@@ -89,7 +89,10 @@ function database_error(response, error) {
 
 //ChatGPT usage: No
 function query_success(response, message){
-  response.status(200).send(message)
+  //change this to json
+  response.status(200)
+  response.json({Message: message})
+
 }
 
 //ChatGPT usage: Partial
@@ -1461,4 +1464,8 @@ async function Messaging(message){
     });
 }
 
-module.exports = app; 
+module.exports = {
+  app,
+  SendExpiryReminder,
+  processShoppingData,
+}; 

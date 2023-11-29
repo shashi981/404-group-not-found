@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('./server'); 
+const {app,  SendExpiryReminder,  processShoppingData} = require('./server'); 
 
 //test
 describe('/get/messageToken endpoint', () => {
@@ -164,6 +164,17 @@ describe('/get/chatHistory/:UID/:DID endpoint', () => {
 
 let UID
 let UID2
+
+// Function to mock the database error
+/*
+const mockDatabaseError = () => {
+  jest.mock('mysql2/promise', () => ({
+    promise: {
+      query: jest.fn().mockRejectedValue(new Error('Mocked database error')),
+    },
+  }));
+};*/
+
 //Interface POST https://20.104.197.24:443/add/users
 describe('/add/users endpoint', () => {
   /**
@@ -186,7 +197,7 @@ describe('/add/users endpoint', () => {
     console.log('UID:', res.body); 
     expect(res.status).toStrictEqual(200);
     //expect(res.body.UID).toEqual(expectedUID);
-    UID=res.body
+    UID=res.body.Message
     console.log(UID)
     
   });
@@ -368,7 +379,7 @@ describe('/add/items_man endpoint', () => {
 
     const res = await request(app).post('/add/items_man').send(validData);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('SUCCESS ADDED ITEMS MANUAL');
+    expect(res.body.Message).toBe('SUCCESS ADDED ITEMS MANUAL');
   });
 
   /**
@@ -452,6 +463,86 @@ describe('/get/items endpoint', () => {
   });
 });
 
+describe('Algorithm: processShoppingData', () => {
+  test('This should generate shopping reminders', async()=>{
+    await processShoppingData()
+  })
+})
+
+describe('Reminder: items about to expiry', () => {
+  test('This should generate reminders for items about to expiry', async()=>{
+    await SendExpiryReminder()
+  })
+  /*test('should handle database error and enter catch block', async () => {
+    // Call your function
+    mockDatabaseError();
+    await expect(SendExpiryReminder()).rejects.toThrow('Mocked database error');
+  });*/
+})
+
+describe('/update/items endpoint', () => {
+  /**
+   * Test: Update items with valid UID, ItemID, UPC, ExpireDate, and ItemCount
+   * Input: Valid data in the request body
+   * Expected status code: 200
+   * Expected behavior: Items with the specified UID, ItemID, UPC are updated in the database
+   * Expected output: 'SUCCESS Updated items' in the response body
+   */
+  test('Update items with valid data', async () => {
+    const validData = {
+      p1: UID, // Replace with an actual valid UID
+      p2: [1, 2], // Replace with actual valid ItemIDs
+      p3: [123456, 789012], // Replace with actual valid UPCs
+      p4: ['2023-12-01', '2023-12-15'], // Replace with actual valid ExpireDates
+      p5: [5, 10] // Replace with actual valid ItemCounts
+    };
+
+    const res = await request(app).post('/update/items').send(validData);
+    expect(res.status).toStrictEqual(200);
+    expect(res.body.Message).toBe('SUCCESS Updated items');
+  });
+
+  /**
+   * Test: Attempt to update items with mismatched array lengths
+   * Input: Arrays with different lengths in the request body
+   * Expected status code: 400
+   * Expected behavior: Endpoint returns an error message indicating array length mismatch
+   * Expected output: Error message in the response body
+   */
+  test('Attempt to update items with mismatched array lengths', async () => {
+    const invalidData = {
+      p1: UID, // Replace with an actual valid UID
+      p2: [1, 2], // Replace with actual valid ItemIDs
+      p3: [123456, 789012], // Replace with actual valid UPCs
+      p4: ['2023-12-01'], // Missing one ExpireDate
+      p5: [5, 10] // Replace with actual valid ItemCounts
+    };
+
+    const res = await request(app).post('/update/items').send(invalidData);
+    expect(res.status).toStrictEqual(400);
+    expect(res.text).toBe('Arrays should have the same length');
+  });
+
+  /**
+   * Test: Attempt to update items without providing UID
+   * Input: No UID provided in the request body
+   * Expected status code: 500
+   * Expected behavior: Endpoint not found due to missing UID
+   * Expected output: An error message indicating missing UID or invalid request
+   */
+  test('Attempt to update items without UID', async () => {
+    const invalidData = {
+      p2: [1, 2], // Replace with actual valid ItemIDs
+      p3: [123456, 789012], // Replace with actual valid UPCs
+      p4: ['2023-12-01', '2023-12-15'], // Replace with actual valid ExpireDates
+      p5: [5, 10] // Replace with actual valid ItemCounts
+    };
+
+    const res = await request(app).post('/update/items').send(invalidData);
+    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing UID
+  });
+});
+
 describe('/delete/items endpoint', () => {
   /**
    * Test: Delete items with valid UID and ItemID
@@ -468,7 +559,7 @@ describe('/delete/items endpoint', () => {
 
     const res = await request(app).post('/delete/items').send(validData);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('DELETED ITEM');
+    expect(res.body.Message).toBe('DELETED ITEM');
   });
 
   /**
@@ -522,69 +613,6 @@ describe('/delete/items endpoint', () => {
   });
 });
 
-describe('/update/items endpoint', () => {
-  /**
-   * Test: Update items with valid UID, ItemID, UPC, ExpireDate, and ItemCount
-   * Input: Valid data in the request body
-   * Expected status code: 200
-   * Expected behavior: Items with the specified UID, ItemID, UPC are updated in the database
-   * Expected output: 'SUCCESS Updated items' in the response body
-   */
-  test('Update items with valid data', async () => {
-    const validData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: [1, 2], // Replace with actual valid ItemIDs
-      p3: [123456, 789012], // Replace with actual valid UPCs
-      p4: ['2023-12-01', '2023-12-15'], // Replace with actual valid ExpireDates
-      p5: [5, 10] // Replace with actual valid ItemCounts
-    };
-
-    const res = await request(app).post('/update/items').send(validData);
-    expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('SUCCESS Updated items');
-  });
-
-  /**
-   * Test: Attempt to update items with mismatched array lengths
-   * Input: Arrays with different lengths in the request body
-   * Expected status code: 400
-   * Expected behavior: Endpoint returns an error message indicating array length mismatch
-   * Expected output: Error message in the response body
-   */
-  test('Attempt to update items with mismatched array lengths', async () => {
-    const invalidData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: [1, 2], // Replace with actual valid ItemIDs
-      p3: [123456, 789012], // Replace with actual valid UPCs
-      p4: ['2023-12-01'], // Missing one ExpireDate
-      p5: [5, 10] // Replace with actual valid ItemCounts
-    };
-
-    const res = await request(app).post('/update/items').send(invalidData);
-    expect(res.status).toStrictEqual(400);
-    expect(res.text).toBe('Arrays should have the same length');
-  });
-
-  /**
-   * Test: Attempt to update items without providing UID
-   * Input: No UID provided in the request body
-   * Expected status code: 500
-   * Expected behavior: Endpoint not found due to missing UID
-   * Expected output: An error message indicating missing UID or invalid request
-   */
-  test('Attempt to update items without UID', async () => {
-    const invalidData = {
-      p2: [1, 2], // Replace with actual valid ItemIDs
-      p3: [123456, 789012], // Replace with actual valid UPCs
-      p4: ['2023-12-01', '2023-12-15'], // Replace with actual valid ExpireDates
-      p5: [5, 10] // Replace with actual valid ItemCounts
-    };
-
-    const res = await request(app).post('/update/items').send(invalidData);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing UID
-  });
-});
-
 describe('/add/pref endpoint', () => {
   /**
    * Test: Add preferences with valid UID and preferences
@@ -601,7 +629,7 @@ describe('/add/pref endpoint', () => {
 
     const res = await request(app).post('/add/pref').send(validData);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('SUCCESS ADDED Pref');
+    expect(res.body.Message).toBe('SUCCESS ADDED Pref');
   });
 
   /**
@@ -690,7 +718,7 @@ describe('/delete/pref endpoint', () => {
   test('Delete preferences with valid UID', async () => {
     const res = await request(app).get('/delete/pref?p1=' + UID);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('SUCCESS DELETE Pref');
+    expect(res.body.Message).toBe('SUCCESS DELETE Pref');
   });
 
   /**
@@ -747,7 +775,7 @@ describe('/add/dietReq endpoint', () => {
   test('Send a request for being a dietitian', async () => {
     const res = await request(app).get(`/add/dietReq?p1=${UID}`);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('Request for being dietician made!!');
+    expect(res.body.Message).toBe('Request for being dietician made!!');
   });
 
   /**
@@ -792,7 +820,7 @@ describe('/approve/dietReq endpoint', () => {
   test('Approve request for being a dietitian', async () => {
     const res = await request(app).get(`/approve/dietReq?p1=${UID}`);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('SUCCESS approve being dietician request');
+    expect(res.body.Message).toBe('SUCCESS approve being dietician request');
     
     // Add additional assertions based on your actual response structure
     // and the expected behavior of the endpoint.
@@ -817,11 +845,11 @@ describe('/remove/dietReq endpoint', () => {
       p5: 'someToken'
     };
     const res2 = await request(app).post('/add/users').send(userData2);
-    UID2=res2.body
+    UID2=res2.body.Message
     await request(app).get(`/add/dietReq?p1=${UID2}`);
     const res = await request(app).get(`/remove/dietReq?p1=${UID2}`);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('SUCCESS delete being dietician request');
+    expect(res.body.Message).toBe('SUCCESS delete being dietician request');
     
     // Add additional assertions based on your actual response structure
     // and the expected behavior of the endpoint.
@@ -859,7 +887,7 @@ describe('/get/dietician endpoint', () => {
     expect(res.body).toHaveProperty('Email');
     expect(res.body).toHaveProperty('ProfileURL');
 
-    const DID= res.body.DID
+    const DID= res.body.DID.Message
     await request(app).get(`/delete/dietician?p1=${DID}`)
   });
 }); 
@@ -878,7 +906,7 @@ describe('/get/users_type endpoint', () => {
     const res = await request(app).get(`/get/users_type?p1=${validUserEmail}`);
 
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('User\n');
+    expect(res.body.Message).toBe('User\n');
   });
 
   /**
@@ -893,7 +921,7 @@ describe('/get/users_type endpoint', () => {
     const res = await request(app).get(`/get/users_type?p1=${validDietitianEmail}`);
 
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('Dietician\n');
+    expect(res.body.Message).toBe('Dietician\n');
   });
 
   /**
@@ -908,7 +936,7 @@ describe('/get/users_type endpoint', () => {
     const res = await request(app).get(`/get/users_type?p1=${validAdminEmail}`);
 
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('Admin\n');
+    expect(res.body.Message).toBe('Admin\n');
   });
 
   /**
@@ -923,7 +951,7 @@ describe('/get/users_type endpoint', () => {
     const res = await request(app).get(`/get/users_type?p1=${invalidEmail}`);
 
     expect(res.status).toStrictEqual(200); // Assuming the route handles non-existent email cases gracefully
-    expect(res.text).toBe('Does not exist\n');
+    expect(res.body.Message).toBe('Does not exist\n');
   });
 });
 
@@ -1036,7 +1064,7 @@ describe('/delete/users endpoint',  () => {
   test('Delete user with valid UID', async () => {
     const res = await request(app).get('/delete/users?p1=' +UID2);
     expect(res.status).toStrictEqual(200);
-    expect(res.text).toBe('DELETED USER');
+    expect(res.body.Message).toBe('DELETED USER');
   });
 
   /**
