@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
 
     private GoogleSignInAccount googleAccount;
     private int RC_SIGN_IN = 1;
-    private OkHttpClient client;
     private TokenManager tm;
 
 
