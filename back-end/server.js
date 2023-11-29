@@ -89,7 +89,10 @@ function database_error(response, error) {
 
 //ChatGPT usage: No
 function query_success(response, message){
-  response.status(200).send(message)
+  //change this to json
+  response.status(200)
+  response.json({Message: message})
+
 }
 
 //ChatGPT usage: Partial
@@ -305,10 +308,10 @@ async function ItemIDcheck(UID, ItemID){
 //get users
 //done
 //ChatGPT usage: Partial
-app.get("/get/users", async (req, res) => {
+app.post("/get/users", async (req, res) => {
   try{
-    const email = req.query.p1
-    const token = req.query.p2
+    const email = req.body.p1
+    const token = req.body.p2
     
     try {
       await Emailcheck(email)
@@ -942,10 +945,10 @@ app.get("/remove/dietReq", async (req,res)=>{
 //get dieitician with the email and also update the firebase token as well
 //done
 //ChatGPT usage: No
-app.get("/get/dietician", async (req,res)=>{
+app.post("/get/dietician", async (req,res)=>{
   try{
-  const Email=req.query.p1
-  const Token=req.query.p2
+  const Email=req.body.p1
+  const Token=req.body.p2
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
@@ -1461,4 +1464,8 @@ async function Messaging(message){
     });
 }
 
-module.exports = app; 
+module.exports = {
+  app,
+  SendExpiryReminder,
+  processShoppingData,
+}; 
