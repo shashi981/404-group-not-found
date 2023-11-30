@@ -6,20 +6,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class BackendPathingMock {
 
     final static String TAG = "Pathing";
-    private final static String serverURL = "https://20.104.197.24";
 
     public static void postRequest(String endpoint, JSONObject jsonData, Context context, final CallbackListener callbackListener) {
         JSONObject jsonAccount = new JSONObject();

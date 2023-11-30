@@ -1,16 +1,13 @@
 package com.example.grocerymanager;
 
-import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -96,6 +93,10 @@ public class ChatTest {
 
         // Step 7: The user presses the send icon
         Espresso.onView(ViewMatchers.withId(R.id.sendButton)).perform(ViewActions.click());
+        for(int j = 0; j < 150; j++){
+            onView(withId(R.id.edit_button)).check(doesNotExist());
+            onView(withId(R.id.delete_button)).check(doesNotExist());
+        }
     }
 
 }
