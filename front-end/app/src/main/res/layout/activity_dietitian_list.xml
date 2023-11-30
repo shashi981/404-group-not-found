@@ -17,7 +17,7 @@
             android:id="@+id/chatFrameDietitian_diet"
             android:layout_width="350dp"
             android:layout_height="500dp"
-            android:background="@color/mint_green"
+            android:background="@color/faded_white"
             android:visibility="visible"
             app:layout_constrainedHeight="true"
             app:layout_constraintBottom_toBottomOf="parent"
