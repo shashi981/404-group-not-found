@@ -236,7 +236,7 @@ app.get('/get/messageToken/:DID', (req, res) => {
 app.get('/get/chatHistory/:UID/:DID', (req, res) => {
     const UID = req.params.UID;
     const DID = req.params.DID;
-    const limit = 10;  // max number of messages to return
+    const limit = 100;  // max number of messages to return
 
     const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ?';
 
