@@ -1,6 +1,6 @@
 const request = require('supertest');
-const {app,  SendExpiryReminder,  processShoppingData} = require('./server'); 
-
+const {app,  SendExpiryReminder,  processShoppingData, getcon} = require('./server'); 
+const mysql = require('mysql2/promise');
 //test
 describe('/get/messageToken endpoint', () => {
   /**
@@ -166,14 +166,21 @@ let UID
 let UID2
 
 // Function to mock the database error
-/*
-const mockDatabaseError = () => {
-  jest.mock('mysql2/promise', () => ({
-    promise: {
-      query: jest.fn().mockRejectedValue(new Error('Mocked database error')),
-    },
-  }));
-};*/
+
+const mockError = () => {
+  jest.mock('./server', () => {
+    const originalModule = jest.requireActual('./server');
+
+    return {
+      ...originalModule,
+      getcon: jest.fn(() => ({
+        promise: {
+          query: jest.fn().mockRejectedValue(new Error('Simulated database error')),
+        },
+      })),
+    };
+  });
+};
 
 //Interface POST https://20.104.197.24:443/add/users
 describe('/add/users endpoint', () => {
@@ -243,8 +250,8 @@ describe('/add/users endpoint', () => {
 });
 
 
-//Interface GET https://20.104.197.24:443/get/users
-describe('GET USER request', () => {
+//Interface Post https://20.104.197.24:443/get/users
+describe('Get USER request', () => {
   //Input: both Email and Token passed, email is valid, unique and exists in the database 
   // Expected status code: 200
   //Expected behaviour: Message Token for the user with that email is updated, and get all //information for the user with that email
@@ -252,8 +259,11 @@ describe('GET USER request', () => {
   test("Valid user", async()=>{
     const email='john.doe@example.com' //this email should exist in db
     const Token="fakoehfnjildhnfljhasfjsfksjf"
-    const url= "/get/users?p1=" + email + "&p2=" + Token
-    const res= await request(app).get(url)
+    const url= "/get/users"
+    const res= await request(app).post(url).send({
+      p1:email,
+      p2:Token
+    })
     const responseObject = {
         FirstName: 'John',
         LastName: 'Doe',
@@ -267,6 +277,19 @@ describe('GET USER request', () => {
     expect(res.body.Email).toEqual(responseObject.Email)
     expect(res.body.ProfileURL).toEqual(responseObject.ProfileURL)
   })
+
+  test('should handle database error and enter catch block', async () => {
+
+    const email="ForceError"
+    const Token="ForceError"
+    const url= "/get/users"
+    const res= await request(app).post(url).send({
+      p1:email,
+      p2:Token
+    })
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
   
   //Input: both Email and Token passed, email doesn’t exist in the database 
   // Expected status code: 500
@@ -275,8 +298,11 @@ describe('GET USER request', () => {
   test("Email Not in DB", async()=>{
     const email="invalidtest@gmail.com" //this email should not exist in db
     const Token="fakoehfnjildhnfljhasfjsfksjf"
-    const url= "/get/users?p1=" + email + "&p2=" + Token
-    const res= await request(app).get(url)
+    const url= "/get/users"
+    const res= await request(app).post(url).send({
+      p1:email,
+      p2:Token
+    })
     const responseObject = {}
     expect(res.status).toStrictEqual(500)
     expect(res.body).toEqual(responseObject)
@@ -289,8 +315,11 @@ describe('GET USER request', () => {
   test("Missing input", async()=>{
     const email="" 
     const Token=""
-    const url= "/get/users?p1=" + email + "&p2=" + Token
-    const res= await request(app).get(url)
+    const url= "/get/users"
+    const res= await request(app).post(url).send({
+      p1:email,
+      p2:Token
+    })
     const responseObject = {}
     expect(res.status).toStrictEqual(500)
     expect(res.body).toEqual(responseObject)
@@ -357,6 +386,20 @@ describe('/add/items endpoint',() => {
 
     const res = await request(app).post('/add/items').send(invalidData);
     expect(res.status).toStrictEqual(500);
+  });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const ErrorData = {
+      p1: "ForceError",
+      p2: "ForceError",
+      p3: "ForceError",
+      p4: "ForceError"
+    };
+
+    const res = await request(app).post('/add/items').send(ErrorData);
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
@@ -461,23 +504,66 @@ describe('/get/items endpoint', () => {
     const res = await request(app).get('/get/items');
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const ErrorUID = 'ForceError'; // An invalid UID example
+    const res = await request(app).get(`/get/items?p1=${ErrorUID}`);
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('Algorithm: processShoppingData', () => {
   test('This should generate shopping reminders', async()=>{
     await processShoppingData()
   })
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    mockError()
+
+  // Your test assertions
+  //await expect(processShoppingData()).rejects.toThrow('Mocked database error');
+  // Reset mocks to avoid affecting subsequent tests
+  try {
+    // Call the function that uses getcon
+    // This will throw the simulated database error
+    // Your test logic here
+    await processShoppingData()
+  } catch (error) {
+    // Assert that the error is the expected database error
+    expect(error.message).toBe('Simulated database error');
+  }
+
+  jest.resetAllMocks();
+  });
 })
 
 describe('Reminder: items about to expiry', () => {
   test('This should generate reminders for items about to expiry', async()=>{
     await SendExpiryReminder()
   })
-  /*test('should handle database error and enter catch block', async () => {
+  
+  test('should handle database error and enter catch block', async () => {
     // Call your function
-    mockDatabaseError();
-    await expect(SendExpiryReminder()).rejects.toThrow('Mocked database error');
-  });*/
+    mockError()
+
+  // Your test assertions
+  //await expect(processShoppingData()).rejects.toThrow('Mocked database error');
+  // Reset mocks to avoid affecting subsequent tests
+  try {
+    // Call the function that uses getcon
+    // This will throw the simulated database error
+    // Your test logic here
+    await SendExpiryReminder()
+  } catch (error) {
+    // Assert that the error is the expected database error
+    expect(error.message).toBe('Simulated database error');
+  }
+
+  jest.resetAllMocks();
+  });
 })
 
 describe('/update/items endpoint', () => {
@@ -857,7 +943,7 @@ describe('/remove/dietReq endpoint', () => {
 });
 
 
-describe('/get/dietician endpoint', () => {
+describe('/post/dietician endpoint', () => {
   /**
    * Test: Get dietitian with email and update Firebase token
    * Input: Valid dietitian email and Firebase token
@@ -868,7 +954,10 @@ describe('/get/dietician endpoint', () => {
   test('Get dietitian with email and update Firebase token', async () => {
     const validEmail = 'john.doe@example.com'; // Replace with a valid dietitian email
     const validToken = 'newFirebaseToken'; // Replace with a valid Firebase token
-    const res = await request(app).get(`/get/dietician?p1=${validEmail}&p2=${validToken}`);
+    const res = await request(app).post('/get/dietician').send({
+      p1:validEmail,
+      p2:validToken
+    });
     
     expect(res.status).toStrictEqual(200);
     
@@ -887,7 +976,7 @@ describe('/get/dietician endpoint', () => {
     expect(res.body).toHaveProperty('Email');
     expect(res.body).toHaveProperty('ProfileURL');
 
-    const DID= res.body.DID.Message
+    const DID= res.body.DID
     await request(app).get(`/delete/dietician?p1=${DID}`)
   });
 }); 
@@ -1054,6 +1143,14 @@ describe('/get/recipe_info endpoint', () => {
 
 //Interface GET https://20.104.197.24:443/delete/users
 describe('/delete/users endpoint',  () => {
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/delete/users?p1=' +"ForceError");
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+
   /**
    * Test: Delete a user with a valid UID
    * Input: Valid UID in the query parameters

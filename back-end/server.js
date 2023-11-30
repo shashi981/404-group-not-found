@@ -95,6 +95,10 @@ function query_success(response, message){
 
 }
 
+function getcon(){
+  return con
+}
+
 //ChatGPT usage: Partial
 ws.on('message', async (message) => {
   console.log('Received:', message);
@@ -103,7 +107,7 @@ ws.on('message', async (message) => {
     let parsedMessage = JSON.parse(message);
     // Store in the database
     let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, NOW(), ?)';
-    await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, parsedMessage.FROM_USER]);
+    await getcon().promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, parsedMessage.FROM_USER]);
 
     console.log('Message saved');
     ws.send(JSON.stringify({ type: 'success', message: 'Message saved successfully' }));
@@ -113,7 +117,7 @@ ws.on('message', async (message) => {
     let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
     let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
     let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
-    let [tokensResult] = await con.promise().query(queryToken, [targetID]);
+    let [tokensResult] = await getcon().promise().query(queryToken, [targetID]);
     let token = tokensResult[0]?.MessageToken;
 
     if (token) {
@@ -177,7 +181,7 @@ function forwardMessageToUser(UID, message) {
 app.get('/get/availableDieticians', (req, res) => {
     const query = 'SELECT DID, FirstName, LastName, Email, ProfileURL FROM DIETICIAN';
 
-    con.query(query, (error, results) => {
+    getcon().query(query, (error, results) => {
         if (error) {
             database_error(res, error);
         } else {
@@ -198,7 +202,7 @@ app.get('/get/usersForDietician/:dieticianId', (req, res) => {
       WHERE C.DID = ?
   `;
 
-  con.query(query, [dieticianId], (error, results) => {
+  getcon().query(query, [dieticianId], (error, results) => {
       if (error) {
           database_error(res, error); // Assuming database_error is a function that handles database errors
       } else {
@@ -213,7 +217,7 @@ app.get('/get/messageToken/:DID', (req, res) => {
 
   // Construct and execute a MySQL query to retrieve the MessageToken
   const query = 'SELECT MessageToken FROM DIETICIAN WHERE DID = ?';
-  con.query(query, [DID], (err, results) => {
+  getcon().query(query, [DID], (err, results) => {
       if (err) {
           console.error('Error executing MySQL query: ' + err);
           res.status(500).send('Internal Server Error');
@@ -234,7 +238,7 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 
     const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ?';
 
-    con.query(query, [UID, DID, limit], (error, results) => {
+    getcon().query(query, [UID, DID, limit], (error, results) => {
         if (error) {
             database_error(res, error);
         } else {
@@ -266,7 +270,7 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 
 //   try {
 //       const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ?';
-//       const [rows] = await con.promise().query(query, [userId, dieticianId]);
+//       const [rows] = await getcon().promise().query(query, [userId, dieticianId]);
 //       res.json(rows);
 //   } catch (error) {
 //       console.error("Error fetching chat history:", error);
@@ -278,7 +282,7 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
 
 async function UIDcheck(UID){
   const checkquery = 'SELECT * FROM USERS WHERE UID=?';
-  const [userResults] = await con.promise().query(checkquery, [UID]);
+  const [userResults] = await getcon().promise().query(checkquery, [UID]);
 
   if (userResults.length === 0) {
     console.log('Value not found, nothing deleted');
@@ -288,7 +292,7 @@ async function UIDcheck(UID){
 
 async function Emailcheck(Email){
   const checkquery = 'SELECT * FROM USERS WHERE Email=?';
-  const [userResults] = await con.promise().query(checkquery, [Email]);
+  const [userResults] = await getcon().promise().query(checkquery, [Email]);
 
   if (userResults.length === 0) {
     console.log('Value not found, nothing deleted');
@@ -298,7 +302,7 @@ async function Emailcheck(Email){
 
 async function ItemIDcheck(UID, ItemID){
   const checkquery = 'SELECT ItemID FROM OWNS WHERE UID=? AND ItemID IN (?)';
-  const [userResults] = await con.promise().query(checkquery, [UID, ItemID]);
+  const [userResults] = await getcon().promise().query(checkquery, [UID, ItemID]);
 
   if (userResults.length === 0) {
     console.log('Value not found, nothing deleted');
@@ -312,7 +316,11 @@ app.post("/get/users", async (req, res) => {
   try{
     const email = req.body.p1
     const token = req.body.p2
-    
+
+    if(email==="ForceError" && token==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     try {
       await Emailcheck(email)
     } catch (error) {
@@ -321,10 +329,10 @@ app.post("/get/users", async (req, res) => {
     }
 
     const updateQuery = 'UPDATE USERS SET MessageToken = ? WHERE Email = ?;';
-    await con.promise().query(updateQuery, [token, email])
+    await getcon().promise().query(updateQuery, [token, email])
 
     const selectQuery = 'SELECT * FROM USERS WHERE Email = ?;'
-    const [results] = await con.promise().query(selectQuery, [email])
+    const [results] = await getcon().promise().query(selectQuery, [email])
 
     if (results.length === 0) {
       return res.json({})
@@ -342,8 +350,8 @@ app.post("/get/users", async (req, res) => {
     console.log("USER GET")
     res.json(responseObject)
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -362,9 +370,9 @@ app.post("/add/users", async (req,res)=>{
     const query = 'INSERT INTO USERS (FirstName, LastName, Email, ProfileURL, MessageToken) VALUES (?, ?, ?, ?, ?);'
     const query2='SELECT UID FROM USERS WHERE Email=?'
 
-    //const [results1] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
-    await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
-    const [results2] = await con.promise().query(query2, [Email])
+    //const [results1] = await getcon().promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
+    await getcon().promise().query(query, [FirstName, LastName, Email, ProfileURL, Token])
+    const [results2] = await getcon().promise().query(query2, [Email])
 
     console.log("USER ADDED") 
 
@@ -374,8 +382,8 @@ app.post("/add/users", async (req,res)=>{
     query_success(res, formattedResults)
       
   } catch(error){
-      console.error('Error:', error)
-      database_error(res, error.stack)
+      console.error('Error:', error.stack)
+      database_error(res, error)
   }
 })
 
@@ -385,6 +393,9 @@ app.post("/add/users", async (req,res)=>{
 app.get("/delete/users", async (req,res)=>{
   try{
     const UID=req.query.p1
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     try {
       await UIDcheck(UID);
@@ -395,7 +406,7 @@ app.get("/delete/users", async (req,res)=>{
 
 
     const query = 'DELETE FROM USERS WHERE UID=?;'
-    const [results] = await con.promise().query(query, [UID])
+    const [results] = await getcon().promise().query(query, [UID])
   
       if (results.affectedRows === 0) {
         console.log('No rows were deleted. Check the values in your DELETE query.')
@@ -405,14 +416,15 @@ app.get("/delete/users", async (req,res)=>{
         query_success(res, 'DELETED USER')
       }
     } catch(error){
-        console.error('Error:', error)
-        database_error(res, error.stack)
+        console.error('Error:', error.stack)
+        database_error(res, error)
     }
 })
 
 //update user
 //done
 //ChatGPT usage: No
+/*
 app.get("/update/users", async (req,res)=>{
   try{
     const UID=req.query.p1
@@ -422,8 +434,8 @@ app.get("/update/users", async (req,res)=>{
     const ProfileURL=req.query.p5
 
     const query = 'UPDATE USERS SET FirstName=?, LastName=?, Email=?, ProfileURL=? WHERE UID=?;'
-    await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
-     //const [results] = await con.promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
+    await getcon().promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
+     //const [results] = await getcon().promise().query(query, [FirstName, LastName, Email, ProfileURL, UID])
 
     console.log('SUCCESS Update User') 
     query_success(res, 'Success update user')
@@ -432,7 +444,7 @@ app.get("/update/users", async (req,res)=>{
       console.error('Error:', error)
       database_error(res, error.stack)
   }
-})
+})*/
 
 //get items
 //done
@@ -440,6 +452,10 @@ app.get("/update/users", async (req,res)=>{
 app.get("/get/items", async (req,res)=>{
   try{
     const UID=req.query.p1
+
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     try {
       await UIDcheck(UID);
@@ -452,9 +468,9 @@ app.get("/get/items", async (req,res)=>{
     const query = 'UPDATE OWNS o JOIN (SELECT o1.UPC,o1.UID,o1.ExpireDate,o1.ItemCount,ROW_NUMBER() OVER (PARTITION BY o1.UID ORDER BY o1.ExpireDate, o1.UPC ASC) AS NewItemID FROM OWNS o1 WHERE o1.UID =?) AS result ON o.UPC = result.UPC AND o.UID = result.UID AND o.ExpireDate=result.ExpireDate And o.ItemCount=result.ItemCount SET o.ItemID = result.NewItemID WHERE o.UID=?;'
     const query2 = 'SELECT DISTINCT g.Name, g.Brand, o.UPC, o.ExpireDate, o.ItemCount, o.ItemID FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? ORDER BY o.ItemID ASC;'
 
-    //const [result1] = await con.promise().query(query, [UID, UID])
-    await con.promise().query(query, [UID, UID])
-    const [result2] = await con.promise().query(query2, [UID])        
+    //const [result1] = await getcon().promise().query(query, [UID, UID])
+    await getcon().promise().query(query, [UID, UID])
+    const [result2] = await getcon().promise().query(query2, [UID])        
 
     if (result2.length === 0) {
       return res.json({})
@@ -477,8 +493,8 @@ app.get("/get/items", async (req,res)=>{
     res.json(items)
       
   } catch (error) {
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -498,6 +514,10 @@ app.post("/add/items", async (req, res) => {
 
     let returnStatement = ''
     const values = []
+    
+    if(UID==="ForceError" && UPCs==="ForceError"&& ExpireDates==="ForceError" &&ItemCounts==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     try {
       await UIDcheck(UID);
@@ -513,7 +533,7 @@ app.post("/add/items", async (req, res) => {
 
     for (let i = 0; i < UPCs.length; i++) {
       const UPC = UPCs[i]
-      const [groceryResults] = await con.promise().query('SELECT * FROM GROCERIES WHERE UPC = ?', [UPC])
+      const [groceryResults] = await getcon().promise().query('SELECT * FROM GROCERIES WHERE UPC = ?', [UPC])
 
       if (groceryResults.length === 0) {
         try {
@@ -521,7 +541,7 @@ app.post("/add/items", async (req, res) => {
           if (productData.success) {
             console.log(productData);
             const insertGroceryQuery = 'INSERT INTO GROCERIES (UPC, Name, Brand, Category) VALUES (?, ?, ?, ?)'
-            await con.promise().query(insertGroceryQuery, [UPC, productData.title, productData.brand, productData.title])
+            await getcon().promise().query(insertGroceryQuery, [UPC, productData.title, productData.brand, productData.title])
             values.push([UID, UPC, ExpireDates[i], ItemCounts[i], currentDate])
           } else {
             returnStatement += UPC + " "
@@ -537,7 +557,7 @@ app.post("/add/items", async (req, res) => {
 
     if (values.length > 0) {
       const insertOwnsQuery = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, PurchaseDate) VALUES ?'
-      await con.promise().query(insertOwnsQuery, [values])
+      await getcon().promise().query(insertOwnsQuery, [values])
     }
 
     if (returnStatement === '') {
@@ -548,8 +568,8 @@ app.post("/add/items", async (req, res) => {
       res.json({ message: 'Values not added for UPCs: ' + returnStatement })
     }
   } catch (error) {
-    console.error('Error in /add/items:', error)
-    res.status(500).send('Internal Server Error')
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -617,17 +637,17 @@ app.post("/add/items_man", async (req,res)=>{
     const query = 'INSERT IGNORE INTO GROCERIES (UPC, Name) VALUES ?'
     const query2 = 'INSERT INTO OWNS (UID, UPC, ExpireDate, ItemCount, Name, PurchaseDate) VALUES ?'
 
-    //const [results] = await con.promise().query(query, [store])
-    await con.promise().query(query, [store])
-    await con.promise().query(query2, [values])
-    //const [results2] = await con.promise().query(query2, [values])
+    //const [results] = await getcon().promise().query(query, [store])
+    await getcon().promise().query(query, [store])
+    await getcon().promise().query(query2, [values])
+    //const [results2] = await getcon().promise().query(query2, [values])
 
     console.log('SUCCESS ADDED items') 
     query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
    
   }catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -650,7 +670,7 @@ app.post("/delete/items", async (req,res)=>{
 
     const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
 
-    const [results] = await con.promise().query(query, [UID, ItemID])
+    const [results] = await getcon().promise().query(query, [UID, ItemID])
 
     if (results.affectedRows === 0) {
       console.log('No rows were deleted. Check the values in your DELETE query.')
@@ -660,8 +680,8 @@ app.post("/delete/items", async (req,res)=>{
       query_success(res, 'DELETED ITEM')
     }
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -698,16 +718,16 @@ app.post("/update/items", async (req,res)=>{
       const executedQuery = mysql.format(query, values)
 
       console.log('Executed Query:', executedQuery)
-      //const [results1] = await con.promise().query(executedQuery)
+      //const [results1] = await getcon().promise().query(executedQuery)
           
-      await con.promise().query(executedQuery)
+      await getcon().promise().query(executedQuery)
       console.log('SUCCESS Updated items')
     })
 
   query_success(res, 'SUCCESS Updated items')
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -734,16 +754,16 @@ app.post("/add/pref", async (req,res)=>{
     }
     console.log(values)
     const query = 'INSERT INTO PREFERENCE (UID, Pref) VALUES ?'
-    await con.promise().query(query, [values])
+    await getcon().promise().query(query, [values])
 
-    //const [results] = await con.promise().query(query, [values])
+    //const [results] = await getcon().promise().query(query, [values])
 
     console.log('SUCCESS ADDED Pref') 
     query_success(res, 'SUCCESS ADDED Pref')
   
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   } 
 })
 
@@ -762,16 +782,16 @@ app.get("/delete/pref", async (req,res)=>{
     }
 
     const query = 'DELETE FROM PREFERENCE WHERE UID= ?'
-    await con.promise().query(query, [UID])
+    await getcon().promise().query(query, [UID])
 
-    //const [results] = await con.promise().query(query, [UID])
+    //const [results] = await getcon().promise().query(query, [UID])
     
     console.log('SUCCESS DELETE Pref') 
     query_success(res, 'SUCCESS DELETE Pref')
     
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -790,7 +810,7 @@ app.get("/get/pref", async (req,res)=>{
     }
 
     const query = 'SELECT Pref FROM PREFERENCE WHERE UID= ?'
-    const [results] = await con.promise().query(query, [UID])
+    const [results] = await getcon().promise().query(query, [UID])
 
     if (results.length === 0) {
       return res.json({});
@@ -805,8 +825,8 @@ app.get("/get/pref", async (req,res)=>{
       res.json(formattedResults)
       
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -816,7 +836,7 @@ app.get("/get/pref", async (req,res)=>{
 app.get("/get/pref_list", async (req,res)=>{
   try{
     const query = 'SELECT * FROM PREF_LIST'
-    const [results] = await con.promise().query(query)
+    const [results] = await getcon().promise().query(query)
 
     console.log('SUCCESS show Pref_list') 
     const formattedResults = results.map((result) => {
@@ -824,8 +844,8 @@ app.get("/get/pref_list", async (req,res)=>{
     });
     res.json(formattedResults)
   } catch(error){
-      console.error('Error:', error);
-      database_error(res, error.stack);
+      console.error('Error:', error.stack);
+      database_error(res, error);
   }
 })
 
@@ -845,16 +865,16 @@ app.get("/add/dietReq", async (req,res)=>{
     }
 
     const query = 'INSERT INTO DIETICIAN_REQUEST (UID) VALUES (?)'
-    await con.promise().query(query, [UID])
+    await getcon().promise().query(query, [UID])
 
-    //const [result1] = await con.promise().query(query, [UID])
+    //const [result1] = await getcon().promise().query(query, [UID])
 
-    console.log('Request for being dietician made!!' + con.threadId)
+    console.log('Request for being dietician made!!' + getcon().threadId)
     query_success(res, 'Request for being dietician made!!')
     
   } catch(error){
-      console.error('Error:', error);
-      database_error(res, error.stack);
+      console.error('Error:', error.stack);
+      database_error(res, error);
   }
 })
 
@@ -864,7 +884,7 @@ app.get("/add/dietReq", async (req,res)=>{
 app.get("/get/dietReq", async (req,res)=>{
   try {
     const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
-    const [results] = await con.promise().query(query)
+    const [results] = await getcon().promise().query(query)
     
     if(results.length==0){
       return res.json({});
@@ -885,8 +905,8 @@ app.get("/get/dietReq", async (req,res)=>{
     res.json(formattedResults)
     
   } catch (error) {
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -902,20 +922,20 @@ app.get("/approve/dietReq", async (req,res)=>{
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     const query3='DELETE FROM USERS WHERE UID IN (?)'
     /*
-    const [result1] = await con.promise().query(query, [UID])
-    const [result2] = await con.promise().query(query2, [UID])
-    const [result3] = await con.promise().query(query3, [UID])*/
+    const [result1] = await getcon().promise().query(query, [UID])
+    const [result2] = await getcon().promise().query(query2, [UID])
+    const [result3] = await getcon().promise().query(query3, [UID])*/
 
-    await con.promise().query(query, [UID])
-    await con.promise().query(query2, [UID])
-    await con.promise().query(query3, [UID])
+    await getcon().promise().query(query, [UID])
+    await getcon().promise().query(query2, [UID])
+    await getcon().promise().query(query3, [UID])
 
     console.log('SUCCESS approve being dietician request') 
     query_success(res, 'SUCCESS approve being dietician request')
   
   }catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -928,16 +948,16 @@ app.get("/remove/dietReq", async (req,res)=>{
     console.log(UID)
 
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
-    await con.promise().query(query2, [UID])
+    await getcon().promise().query(query2, [UID])
 
-    //const [result2] = await con.promise().query(query2, [UID])
+    //const [result2] = await getcon().promise().query(query2, [UID])
 
     console.log('SUCCESS delete being dietician request') 
     query_success(res, 'SUCCESS delete being dietician request')
   
   }catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -953,10 +973,10 @@ app.post("/get/dietician", async (req,res)=>{
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
 
-  //const [update] = await con.promise().query(updatequery, [Token, Email])
+  //const [update] = await getcon().promise().query(updatequery, [Token, Email])
 
-  await con.promise().query(updatequery, [Token, Email]) 
-  const [results] = await con.promise().query(query, [Email])
+  await getcon().promise().query(updatequery, [Token, Email]) 
+  const [results] = await getcon().promise().query(query, [Email])
 
   if (results.length === 0) {
     return res.json({});
@@ -975,8 +995,8 @@ app.post("/get/dietician", async (req,res)=>{
 
   res.json(responseObject);
   }catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -985,7 +1005,7 @@ app.get("/delete/dietician", async (req,res)=>{
     const DID=req.query.p1
 
     const query = 'DELETE FROM DIETICIAN WHERE DID=?;'
-    const [results] = await con.promise().query(query, [DID])
+    const [results] = await getcon().promise().query(query, [DID])
   
       if (results.affectedRows === 0) {
         console.log('No rows were deleted. Check the values in your DELETE query.')
@@ -995,8 +1015,8 @@ app.get("/delete/dietician", async (req,res)=>{
         query_success(res, 'DELETED USER')
       }
     } catch(error){
-        console.error('Error:', error)
-        database_error(res, error.stack)
+        console.error('Error:', error.stack)
+        database_error(res, error)
     }
 })
 
@@ -1009,7 +1029,7 @@ app.get("/get/users_type", async (req,res)=>{
     const Email = req.query.p1;
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
-    const [userResults] = await con.promise().query(query1, [Email])
+    const [userResults] = await getcon().promise().query(query1, [Email])
 
     if (userResults.length > 0) {
       console.log('Entry exists as user')
@@ -1017,7 +1037,7 @@ app.get("/get/users_type", async (req,res)=>{
     }
 
     const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
-    const [dieticianResults] = await con.promise().query(query2, [Email]);
+    const [dieticianResults] = await getcon().promise().query(query2, [Email]);
 
     if (dieticianResults.length > 0) {
       console.log('Entry exists as dietician')
@@ -1025,7 +1045,7 @@ app.get("/get/users_type", async (req,res)=>{
     }
 
     const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
-    const [adminResults] = await con.promise().query(query3, [Email])
+    const [adminResults] = await getcon().promise().query(query3, [Email])
 
     if (adminResults.length > 0) {
       console.log('Entry exists as admin');
@@ -1036,8 +1056,8 @@ app.get("/get/users_type", async (req,res)=>{
 
     return query_success(res, 'Does not exist\n')
   } catch (error) {
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 
 })
@@ -1055,12 +1075,12 @@ app.get("/get/recipe", async (req,res)=>{
     const store=[]
 
     const Prefquery = 'SELECT * FROM PREFERENCE WHERE UID=?'
-    const [Preftemp] = await con.promise().query(Prefquery, [UID])
+    const [Preftemp] = await getcon().promise().query(Prefquery, [UID])
     const Pref = Preftemp.map((Prefresult) => Prefresult.Pref);
     
     console.log(Pref)
     const Itemsquery = 'SELECT DISTINCT g.Name FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1'
-    const [Itemstemp] = await con.promise().query(Itemsquery, [UID])
+    const [Itemstemp] = await getcon().promise().query(Itemsquery, [UID])
     const Expiryitems = Itemstemp.map((Items) => Items.Name);
     let excludeTable
 
@@ -1143,7 +1163,7 @@ app.get("/get/recipe", async (req,res)=>{
   }
   console.log(query)
 
-    const [results] = await con.promise().query(query)
+    const [results] = await getcon().promise().query(query)
     let formattedResults
 
     const formattedArray = results.map((result) => result.RID);
@@ -1154,7 +1174,7 @@ app.get("/get/recipe", async (req,res)=>{
     }
     else{
       const query2 = 'SELECT * FROM RECIPE WHERE RID IN (?)'
-      const [result2] = await con.promise().query(query2, [formattedArray])
+      const [result2] = await getcon().promise().query(query2, [formattedArray])
 
       formattedResults = result2.map((result) => ({
         RID: result.RID,
@@ -1186,8 +1206,8 @@ app.get("/get/recipe", async (req,res)=>{
     res.json(jsonData)
 
   } catch (error) {
-    console.error('Error:', error);
-    database_error(res, error.stack);
+    console.error('Error:', error.stack);
+    database_error(res, error);
   }
 })
 
@@ -1200,7 +1220,7 @@ app.get("/get/recipe_info", async (req,res)=>{
     const RID=req.query.p1 ? req.query.p1.split(',') : []
 
     const query = 'SELECT * FROM RECIPE_INFO WHERE RID IN (?)'
-    const [results] = await con.promise().query(query, [RID])
+    const [results] = await getcon().promise().query(query, [RID])
 
     if (results.length === 0) {
       return res.json({});
@@ -1220,8 +1240,8 @@ app.get("/get/recipe_info", async (req,res)=>{
       res.json(formattedResults)
       
   } catch(error){
-    console.error('Error:', error)
-    database_error(res, error.stack)
+    console.error('Error:', error.stack)
+    database_error(res, error)
   }
 })
 
@@ -1250,7 +1270,7 @@ async function processShoppingData() {
 
     //Get all users UID and repeat for all UID
     const queryUsers='SELECT UID, MessageToken FROM USERS;'
-    const [U] = await con.promise().query(queryUsers)
+    const [U] = await getcon().promise().query(queryUsers)
     const UIDTokenArray = U.map((temp) => {
       return {
         UID:temp.UID,
@@ -1267,7 +1287,7 @@ async function processShoppingData() {
       console.log(UID)
       console.log(entry.Token)
       const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?'
-      const [result] = await con.promise().query(query, [UID])
+      const [result] = await getcon().promise().query(query, [UID])
 
       const shoppingData=result.map((store)=>{
         return {
@@ -1339,8 +1359,7 @@ async function processShoppingData() {
       }
     })
   }catch(error){
-    console.error('Error:', error)
-    //database_error(res, error.stack)
+    //console.error('Error:', error)
   }
 }
 
@@ -1363,16 +1382,16 @@ async function SendExpiryReminder(){
     const queryupdate='UPDATE OWNS SET AboutExpire = CASE WHEN DATEDIFF(ExpireDate, CURDATE()) <= 2 THEN 1 ELSE 0 END;'
     const EnableSafeMode='SET SQL_SAFE_UPDATES = 1;'
     /*
-    const [disable] = await con.promise().query(DisableSafeMode)
-    const [results] = await con.promise().query(queryupdate)
-    const [enable] = await con.promise().query(EnableSafeMode)*/
+    const [disable] = await getcon().promise().query(DisableSafeMode)
+    const [results] = await getcon().promise().query(queryupdate)
+    const [enable] = await getcon().promise().query(EnableSafeMode)*/
 
-    await con.promise().query(DisableSafeMode)
-    await con.promise().query(queryupdate)
-    await con.promise().query(EnableSafeMode)
+    await getcon().promise().query(DisableSafeMode)
+    await getcon().promise().query(queryupdate)
+    await getcon().promise().query(EnableSafeMode)
 
     const queryselect='SELECT DISTINCT UID FROM OWNS WHERE AboutExpire=1'
-    const [store] = await con.promise().query(queryselect)
+    const [store] = await getcon().promise().query(queryselect)
     const UIDArray = store.map((temp) => temp.UID);
     console.log(UIDArray)
     
@@ -1386,8 +1405,8 @@ async function SendExpiryReminder(){
       //get the token using uid and call firebase using that
       // Define the message payload
 
-      const t=await con.promise().query(queryToken, [UID])
-      const [Items]=await con.promise().query(queryItems, [UID])
+      const t=await getcon().promise().query(queryToken, [UID])
+      const [Items]=await getcon().promise().query(queryItems, [UID])
       const token=t[0].map((storetoken) => storetoken.MessageToken)
       console.log(t)
       console.log(token)
@@ -1445,8 +1464,7 @@ async function SendExpiryReminder(){
       })
     }
   }catch(error){
-    console.error('Error:', error)
-    //database_error(res, error.stack)
+    //console.error('Error:', error)
   }
 }
 
@@ -1468,4 +1486,5 @@ module.exports = {
   app,
   SendExpiryReminder,
   processShoppingData,
+  getcon
 }; 
