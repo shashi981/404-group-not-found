@@ -128,6 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.e(TAG, "Request failed: " + e.getMessage());
+                    launchMainIntent();
                 }
 
                 @Override
@@ -138,11 +139,13 @@ public class SettingsActivity extends AppCompatActivity {
                         launchMainIntent();
                     } else {
                         Log.e(TAG, "Unsuccessful response: " + response.code());
+                        launchMainIntent();
                     }
                 }
             });
         } else {
             Log.d(TAG, "User data not found in shared preferences");
+            launchMainIntent();
         }
 
     }
