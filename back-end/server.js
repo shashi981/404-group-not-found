@@ -863,6 +863,7 @@ app.get("/get/pref_list", async (req,res)=>{
     if(req.query.p1==="ForceError"){
       throw new Error("Forced Error");
     }
+
     const query = 'SELECT * FROM PREF_LIST'
     const [results] = await getcon().promise().query(query)
 
@@ -888,7 +889,7 @@ app.get("/add/dietReq", async (req,res)=>{
     if(UID==="ForceError"){
       throw new Error("Forced Error");
     }
-    
+
     try {
       await UIDcheck(UID);
     } catch (error) {
@@ -915,6 +916,11 @@ app.get("/add/dietReq", async (req,res)=>{
 //ChatGPT usage: Partial
 app.get("/get/dietReq", async (req,res)=>{
   try {
+
+    if(req.query.p1==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
     const [results] = await getcon().promise().query(query)
     
@@ -950,6 +956,11 @@ app.get("/approve/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
     console.log(UID)
+
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+    
     const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL, MessageToken) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL, u.MessageToken FROM USERS u WHERE u.UID=?'
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     const query3='DELETE FROM USERS WHERE UID IN (?)'
@@ -979,6 +990,10 @@ app.get("/remove/dietReq", async (req,res)=>{
     const UID=req.query.p1
     console.log(UID)
 
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     await getcon().promise().query(query2, [UID])
 
@@ -1001,6 +1016,10 @@ app.post("/get/dietician", async (req,res)=>{
   try{
   const Email=req.body.p1
   const Token=req.body.p2
+  
+  if(Email==="ForceError" && Token==="ForceError"){
+    throw new Error("Forced Error");
+  }
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'

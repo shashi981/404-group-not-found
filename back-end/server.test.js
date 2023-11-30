@@ -970,9 +970,13 @@ describe('/get/dietReq endpoint', () => {
   const res = await request(app).get('/get/dietReq');
   expect(res.status).toStrictEqual(200);
     
-    // Add additional assertions based on your actual response structure
-    // and the expected behavior of the endpoint.
-    // For example, you can check if the response body is an array.
+  });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/get/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
@@ -990,9 +994,15 @@ describe('/approve/dietReq endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body.Message).toBe('SUCCESS approve being dietician request');
     
-    // Add additional assertions based on your actual response structure
-    // and the expected behavior of the endpoint.
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/approve/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+  
 });
 
 
@@ -1019,13 +1029,19 @@ describe('/remove/dietReq endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body.Message).toBe('SUCCESS delete being dietician request');
     
-    // Add additional assertions based on your actual response structure
-    // and the expected behavior of the endpoint.
+
+  });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/remove/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
 
-describe('/post/dietician endpoint', () => {
+describe('/get/dietician endpoint', () => {
   /**
    * Test: Get dietitian with email and update Firebase token
    * Input: Valid dietitian email and Firebase token
@@ -1060,6 +1076,19 @@ describe('/post/dietician endpoint', () => {
 
     const DID= res.body.DID
     await request(app).get(`/delete/dietician?p1=${DID}`)
+  });
+
+  test('should handle database error and enter catch block', async () => {
+
+    const email="ForceError"
+    const Token="ForceError"
+    const url= '/get/dietician'
+    const res= await request(app).post(url).send({
+      p1:email,
+      p2:Token
+    })
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 }); 
 
