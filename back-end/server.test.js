@@ -1,6 +1,16 @@
 const request = require('supertest');
 const {app,  SendExpiryReminder,  processShoppingData, getcon} = require('./server'); 
-const mysql = require('mysql2/promise');
+const fs = require("fs");
+let actualtoken
+
+fs.readFile('./token.txt', 'utf8', (err, data) => {
+  if (err) {
+    console.error('Error reading the file:', err)
+  } else {
+    actualtoken= data
+  }
+})
+
 //test
 describe('/get/messageToken endpoint', () => {
   /**
@@ -41,39 +51,6 @@ describe('/get/messageToken endpoint', () => {
     expect(res.status).toStrictEqual(404);
   });
 });
-
-
-//describe('/get/users endpoint', () => {
-  /**
-   * Test: Retrieve user details with valid email and token
-   * Input: Valid email and token as query parameters
-   * Expected status code: 200
-   * Expected behavior: User details are updated in the database and the updated user information is returned
-   * Expected output: User object containing UID, FirstName, LastName, Email, and ProfileURL
-   */
-  /*test('Retrieve user details with valid email and token', async () => {
-    const email = 'shashi090801@gmail.com';
-    const token = 'validToken';
-    const res = await request(app).get(`/get/users?p1=${email}&p2=${token}`);
-    expect(res.status).toStrictEqual(200);
-  });*/
-
-  /**
-   * Test: Attempt to retrieve user details with invalid email
-   * Input: Invalid email and valid token as query parameters
-   * Expected status code: 200 (Empty JSON response)
-   * Expected behavior: No user found with the invalid email, and an empty JSON object is returned
-   * Expected output: Empty JSON object
-   */
- /* test('Attempt to retrieve user details with invalid email', async () => {
-    const email = 'invalid@example.com';
-    const token = 'validToken';
-    const res = await request(app).get(`/get/users?p1=${email}&p2=${token}`);
-    expect(res.status).toStrictEqual(200);
-    expect(res.body).toEqual({});
-  });
-});*/
-
 
 describe('/get/availableDieticians endpoint', () => {
   /**
@@ -198,7 +175,7 @@ describe('/add/users endpoint', () => {
       p2: 'Doe',
       p3: 'john.doe@example.com',
       p4: 'https://example.com/profile.jpg',
-      p5: 'someToken'
+      p5: actualtoken
     };
     const res = await request(app).post('/add/users').send(userData);
     //console.log('Response:', res.body);  // Log the entire response object
@@ -259,11 +236,10 @@ describe('Get USER request', () => {
   //Expected output: UID, FirstName, LastName, Email, ProfileURL
   test("Valid user", async()=>{
     const email='john.doe@example.com' //this email should exist in db
-    const Token="fakoehfnjildhnfljhasfjsfksjf"
     const url= "/get/users"
     const res= await request(app).post(url).send({
       p1:email,
-      p2:Token
+      p2:actualtoken
     })
     const responseObject = {
         FirstName: 'John',
@@ -327,6 +303,20 @@ describe('Get USER request', () => {
   
   
   })
+})
+
+describe('/get/items endpoint before add items', () => {
+  /**
+   * Test: Get items for a user with valid UID
+   * Input: Valid UID in the query parameters
+   * Expected status code: 200
+   * Expected behavior: Empty, nothing is added yet
+   * Expected output: An array of items in the response body
+   */
+  test('Get items for user with valid UID', async () => {
+    const res = await request(app).get(`/get/items?p1=${UID}`);
+    expect(res.status).toStrictEqual(200);
+  });
 })
 
 describe('/add/items endpoint',() => {
@@ -451,6 +441,19 @@ describe('/add/items endpoint',() => {
     expect(res.status).toStrictEqual(500); 
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
+
+  test('should handle fetch data error and enter catch block', async () => {
+     
+    const ErrorData = {
+      p1: UID,
+      p2: ["1234567890"],
+      p3: ["ForceError"],
+      p4: ["ForceError"]
+    };
+
+    const res = await request(app).post('/add/items').send(ErrorData);
+    expect(res.body.message).toStrictEqual('Values not added for UPCs: 1234567890 '); 
+  });
 });
 
 describe('/add/items_man endpoint', () => {
@@ -472,9 +475,9 @@ describe('/add/items_man endpoint', () => {
     const validData = {
       p1: UID, // Replace with an actual valid UID
       p2: -1,
-      p3: [tmr, "2024-01-31"],
-      p4: [2, 5],
-      p5: ['Banana', 'Potato']
+      p3: [tmr, "2024-01-31", tmr],
+      p4: [2, 5, 1],
+      p5: ['Banana', 'Potato', 'Milk']
     };
 
     const res = await request(app).post('/add/items_man').send(validData);
@@ -586,32 +589,6 @@ describe('/get/items endpoint', () => {
   });
 });
 
-describe('Algorithm: processShoppingData', () => {
-  test('This should generate shopping reminders', async()=>{
-    await processShoppingData()
-  })
-
-  test('should handle database error and enter catch block', async () => {
-     
-    mockError()
-
-  // Your test assertions
-  //await expect(processShoppingData()).rejects.toThrow('Mocked database error');
-  // Reset mocks to avoid affecting subsequent tests
-  try {
-    // Call the function that uses getcon
-    // This will throw the simulated database error
-    // Your test logic here
-    await processShoppingData()
-  } catch (error) {
-    // Assert that the error is the expected database error
-    expect(error.message).toBe('Simulated database error');
-  }
-
-  jest.resetAllMocks();
-  });
-})
-
 describe('Reminder: items about to expiry', () => {
   test('This should generate reminders for items about to expiry', async()=>{
     await SendExpiryReminder()
@@ -638,9 +615,10 @@ describe('Reminder: items about to expiry', () => {
   });
 })
 
+//todo add a case for 3 items
 describe('/get/recipe endpoint', () => {
   /**
-   * Test: Get recipe for items about to expire based on all 3 preference and UID
+   * Test: Get recipe for 3 items about to expire based on all 3 preference and UID
    * Input: Valid UID with preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on the preferences and items about to expire
@@ -660,7 +638,7 @@ describe('/get/recipe endpoint', () => {
   });
 
   /**
-   * Test: Get recipe for items about to expire based on 2 preference and UID
+   * Test: Get recipe for 2 items about to expire based on 2 preference and UID
    * Input: Valid UID with preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on the preferences and items about to expire
@@ -675,6 +653,12 @@ describe('/get/recipe endpoint', () => {
 
     await request(app).post('/add/pref').send(validData);
     
+    const itemData = {
+      p1: UID, 
+      p2: [3] 
+    };
+
+    await request(app).post('/delete/items').send(itemData);
     const res = await request(app).get(`/get/recipe?p1=${UID}`)
 
     expect(res.status).toStrictEqual(200);
@@ -700,8 +684,9 @@ describe('/get/recipe endpoint', () => {
 
     expect(res.status).toStrictEqual(200);
   });
+
   /**
-   * Test: Get recipe for items about to expire without preferences
+   * Test: Get recipe for 1 items about to expire without preferences
    * Input: Valid UID without preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on items about to expire without considering preferences
@@ -761,10 +746,10 @@ describe('/update/items endpoint', () => {
   test('Update items with valid data', async () => {
     const validData = {
       p1: UID, // Replace with an actual valid UID
-      p2: [1, 2], // Replace with actual valid ItemIDs
-      p3: [123456, 789012], // Replace with actual valid UPCs
-      p4: ['2023-12-01', '2023-12-15'], // Replace with actual valid ExpireDates
-      p5: [5, 10] // Replace with actual valid ItemCounts
+      p2: [1], // Replace with actual valid ItemIDs
+      p3: [123456], // Replace with actual valid UPCs
+      p4: ['2023-12-01'], // Replace with actual valid ExpireDates
+      p5: [5] // Replace with actual valid ItemCounts
     };
 
     const res = await request(app).post('/update/items').send(validData);
@@ -840,7 +825,7 @@ describe('/delete/items endpoint', () => {
     await request(app).get(`/get/items?p1=${UID}`);
     const validData = {
       p1: UID, // Replace with an actual valid UID
-      p2: [1, 2] // Replace with actual valid ItemIDs
+      p2: [1] // Replace with actual valid ItemIDs
     };
 
     const res = await request(app).post('/delete/items').send(validData);
@@ -910,6 +895,33 @@ describe('/delete/items endpoint', () => {
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
+
+describe('Algorithm: processShoppingData', () => {
+  //Expect to send message using Firebase
+  test('This should generate shopping reminders', async()=>{
+    await processShoppingData()
+  })
+  
+  test('should handle database error and enter catch block', async () => {
+     
+  mockError()
+
+  // Your test assertions
+  //await expect(processShoppingData()).rejects.toThrow('Mocked database error');
+  // Reset mocks to avoid affecting subsequent tests
+  try {
+    // Call the function that uses getcon
+    // This will throw the simulated database error
+    // Your test logic here
+    await processShoppingData()
+  } catch (error) {
+    // Assert that the error is the expected database error
+    expect(error.message).toBe('Simulated database error');
+  }
+
+  jest.resetAllMocks();
+  });
+})
 
 describe('/add/pref endpoint', () => {
   /**
@@ -987,10 +999,22 @@ describe('/get/pref endpoint', () => {
   test('Get preferences with valid UID', async () => {
     const res = await request(app).get('/get/pref?p1=' + UID);
     expect(res.status).toStrictEqual(200);
-    // Add more specific assertions based on your expected output
-    // For example, if you expect an array of preferences, you can check the array length, etc.
+
   });
 
+  /**
+   * Test: Get preferences with valid UID but no pref in db
+   * Input: Valid UID in the query parameters
+   * Expected status code: 200
+   * Expected behavior: Preferences with the specified UID are retrieved from the database
+   * Expected output: An array of preferences in the response body
+   */
+  test('Get preferences with valid UID but no pref in db', async () => {
+    await request(app).get('/delete/pref?p1=' + UID);
+    const res = await request(app).get('/get/pref?p1=' + UID);
+    expect(res.status).toStrictEqual(200);
+
+  });
   /**
    * Test: Attempt to get preferences with an invalid UID
    * Input: Invalid UID in the query parameters
@@ -1094,6 +1118,20 @@ describe('/get/pref_list endpoint', () => {
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
+
+describe('/get/dietReq endpoint empty', () => {
+  /**
+   * Test: Retrieve all requests for being a dietitian
+   * Expected status code: 200
+   * Expected behavior: Empty, no request being made
+   * Expected output: An array of dietitian requests in the response body
+   */
+  test('Retrieve all requests for being a dietitian', async () => {
+  const res = await request(app).get('/get/dietReq');
+  expect(res.status).toStrictEqual(200);
+    
+  });
+})
 
 describe('/add/dietReq endpoint', () => {
   /**
