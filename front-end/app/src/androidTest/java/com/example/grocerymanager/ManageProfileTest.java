@@ -9,6 +9,8 @@ import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -88,7 +90,7 @@ public class ManageProfileTest {
         // Step 4: User presses Request Dietician View
         onView(withId(R.id.request_dietitian_settings_user)).perform(click());
         // Step 5a: The user does not acknowledge the pop up (via cancel or back)
-        onView(ViewMatchers.withText("Cancel")).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("Cancel")).perform(ViewActions.click());
 
         // Step 5a1: The pop up is dismissed and the user can interact with the settings page
         onView(withId(R.id.delete_account_settings_user)).check(matches(isDisplayed()));
@@ -100,13 +102,13 @@ public class ManageProfileTest {
         onView(withId(R.id.menu_bar_icon_home)).perform(click());
         onView(withText("Profile")).inRoot(isPlatformPopup()).perform(click());
 
-        onView(ViewMatchers.withText("Name: Mock User"))
+        Espresso.onView(ViewMatchers.withText("Name: Mock User"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-        onView(ViewMatchers.withText("Email: MockUser@gmail.com"))
+        Espresso.onView(ViewMatchers.withText("Email: MockUser@gmail.com"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-        onView(ViewMatchers.withText("User ID: 1"))
+        Espresso.onView(ViewMatchers.withText("User ID: 1"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
-        onView(ViewMatchers.withText("Dietary Restrictions:"))
+        Espresso.onView(ViewMatchers.withText("Dietary Restrictions:"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
@@ -121,7 +123,7 @@ public class ManageProfileTest {
         }
 
         onView(withId(R.id.delete_account_settings_user)).perform(click());
-        onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
 
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());
@@ -142,7 +144,7 @@ public class ManageProfileTest {
         }
 
         onView(withId(R.id.delete_account_settings_dietician)).perform(click());
-        onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
 
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());
@@ -198,14 +200,14 @@ public class ManageProfileTest {
 
     private void signInAdmin() {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        onView(ViewMatchers.withId(R.id.admin_button)).perform(ViewActions.click());
-        onView(ViewMatchers.withText("Dashboard"))
+        Espresso.onView(ViewMatchers.withId(R.id.admin_button)).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("Dashboard"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
     private void signInDietician() {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        onView(ViewMatchers.withId(R.id.dietician_button)).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withId(R.id.dietician_button)).perform(ViewActions.click());
         onView(withId(R.id.chatDietitianUserButton)).check(matches(isDisplayed()));
     }
 
@@ -213,8 +215,8 @@ public class ManageProfileTest {
 
         // Step 1: User signs in using google sign in
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        onView(ViewMatchers.withId(R.id.user_button)).perform(ViewActions.click());
-        onView(ViewMatchers.withText("Welcome Back!"))
+        Espresso.onView(ViewMatchers.withId(R.id.user_button)).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("Welcome Back!"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
@@ -233,7 +235,7 @@ public class ManageProfileTest {
         // Step 4: User presses Request Dietician View
         onView(withId(R.id.request_dietitian_settings_user)).perform(click());
         // Step 5: User acknowledges the pop up message then presses OK
-        onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
+        Espresso.onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
 
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());
