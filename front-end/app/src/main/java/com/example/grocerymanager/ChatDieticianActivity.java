@@ -104,6 +104,7 @@ public class ChatDieticianActivity extends AppCompatActivity {
             @Override
             public void onMessage(WebSocket webSocket, String text) {
                 super.onMessage(webSocket, text);
+                fetchChatHistory(curUID, dietitianData.getDID());
                 // Handle incoming messages
                 Log.d(TAG, "Received message: " + text);
             }

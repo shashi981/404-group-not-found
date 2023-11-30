@@ -80,7 +80,7 @@ if (process.env.NODE_ENV !== 'test') {
   });
 }
 
-const ws = new WebSocket.Server({server})
+const wss = new WebSocket.Server({server})
 
 //ChatGPT usage: No
 function database_error(response, error) {
@@ -100,81 +100,83 @@ function getcon(){
 }
 
 //ChatGPT usage: Partial
-ws.on('message', async (message) => {
-  console.log('Received:', message);
+wss.on('connection', async (ws,req) => {
+  console.log('Client connected');
+  const actorId = req.headers['actor-id'];
+  const actorType = req.headers['actor-type']; // This could be 'user' or 'dietician'
 
-  try {
-    let parsedMessage = JSON.parse(message);
-    // Store in the database
-    let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, NOW(), ?)';
-    await getcon().promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, parsedMessage.FROM_USER]);
-
-    console.log('Message saved');
-    ws.send(JSON.stringify({ type: 'success', message: 'Message saved successfully' }));
-
-    // Prepare notification
-    let targetTable = parsedMessage.FROM_USER === 1 ? 'DIETICIAN' : 'USERS';
-    let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
-    let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
-    let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
-    let [tokensResult] = await getcon().promise().query(queryToken, [targetID]);
-    let token = tokensResult[0]?.MessageToken;
-
-    if (token) {
-      let notificationText = `You have a new message from ${parsedMessage.FROM_USER === 1 ? 'user' : 'dietitian'} with ID ${targetID}`;
-      let messagePayload = {
-        notification: {
-          title: 'Chat notification',
-          body: notificationText,
-        },
-        token
-      };
-
-      console.log(messagePayload);
-      Messaging(messagePayload);
-    }
-
-    // Forward message
-    if (parsedMessage.FROM_USER === 1) {
-      forwardMessageToDietician(parsedMessage.DID, message);
-    } else {
-      forwardMessageToUser(parsedMessage.UID, message);
-    }
-  } catch (error) {
-    console.error('Database error:', error);
-    ws.send(JSON.stringify({ type: 'error', message: 'Error saving the message' }));
+  if (actorType === 'user') {
+      userConnections[actorId] = ws;
+  } else if (actorType === 'dietician') {
+      dieticianConnections[actorId] = ws;
   }
+
+  // On receiving a message from the client
+  ws.on('message', async (message) => {
+    try{
+   
+      console.log('Received:', message);
+      
+      // Parse the message (assuming it's in JSON format)
+      let parsedMessage = JSON.parse(message);
+      const UID=parsedMessage.UID
+      const DID =parsedMessage.DID
+      // Store in the database
+      let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)'
+      const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
+
+      console.log('Message saved');
+
+      forwardMessage(parsedMessage.FROM_USER, parsedMessage.DID, parsedMessage.UID, parsedMessage.Text);
+
+      // Prepare notification
+  let targetTable = parsedMessage.FROM_USER === 1 ? 'DIETICIAN' : 'USERS';
+  let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
+  let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
+  let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
+  let [tokensResult] = await con.promise().query(queryToken, [targetID]);
+  let token = tokensResult[0]?.MessageToken;
+
+  if (token) {
+    let notificationText = `You have a new message from ${parsedMessage.FROM_USER === 1 ? 'user' : 'dietitian'} with ID ${targetID}`;
+    let messagePayload = {
+      notification: {
+        title: 'Chat notification',
+        body: notificationText,
+      },
+      token
+    };
+
+    console.log(messagePayload);
+    Messaging(messagePayload);
+  }
+    } catch(error){
+        console.error('Database error:', error)
+        ws.send(JSON.stringify({ type: 'error', message: 'Error saving the message' }))
+    }
+  });
+
+  // When the client closes the connection
+  ws.on('close', () => {
+      console.log('Client disconnected');
+  });
 });
 
-// When the client closes the connection
-ws.on('close', () => {
-  console.log('Client disconnected');
-});
+function forwardMessage(fromBit, DID, UID, Text){
+  let actorWS = dieticianConnections[DID];
+  if (fromBit === 1) {
+      actorWS = dieticianConnections[DID];
+  } else {
+       actorWS = userConnections[UID];
+  }
 
-
-//Helper functions for ws
-//ChatGPT usage: Partial
-function forwardMessageToDietician(DID, message) {
-    const dieticianWs = dieticianConnections[DID];
-    
-    if (dieticianWs) {
-        dieticianWs.send(message)
-    } else {
-        console.log(`No active connection found for dietician with ID ${DID}`)
-    }
+  if(actorWS){
+      actorWS.send(Text);
+  }
+  else{
+      console.log(`No active connection found for user with Reciever`)
+  }
 }
-
-//ChatGPT usage: Partial
-function forwardMessageToUser(UID, message) {
-    const userWs = userConnections[UID]
-    
-    if (userWs) {
-        userWs.send(message)
-    } else {
-        console.log(`No active connection found for user with ID ${UID}`)
-    }
-}
-//End Helper functions for ws
 
 //END POINTS FOR WS
 //ChatGPT usage: Partial
