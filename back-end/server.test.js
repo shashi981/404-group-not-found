@@ -164,6 +164,7 @@ describe('/get/chatHistory/:UID/:DID endpoint', () => {
 
 let UID
 let UID2
+let UPC='068700115004'
 
 // Function to mock the database error
 
@@ -330,18 +331,47 @@ describe('Get USER request', () => {
 
 describe('/add/items endpoint',() => {
   /**
-   * Test: Add items with valid data
+   * Test: Add items with valid data, the UPC is not in database
    * Input: Valid user ID, UPCs, ExpireDates, and ItemCounts in the request body
    * Expected status code: 200
    * Expected behavior: Items are added to the database, and a success message is returned in the response body
    * Expected output: { message: 'SUCCESS ADDED ITEMS' } in the response body
    */
   test('Add items with valid data', async () => {
+    const currentDate = new Date();
+    const tomorrow = new Date(currentDate);
+    tomorrow.setDate(currentDate.getDate() + 1);
+
+    const tmr = tomorrow.toISOString().split('T')[0];
     const validData = {
       p1: UID, // Replace with an actual valid UID
-      p2: ['068700115004', '068700115004'], // Replace with actual UPCs
-      p3: ['2023-12-31', '2024-01-15'], // Replace with actual ExpireDates
+      p2: [UPC, UPC], // Replace with actual UPCs
+      p3: [tmr, '2024-01-15'], // Replace with actual ExpireDates
       p4: [2, 5] // Replace with actual ItemCounts
+    };
+
+    const res = await request(app).post('/add/items').send(validData);
+    expect(res.status).toStrictEqual(200);
+    expect(res.body).toEqual({ message: 'SUCCESS ADDED ITEMS' });
+  });
+
+  /**
+   * Test: Add items with valid data, the UPC is now in db
+   * Input: Valid user ID, UPCs, ExpireDates, and ItemCounts in the request body
+   * Expected status code: 200
+   * Expected behavior: Items are added to the database, and a success message is returned in the response body
+   * Expected output: { message: 'SUCCESS ADDED ITEMS' } in the response body
+   */
+  test('Add items with valid data', async () => {
+    const currentDate = new Date();
+    const tomorrow = new Date(currentDate);
+    tomorrow.setDate(currentDate.getDate() + 1);
+
+    const validData = {
+      p1: UID, // Replace with an actual valid UID
+      p2: [UPC], // Replace with actual UPCs
+      p3: ['2024-02-28'], // Replace with actual ExpireDates
+      p4: [2] // Replace with actual ItemCounts
     };
 
     const res = await request(app).post('/add/items').send(validData);
@@ -388,8 +418,28 @@ describe('/add/items endpoint',() => {
     expect(res.status).toStrictEqual(500);
   });
 
+  /**
+   * Test: Attempt to add items with UPC that cannot be found
+   * Input: Valid user ID, UPCs, ExpireDates, and ItemCounts in the request body
+   * but the UPC cannot be find in db or api, have to be input manual
+   * Expected status code: 500
+   * Expected behavior: Items are not added to the database, and the UPC is returned in the response body to should which item is not added
+   * Expected output: An error message in the response body
+   */
+  test('Attempt to add items with UPC cant be find in db and API', async () => {
+    const invalidData = {
+      p1: UID,
+      p2: ['068700011818'],
+      p3: ['2024-01-15'],
+      p4: [2] 
+    };
+
+    const res = await request(app).post('/add/items').send(invalidData);
+    expect(res.status).toStrictEqual(200);
+  });
+
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError",
@@ -412,12 +462,19 @@ describe('/add/items_man endpoint', () => {
    * Expected output: 'SUCCESS ADDED ITEMS MANUAL' in the response body
    */
   test('Add items manually with valid data', async () => {
+    const currentDate = new Date();
+    const tomorrow = new Date(currentDate);
+    tomorrow.setDate(currentDate.getDate() + 1);
+
+    const tmr = tomorrow.toISOString().split('T')[0];
+
+
     const validData = {
       p1: UID, // Replace with an actual valid UID
       p2: -1,
-      p3: ['2023-12-31', '2024-01-15'],
+      p3: [tmr, "2024-01-31"],
       p4: [2, 5],
-      p5: ['Item1', 'Item2']
+      p5: ['Banana', 'Potato']
     };
 
     const res = await request(app).post('/add/items_man').send(validData);
@@ -467,7 +524,7 @@ describe('/add/items_man endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError",
@@ -521,7 +578,7 @@ describe('/get/items endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorUID = 'ForceError'; // An invalid UID example
     const res = await request(app).get(`/get/items?p1=${ErrorUID}`);
     expect(res.status).toStrictEqual(500); 
@@ -535,7 +592,7 @@ describe('Algorithm: processShoppingData', () => {
   })
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     mockError()
 
   // Your test assertions
@@ -561,7 +618,7 @@ describe('Reminder: items about to expiry', () => {
   })
   
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     mockError()
 
   // Your test assertions
@@ -580,6 +637,118 @@ describe('Reminder: items about to expiry', () => {
   jest.resetAllMocks();
   });
 })
+
+describe('/get/recipe endpoint', () => {
+  /**
+   * Test: Get recipe for items about to expire based on all 3 preference and UID
+   * Input: Valid UID with preferences and items about to expire
+   * Expected status code: 200
+   * Expected behavior: Retrieve recipes based on the preferences and items about to expire
+   * Expected output: Response body containing the recipes
+   */
+  test('Get recipe for items about to expire based on preference and UID', async () => {
+    const validData = {
+      p1: UID, // Replace with an actual valid UID
+      p2: ['Vegan', 'Vegetarian', 'Non-dairy'] // Replace with actual valid preferences
+    };
+
+    await request(app).post('/add/pref').send(validData);
+    
+    const res = await request(app).get(`/get/recipe?p1=${UID}`)
+
+    expect(res.status).toStrictEqual(200);
+  });
+
+  /**
+   * Test: Get recipe for items about to expire based on 2 preference and UID
+   * Input: Valid UID with preferences and items about to expire
+   * Expected status code: 200
+   * Expected behavior: Retrieve recipes based on the preferences and items about to expire
+   * Expected output: Response body containing the recipes
+   */
+  test('Get recipe for items about to expire based on preference and UID', async () => {
+    await request(app).get('/delete/pref?p1=' + UID);
+    const validData = {
+      p1: UID, // Replace with an actual valid UID
+      p2: [ 'Vegetarian', 'Non-dairy'] // Replace with actual valid preferences
+    };
+
+    await request(app).post('/add/pref').send(validData);
+    
+    const res = await request(app).get(`/get/recipe?p1=${UID}`)
+
+    expect(res.status).toStrictEqual(200);
+  });
+
+  /**
+   * Test: Get recipe for items about to expire based on 1 preference and UID
+   * Input: Valid UID with preferences and items about to expire
+   * Expected status code: 200
+   * Expected behavior: Retrieve recipes based on the preferences and items about to expire
+   * Expected output: Response body containing the recipes
+   */
+  test('Get recipe for items about to expire based on preference and UID', async () => {
+    await request(app).get('/delete/pref?p1=' + UID);
+    const validData = {
+      p1: UID, // Replace with an actual valid UID
+      p2: ['Non-dairy'] // Replace with actual valid preferences
+    };
+
+    await request(app).post('/add/pref').send(validData);
+    
+    const res = await request(app).get(`/get/recipe?p1=${UID}`)
+
+    expect(res.status).toStrictEqual(200);
+  });
+  /**
+   * Test: Get recipe for items about to expire without preferences
+   * Input: Valid UID without preferences and items about to expire
+   * Expected status code: 200
+   * Expected behavior: Retrieve recipes based on items about to expire without considering preferences
+   * Expected output: Response body containing the recipes
+   */
+  test('Get recipe for items about to expire without preferences', async () => {
+    await request(app).get('/delete/pref?p1=' + UID);
+    const validData = {
+      p1: UID, 
+      p2: [2] 
+    };
+
+    await request(app).post('/delete/items').send(validData);
+    const res = await request(app).get(`/get/recipe?p1=${UID}`)
+
+    expect(res.status).toStrictEqual(200);
+  });
+
+  /**
+   * Test: Get recipe with no items about to expire
+   * Input: Valid UID with preferences and no items about to expire
+   * Expected status code: 200
+   * Expected behavior: Return an empty response as there are no items about to expire
+   * Expected output: Empty response body
+   */
+  test('Get recipe with no items about to expire', async () => {
+    await request(app).get(`/get/items?p1=${UID}`);
+    const validData = {
+      p1: UID, 
+      p2: [1] 
+    };
+
+    await request(app).post('/delete/items').send(validData);
+
+    const res = await request(app).get(`/get/recipe?p1=${UID}`)
+
+    expect(res.status).toStrictEqual(200);
+    expect(res.body).toStrictEqual({});
+  });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/recipe?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+});
 
 describe('/update/items endpoint', () => {
   /**
@@ -644,7 +813,7 @@ describe('/update/items endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError",
@@ -668,6 +837,7 @@ describe('/delete/items endpoint', () => {
    * Expected output: 'DELETED ITEM' in the response body
    */
   test('Delete items with valid UID and ItemID', async () => {
+    await request(app).get(`/get/items?p1=${UID}`);
     const validData = {
       p1: UID, // Replace with an actual valid UID
       p2: [1, 2] // Replace with actual valid ItemIDs
@@ -729,7 +899,7 @@ describe('/delete/items endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError"
@@ -794,7 +964,7 @@ describe('/add/pref endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError"
@@ -847,7 +1017,7 @@ describe('/get/pref endpoint', () => {
   });
   
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/get/pref?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -894,7 +1064,7 @@ describe('/delete/pref endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/delete/pref?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -918,7 +1088,7 @@ describe('/get/pref_list endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/get/pref_list?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -952,7 +1122,7 @@ describe('/add/dietReq endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/add/dietReq?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -970,9 +1140,13 @@ describe('/get/dietReq endpoint', () => {
   const res = await request(app).get('/get/dietReq');
   expect(res.status).toStrictEqual(200);
     
-    // Add additional assertions based on your actual response structure
-    // and the expected behavior of the endpoint.
-    // For example, you can check if the response body is an array.
+  });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
@@ -990,9 +1164,15 @@ describe('/approve/dietReq endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body.Message).toBe('SUCCESS approve being dietician request');
     
-    // Add additional assertions based on your actual response structure
-    // and the expected behavior of the endpoint.
   });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/approve/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+  
 });
 
 
@@ -1019,13 +1199,19 @@ describe('/remove/dietReq endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body.Message).toBe('SUCCESS delete being dietician request');
     
-    // Add additional assertions based on your actual response structure
-    // and the expected behavior of the endpoint.
+
+  });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/remove/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
 
-describe('/post/dietician endpoint', () => {
+describe('/get/dietician endpoint', () => {
   /**
    * Test: Get dietitian with email and update Firebase token
    * Input: Valid dietitian email and Firebase token
@@ -1060,6 +1246,19 @@ describe('/post/dietician endpoint', () => {
 
     const DID= res.body.DID
     await request(app).get(`/delete/dietician?p1=${DID}`)
+  });
+
+  test('should handle database error and enter catch block', async () => {
+
+    const email="ForceError"
+    const Token="ForceError"
+    const url= '/get/dietician'
+    const res= await request(app).post(url).send({
+      p1:email,
+      p2:Token
+    })
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 }); 
 
@@ -1124,64 +1323,12 @@ describe('/get/users_type endpoint', () => {
     expect(res.status).toStrictEqual(200); // Assuming the route handles non-existent email cases gracefully
     expect(res.body.Message).toBe('Does not exist\n');
   });
-});
 
-
-describe('/get/recipe endpoint', () => {
-  /**
-   * Test: Get recipe for items about to expire based on preference and UID
-   * Input: Valid UID with preferences and items about to expire
-   * Expected status code: 200
-   * Expected behavior: Retrieve recipes based on the preferences and items about to expire
-   * Expected output: Response body containing the recipes
-   */
-  test('Get recipe for items about to expire based on preference and UID', async () => {
-    const validPreferences = ['Vegetarian']; // Replace with valid preferences
-    const validItemsAboutToExpire = ['Carrot', 'Broccoli']; // Replace with valid items about to expire
-
-    const res = await request(app)
-      .get(`/get/recipe?p1=${UID}`)
-      .query({ p2: validPreferences.join(',') })
-      .query({ p3: validItemsAboutToExpire.join(',') });
-
-    expect(res.status).toStrictEqual(200);
-    // Add more assertions based on the expected output format
-  });
-
-  /**
-   * Test: Get recipe for items about to expire without preferences
-   * Input: Valid UID without preferences and items about to expire
-   * Expected status code: 200
-   * Expected behavior: Retrieve recipes based on items about to expire without considering preferences
-   * Expected output: Response body containing the recipes
-   */
-  test('Get recipe for items about to expire without preferences', async () => {
-    const validItemsAboutToExpire = ['Milk', 'Eggs']; // Replace with valid items about to expire
-
-    const res = await request(app)
-      .get(`/get/recipe?p1=${UID}`)
-      .query({ p3: validItemsAboutToExpire.join(',') });
-
-    expect(res.status).toStrictEqual(200);
-    // Add more assertions based on the expected output format
-  });
-
-  /**
-   * Test: Get recipe with no items about to expire
-   * Input: Valid UID with preferences and no items about to expire
-   * Expected status code: 200
-   * Expected behavior: Return an empty response as there are no items about to expire
-   * Expected output: Empty response body
-   */
-  test('Get recipe with no items about to expire', async () => {
-    const validPreferences = ['Vegan']; // Replace with valid preferences
-
-    const res = await request(app)
-      .get(`/get/recipe?p1=${UID}`)
-      .query({ p2: validPreferences.join(',') });
-
-    expect(res.status).toStrictEqual(200);
-    expect(res.body).toStrictEqual({});
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/users_type?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
@@ -1220,6 +1367,13 @@ describe('/get/recipe_info endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body).toStrictEqual({});
   });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/recipe_info?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 
@@ -1227,7 +1381,7 @@ describe('/get/recipe_info endpoint', () => {
 describe('/delete/users endpoint',  () => {
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/delete/users?p1=' +"ForceError");
     expect(res.status).toStrictEqual(500); 
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -1272,3 +1426,19 @@ describe('/delete/users endpoint',  () => {
   });
 });
 
+describe('Test case for helper function',  () => {
+  test('should handle database error and enter catch block for delete dietician', async () => {
+     
+    const res = await request(app).get('/delete/dietician?p1=' +"ForceError");
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+  test('should handle database error and enter catch block for delete UPC and also clear up the UPC added', async () => {
+    
+    await request(app).get('/delete/UPC?p1=' +UPC);
+
+    const res = await request(app).get('/delete/UPC?p1=' +"ForceError");
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+})

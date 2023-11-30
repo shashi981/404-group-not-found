@@ -236,7 +236,7 @@ app.get('/get/messageToken/:DID', (req, res) => {
 app.get('/get/chatHistory/:UID/:DID', (req, res) => {
     const UID = req.params.UID;
     const DID = req.params.DID;
-    const limit = 10;  // max number of messages to return
+    const limit = 100;  // max number of messages to return
 
     const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ?';
 
@@ -395,6 +395,7 @@ app.post("/add/users", async (req,res)=>{
 app.get("/delete/users", async (req,res)=>{
   try{
     const UID=req.query.p1
+
     if(UID==="ForceError"){
       throw new Error("Forced Error");
     }
@@ -695,6 +696,28 @@ app.post("/delete/items", async (req,res)=>{
   }
 })
 
+app.get("/delete/UPC", async (req,res)=>{
+  try{
+    const UPC=req.query.p1
+
+    if(UPC==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
+    const query = 'DELETE FROM OWNS WHERE UPC= ?'
+    const query2 = 'DELETE FROM GROCERIES WHERE UPC= ?'
+    await getcon().promise().query(query, [UPC])
+    await getcon().promise().query(query2, [UPC])
+    
+    console.log('SUCCESS DELETE Groceries') 
+    query_success(res, 'SUCCESS DELETE Groceries')
+    
+  } catch(error){
+    console.error('Error:', error.stack)
+    database_error(res, error)
+  }
+})
+
 //done
 //update items
 //ChatGPT usage: Partial
@@ -865,6 +888,7 @@ app.get("/get/pref_list", async (req,res)=>{
     if(req.query.p1==="ForceError"){
       throw new Error("Forced Error");
     }
+
     const query = 'SELECT * FROM PREF_LIST'
     const [results] = await getcon().promise().query(query)
 
@@ -890,7 +914,7 @@ app.get("/add/dietReq", async (req,res)=>{
     if(UID==="ForceError"){
       throw new Error("Forced Error");
     }
-    
+
     try {
       await UIDcheck(UID);
     } catch (error) {
@@ -917,6 +941,11 @@ app.get("/add/dietReq", async (req,res)=>{
 //ChatGPT usage: Partial
 app.get("/get/dietReq", async (req,res)=>{
   try {
+
+    if(req.query.p1==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     const query = 'SELECT d.RID, u.UID, u.FirstName, u.LastName, u.Email, u.ProfileURL FROM DIETICIAN_REQUEST d, USERS u WHERE u.UID=d.UID'
     const [results] = await getcon().promise().query(query)
     
@@ -952,6 +981,11 @@ app.get("/approve/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
     console.log(UID)
+
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+    
     const query = 'INSERT INTO DIETICIAN (FirstName, LastName, Email, ProfileURL, MessageToken) SELECT u.FirstName, u.LastName, u.Email, u.ProfileURL, u.MessageToken FROM USERS u WHERE u.UID=?'
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     const query3='DELETE FROM USERS WHERE UID IN (?)'
@@ -981,6 +1015,10 @@ app.get("/remove/dietReq", async (req,res)=>{
     const UID=req.query.p1
     console.log(UID)
 
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     const query2='DELETE FROM DIETICIAN_REQUEST WHERE UID=?'
     await getcon().promise().query(query2, [UID])
 
@@ -1003,6 +1041,10 @@ app.post("/get/dietician", async (req,res)=>{
   try{
   const Email=req.body.p1
   const Token=req.body.p2
+  
+  if(Email==="ForceError" && Token==="ForceError"){
+    throw new Error("Forced Error");
+  }
 
   const query = 'SELECT * FROM DIETICIAN WHERE Email=?;'
   const updatequery = 'UPDATE DIETICIAN SET MessageToken= ? WHERE Email=? ;'
@@ -1038,6 +1080,10 @@ app.get("/delete/dietician", async (req,res)=>{
   try{
     const DID=req.query.p1
 
+    if(DID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     const query = 'DELETE FROM DIETICIAN WHERE DID=?;'
     const [results] = await getcon().promise().query(query, [DID])
   
@@ -1061,6 +1107,10 @@ app.get("/get/users_type", async (req,res)=>{
 
   try {
     const Email = req.query.p1;
+
+    if(Email==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
     const [userResults] = await getcon().promise().query(query1, [Email])
@@ -1104,6 +1154,11 @@ app.get("/get/recipe", async (req,res)=>{
     // todo use the api to get extra recipes when the no recipe matches on db
 
     const UID=req.query.p1
+    
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     let storequery=''
     let query=''
     const store=[]
@@ -1252,6 +1307,10 @@ app.get("/get/recipe_info", async (req,res)=>{
   try{
     
     const RID=req.query.p1 ? req.query.p1.split(',') : []
+
+    if(RID[0]==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     const query = 'SELECT * FROM RECIPE_INFO WHERE RID IN (?)'
     const [results] = await getcon().promise().query(query, [RID])
