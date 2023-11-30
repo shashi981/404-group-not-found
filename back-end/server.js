@@ -132,13 +132,15 @@ wss.on('connection', async (ws,req) => {
       // Prepare notification
   let targetTable = parsedMessage.FROM_USER === 1 ? 'DIETICIAN' : 'USERS';
   let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
+  let oppositeID=parsedMessage.FROM_USER === 1 ? parsedMessage.UID : parsedMessage.DID;
   let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
+  let receiveID= targetTable === 'DIETICIAN' ? 'UID' : 'DID'
   let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
   let [tokensResult] = await con.promise().query(queryToken, [targetID]);
   let token = tokensResult[0]?.MessageToken;
 
   if (token) {
-    let notificationText = `You have a new message from ${parsedMessage.FROM_USER === 1 ? 'user' : 'dietitian'} with ID ${targetID}`;
+    let notificationText = `You have a new message from ${parsedMessage.FROM_USER === 1 ? 'user' : 'dietitian'} with ${receiveID} ${oppositeID}`;
     let messagePayload = {
       notification: {
         title: 'Chat notification',
@@ -249,39 +251,6 @@ app.get('/get/chatHistory/:UID/:DID', (req, res) => {
     });
 });
 
-//END POINTS WS END
-
-// END POINTS FOR SOCKET - BEGIN
-
-//New endpoint to get the actiev users fro the chat function
-//ChatGPT usage: Partial
-// app.get('/get/activeUsers', (req, res) => {
-//   const activeUsersList = Object.keys(onlineUsers);
-//   const activeDieticiansList = Object.keys(onlineDieticians);
-//   res.json({ users: activeUsersList, dieticians: activeDieticiansList });
-// });
-
-//ChatGPT usage: Partial
-// app.get('/get/chatHistory', async (req, res) => {
-//   const userId = req.query.userId;
-//   const dieticianId = req.query.dieticianId;
-
-//   if (!userId || !dieticianId) {
-//       return res.status(400).send("User ID and Dietician ID are required");
-//   }
-
-//   try {
-//       const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ?';
-//       const [rows] = await getcon().promise().query(query, [userId, dieticianId]);
-//       res.json(rows);
-//   } catch (error) {
-//       console.error("Error fetching chat history:", error);
-//       res.status(500).send("Internal server error");
-//   }
-// });
-
-// END POINTS FOR SOCKET ENDS 
-
 async function UIDcheck(UID){
   const checkquery = 'SELECT * FROM USERS WHERE UID=?';
   const [userResults] = await getcon().promise().query(checkquery, [UID]);
@@ -335,10 +304,6 @@ app.post("/get/users", async (req, res) => {
 
     const selectQuery = 'SELECT * FROM USERS WHERE Email = ?;'
     const [results] = await getcon().promise().query(selectQuery, [email])
-
-    if (results.length === 0) {
-      return res.json({})
-    }
 
     const user = results[0]
     const responseObject = {
@@ -409,15 +374,11 @@ app.get("/delete/users", async (req,res)=>{
 
 
     const query = 'DELETE FROM USERS WHERE UID=?;'
-    const [results] = await getcon().promise().query(query, [UID])
+    await getcon().promise().query(query, [UID])
   
-      if (results.affectedRows === 0) {
-        console.log('No rows were deleted. Check the values in your DELETE query.')
-        res.send('No rows were deleted. Check the values in your DELETE query.')
-      } else {
-        console.log('SUCCESS DELETED USER')
-        query_success(res, 'DELETED USER')
-      }
+    console.log('SUCCESS DELETED USER')
+    query_success(res, 'DELETED USER')
+      
     } catch(error){
         console.error('Error:', error.stack)
         database_error(res, error)
@@ -540,6 +501,10 @@ app.post("/add/items", async (req, res) => {
 
       if (groceryResults.length === 0) {
         try {
+          if(UPC==="1234567890"){
+            throw new Error("Forced Error");
+          }
+
           const productData = await fetchDataFromAPI(UPCAPIURL + UPC + UPCAPIKey)
           if (productData.success) {
             console.log(productData);
@@ -551,6 +516,7 @@ app.post("/add/items", async (req, res) => {
             console.error(`Product not found for UPC: ${UPC}`)
           }
         } catch (error) {
+          returnStatement += UPC + " "
           console.error('Error fetching product data:', error)
         }
       } else {
@@ -630,7 +596,7 @@ app.post("/add/items_man", async (req,res)=>{
     const values = []
     const store=[]
     for (let i = 0; i <ItemName.length; i++) {
-      if(i<UPC.length-1){
+      if(i<ItemName.length-1){
         store.push(([UPC, ItemName[i],]))
         values.push(([UID, UPC, ExpireDate[i], ItemCount[i],ItemName[i], currentDate]))
       }
@@ -681,15 +647,10 @@ app.post("/delete/items", async (req,res)=>{
 
     const query = 'DELETE FROM OWNS WHERE UID= ? AND ItemID IN (?);'
 
-    const [results] = await getcon().promise().query(query, [UID, ItemID])
+    await getcon().promise().query(query, [UID, ItemID])
 
-    if (results.affectedRows === 0) {
-      console.log('No rows were deleted. Check the values in your DELETE query.')
-      res.send('No rows were deleted. Check the values in your DELETE query.')
-    } else {
-      console.log('SUCCESS DELETED items')
-      query_success(res, 'DELETED ITEM')
-    }
+    console.log('SUCCESS DELETED items')
+    query_success(res, 'DELETED ITEM')
   } catch(error){
     console.error('Error:', error.stack)
     database_error(res, error)
@@ -1054,10 +1015,6 @@ app.post("/get/dietician", async (req,res)=>{
   await getcon().promise().query(updatequery, [Token, Email]) 
   const [results] = await getcon().promise().query(query, [Email])
 
-  if (results.length === 0) {
-    return res.json({});
-  }
-
   const dietician = results[0];
 
   const responseObject = {
@@ -1085,15 +1042,11 @@ app.get("/delete/dietician", async (req,res)=>{
     }
 
     const query = 'DELETE FROM DIETICIAN WHERE DID=?;'
-    const [results] = await getcon().promise().query(query, [DID])
+    await getcon().promise().query(query, [DID])
   
-      if (results.affectedRows === 0) {
-        console.log('No rows were deleted. Check the values in your DELETE query.')
-        res.send('No rows were deleted. Check the values in your DELETE query.')
-      } else {
-        console.log('SUCCESS DELETED USER')
-        query_success(res, 'DELETED USER')
-      }
+    console.log('SUCCESS DELETED Dietician')
+    query_success(res, 'DELETED Dietician')
+
     } catch(error){
         console.error('Error:', error.stack)
         database_error(res, error)
@@ -1171,7 +1124,6 @@ app.get("/get/recipe", async (req,res)=>{
     const Itemsquery = 'SELECT DISTINCT g.Name FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ? AND o.AboutExpire=1'
     const [Itemstemp] = await getcon().promise().query(Itemsquery, [UID])
     const Expiryitems = Itemstemp.map((Items) => Items.Name);
-    let excludeTable
 
     console.log(Expiryitems)
     if(Expiryitems.length === 0){
@@ -1179,45 +1131,38 @@ app.get("/get/recipe", async (req,res)=>{
     }
 
     if(Pref.length !== 0){
-      if(Pref.length === 1){
-        if (Pref[0] === 'Vegetarian') {
+      query = 'SELECT store.RID FROM ('
+
+      for(let i=0; i< Pref.length; i++){
+        let preference = Pref[i];
+        let excludeTable = ''
+
+        if (preference === 'Vegetarian') {
           excludeTable = 'vegetarian';
-        } else if (Pref[0] === 'Non-dairy') {
-          excludeTable = 'nondairy';
-        } else if (Pref[0] === 'Vegan') {
+        } else if (preference === 'Non-dairy') {
+           excludeTable = 'nondairy';
+        } else if (preference === 'Vegan') {
           excludeTable = 'vegan';
         }
-        query ='SELECT store.RID FROM (SELECT * FROM ' +excludeTable + ') AS store WHERE LOWER(store.Ingredient) LIKE ? '
-      }
-      else{
-        query = 'SELECT store.RID FROM ('
 
-        for(let i=0; i< Pref.length; i++){
-          let preference = Pref[i];
-          let excludeTable = ''
-
-          if (preference === 'Vegetarian') {
-            excludeTable = 'vegetarian';
-          } else if (preference === 'Non-dairy') {
-            excludeTable = 'nondairy';
-          } else if (preference === 'Vegan') {
-            excludeTable = 'vegan';
-          }
-
-          if(i===0){
-            query+="SELECT * FROM " +excludeTable + " "
-          }
-          else if(i<Pref.length-1){
-            query+="INTERSECT SELECT * FROM " + excludeTable + " "
-            
-          }
-          else{
-            query+="INTERSECT SELECT * FROM " +excludeTable + ') AS store WHERE LOWER(store.Ingredient) LIKE ? '
-            store.push(excludeTable)
-          }
+        if(Pref.length === 1){
+          query ='SELECT store.RID FROM (SELECT * FROM ' +excludeTable + ') AS store WHERE LOWER(store.Ingredient) LIKE ? '
+          break
         }
-        console.log(query)
+          
+        if(i===0){
+          query+="SELECT * FROM " +excludeTable + " "
+        }
+        else if(i<Pref.length-1){
+          query+="INTERSECT SELECT * FROM " + excludeTable + " "
+            
+        }
+        else{
+          query+="INTERSECT SELECT * FROM " +excludeTable + ') AS store WHERE LOWER(store.Ingredient) LIKE ? '
+          store.push(excludeTable)
+        }
       }
+      console.log(query)
     }
     else{
       query = 'SELECT r.RID FROM RECIPE r WHERE LOWER(r.Ingredient) LIKE ? '
@@ -1352,7 +1297,7 @@ async function processShoppingData() {
     console.log("algorithm tiggered")
     // User-defined settings
     const reminderPeriodDays = 5
-    const numberOfVisits = 2 // This can be changed
+    const numberOfVisits = 3// This can be changed
 
     // Store item purchase history
 
@@ -1377,8 +1322,8 @@ async function processShoppingData() {
     const expectedRunOutDates = {}
     // Query to retrieve shopping data from the database
       const UID=entry.UID
-      console.log(UID)
-      console.log(entry.Token)
+      //console.log(UID)
+      //console.log(entry.Token)
       const query = 'SELECT g.Name, o.ItemCount, o.PurchaseDate FROM OWNS o INNER JOIN GROCERIES g ON g.UPC = o.UPC AND (o.Name = \'whatever\' OR g.Name = o.Name) WHERE o.UID = ?'
       const [result] = await getcon().promise().query(query, [UID])
 
