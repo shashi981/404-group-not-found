@@ -13,17 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: 14.x
 
       - name: Install dependencies
         run: |
           cd back-end || exit 1 
           npm install
 
-      - name: Install dependencies
+      - name: Run Tests
         run: |
           cd back-end || exit 1 
           npm test
