@@ -465,6 +465,21 @@ describe('/add/items_man endpoint', () => {
     const res = await request(app).post('/add/items_man').send(invalidData);
     expect(res.status).toStrictEqual(500);
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const ErrorData = {
+      p1: "ForceError",
+      p2: "ForceError",
+      p3: "ForceError",
+      p4: "ForceError",
+      p5: "ForceError"
+    };
+
+    const res = await request(app).post('/add/items_man').send(ErrorData);
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/get/items endpoint', () => {
@@ -627,6 +642,21 @@ describe('/update/items endpoint', () => {
     const res = await request(app).post('/update/items').send(invalidData);
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing UID
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const ErrorData = {
+      p1: "ForceError",
+      p2: "ForceError",
+      p3: "ForceError",
+      p4: "ForceError",
+      p5: "ForceError"
+    };
+
+    const res = await request(app).post('/update/items').send(ErrorData);
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/delete/items endpoint', () => {
@@ -697,6 +727,18 @@ describe('/delete/items endpoint', () => {
     const res = await request(app).post('/delete/items').send(invalidData);
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing ItemID
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const ErrorData = {
+      p1: "ForceError",
+      p2: "ForceError"
+    };
+
+    const res = await request(app).post('/delete/items').send(ErrorData);
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/add/pref endpoint', () => {
@@ -750,6 +792,18 @@ describe('/add/pref endpoint', () => {
     const res = await request(app).post('/add/pref').send(emptyData);
     expect(res.status).toStrictEqual(500); // Assuming the route handles empty preferences array gracefully
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const ErrorData = {
+      p1: "ForceError",
+      p2: "ForceError"
+    };
+
+    const res = await request(app).post('/add/pref').send(ErrorData);
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/get/pref endpoint', () => {
@@ -791,6 +845,13 @@ describe('/get/pref endpoint', () => {
     const res = await request(app).get('/get/pref');
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
   });
+  
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/get/pref?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/delete/pref endpoint', () => {
@@ -831,6 +892,13 @@ describe('/delete/pref endpoint', () => {
     const res = await request(app).get('/delete/pref');
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
   });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/delete/pref?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/get/pref_list endpoint', () => {
@@ -847,6 +915,13 @@ describe('/get/pref_list endpoint', () => {
     // Add more specific assertions based on your expected output
     // For example, you can check the array length, specific preferences, etc.
     // Ensure that the response body matches the expected structure and data from the database
+  });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/get/pref_list?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 
@@ -874,6 +949,13 @@ describe('/add/dietReq endpoint', () => {
   test('Attempt to send a request without providing a UID', async () => {
     const res = await request(app).get('/add/dietReq');
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+  });
+
+  test('should handle database error and enter catch block', async () => {
+    // Call your function
+    const res = await request(app).get('/add/dietReq?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 });
 

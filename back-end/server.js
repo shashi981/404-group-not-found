@@ -612,6 +612,10 @@ app.post("/add/items_man", async (req,res)=>{
     const ItemCount = req.body.p4
     const ItemName = req.body.p5 
 
+    if(UID==="ForceError" && UPC==="ForceError"&& ExpireDate==="ForceError" &&ItemCount==="ForceError"&& ItemName==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     if ( ExpireDate.length !== ItemCount.length || ItemCount.length !== ItemName.length) {
       return res.status(400).send('Arrays should have the same length')
     }
@@ -658,6 +662,10 @@ app.post("/delete/items", async (req,res)=>{
   try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
+    
+    if(UID==="ForceError"&& ItemID==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     try {
       await UIDcheck(UID);
@@ -695,6 +703,10 @@ app.post("/update/items", async (req,res)=>{
     const UPC = req.body.p3 
     const ExpireDate = req.body.p4 
     const ItemCount = req.body.p5 
+
+    if(UID==="ForceError" && UPC==="ForceError"&& ExpireDate==="ForceError" &&ItemCount==="ForceError"&& ItemID==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     try {
       await UIDcheck(UID);
@@ -741,6 +753,10 @@ app.post("/add/pref", async (req,res)=>{
     const Pref = req.body.p2 
     const values = [];
 
+    if(UID==="ForceError"&& Pref==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     if(Pref.length === 0){
       throw new Error('Empty array is passed');
     }
@@ -774,6 +790,10 @@ app.get("/delete/pref", async (req,res)=>{
   try{
     const UID=req.query.p1
 
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     try {
       await UIDcheck(UID);
     } catch (error) {
@@ -801,6 +821,10 @@ app.get("/delete/pref", async (req,res)=>{
 app.get("/get/pref", async (req,res)=>{
   try{
     const UID=req.query.p1
+
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     try {
       await UIDcheck(UID);
@@ -835,6 +859,10 @@ app.get("/get/pref", async (req,res)=>{
 //ChatGPT usage: Partial
 app.get("/get/pref_list", async (req,res)=>{
   try{
+
+    if(req.query.p1==="ForceError"){
+      throw new Error("Forced Error");
+    }
     const query = 'SELECT * FROM PREF_LIST'
     const [results] = await getcon().promise().query(query)
 
@@ -857,6 +885,10 @@ app.get("/add/dietReq", async (req,res)=>{
   try{
     const UID=req.query.p1
 
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+    
     try {
       await UIDcheck(UID);
     } catch (error) {
