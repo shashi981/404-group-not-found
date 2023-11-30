@@ -100,6 +100,7 @@ public class ChatUserActivity extends AppCompatActivity {
             public void onMessage(WebSocket webSocket, String text) {
                 super.onMessage(webSocket, text);
                 // Handle incoming messages
+                fetchChatHistory(userData.getUID(), curDID);
                 Log.d(TAG, "Received message: " + text);
             }
 
