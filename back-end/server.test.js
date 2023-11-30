@@ -389,7 +389,7 @@ describe('/add/items endpoint',() => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError",
@@ -467,7 +467,7 @@ describe('/add/items_man endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError",
@@ -521,7 +521,7 @@ describe('/get/items endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorUID = 'ForceError'; // An invalid UID example
     const res = await request(app).get(`/get/items?p1=${ErrorUID}`);
     expect(res.status).toStrictEqual(500); 
@@ -535,7 +535,7 @@ describe('Algorithm: processShoppingData', () => {
   })
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     mockError()
 
   // Your test assertions
@@ -561,7 +561,7 @@ describe('Reminder: items about to expiry', () => {
   })
   
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     mockError()
 
   // Your test assertions
@@ -644,7 +644,7 @@ describe('/update/items endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError",
@@ -729,7 +729,7 @@ describe('/delete/items endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError"
@@ -794,7 +794,7 @@ describe('/add/pref endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const ErrorData = {
       p1: "ForceError",
       p2: "ForceError"
@@ -847,7 +847,7 @@ describe('/get/pref endpoint', () => {
   });
   
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/get/pref?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -894,7 +894,7 @@ describe('/delete/pref endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/delete/pref?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -918,7 +918,7 @@ describe('/get/pref_list endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/get/pref_list?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -952,7 +952,7 @@ describe('/add/dietReq endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/add/dietReq?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -973,7 +973,7 @@ describe('/get/dietReq endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/get/dietReq?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -997,7 +997,7 @@ describe('/approve/dietReq endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/approve/dietReq?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -1033,7 +1033,7 @@ describe('/remove/dietReq endpoint', () => {
   });
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/remove/dietReq?p1='+'ForceError' );
     expect(res.status).toStrictEqual(500);
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -1153,6 +1153,13 @@ describe('/get/users_type endpoint', () => {
     expect(res.status).toStrictEqual(200); // Assuming the route handles non-existent email cases gracefully
     expect(res.body.Message).toBe('Does not exist\n');
   });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/users_type?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 
@@ -1212,6 +1219,13 @@ describe('/get/recipe endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body).toStrictEqual({});
   });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/recipe?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 describe('/get/recipe_info endpoint', () => {
@@ -1249,6 +1263,13 @@ describe('/get/recipe_info endpoint', () => {
     expect(res.status).toStrictEqual(200);
     expect(res.body).toStrictEqual({});
   });
+
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/get/recipe_info?p1='+'ForceError' );
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
 });
 
 
@@ -1256,7 +1277,7 @@ describe('/get/recipe_info endpoint', () => {
 describe('/delete/users endpoint',  () => {
 
   test('should handle database error and enter catch block', async () => {
-    // Call your function
+     
     const res = await request(app).get('/delete/users?p1=' +"ForceError");
     expect(res.status).toStrictEqual(500); 
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
@@ -1301,3 +1322,11 @@ describe('/delete/users endpoint',  () => {
   });
 });
 
+describe('Test case for helper function',  () => {
+  test('should handle database error and enter catch block', async () => {
+     
+    const res = await request(app).get('/delete/dietician?p1=' +"ForceError");
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
+  });
+})

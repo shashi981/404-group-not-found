@@ -395,6 +395,7 @@ app.post("/add/users", async (req,res)=>{
 app.get("/delete/users", async (req,res)=>{
   try{
     const UID=req.query.p1
+
     if(UID==="ForceError"){
       throw new Error("Forced Error");
     }
@@ -1057,6 +1058,10 @@ app.get("/delete/dietician", async (req,res)=>{
   try{
     const DID=req.query.p1
 
+    if(DID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     const query = 'DELETE FROM DIETICIAN WHERE DID=?;'
     const [results] = await getcon().promise().query(query, [DID])
   
@@ -1080,6 +1085,10 @@ app.get("/get/users_type", async (req,res)=>{
 
   try {
     const Email = req.query.p1;
+
+    if(Email==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     const query1 = 'SELECT * FROM USERS WHERE Email=?'
     const [userResults] = await getcon().promise().query(query1, [Email])
@@ -1123,6 +1132,11 @@ app.get("/get/recipe", async (req,res)=>{
     // todo use the api to get extra recipes when the no recipe matches on db
 
     const UID=req.query.p1
+    
+    if(UID==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
     let storequery=''
     let query=''
     const store=[]
@@ -1271,6 +1285,10 @@ app.get("/get/recipe_info", async (req,res)=>{
   try{
     
     const RID=req.query.p1 ? req.query.p1.split(',') : []
+
+    if(RID[0]==="ForceError"){
+      throw new Error("Forced Error");
+    }
 
     const query = 'SELECT * FROM RECIPE_INFO WHERE RID IN (?)'
     const [results] = await getcon().promise().query(query, [RID])
