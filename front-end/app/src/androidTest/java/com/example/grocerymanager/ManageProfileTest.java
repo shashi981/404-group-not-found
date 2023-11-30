@@ -5,6 +5,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -26,6 +27,24 @@ public class ManageProfileTest {
     @Rule
     public ActivityScenarioRule<MainActivityMock> activityRule =
             new ActivityScenarioRule<>(MainActivityMock.class);
+
+    @Test
+    public void mainTestCase(){
+        signInUser();
+        requestDietician();
+    }
+    @Test
+    public void failureTestCase(){
+        signInUser();
+        requestDieticianFailure();
+    }
+
+    @Test
+    public void viewProfileTest(){
+        signInUser();
+        viewProfile();
+    }
+
 
     @Test
     public void testLoginUser(){
@@ -60,7 +79,42 @@ public class ManageProfileTest {
         deleteDietician();
     }
 
+    private void requestDieticianFailure() {
+        // Step 2: User opens settings page
+        onView(withId(R.id.menu_bar_icon_home)).perform(click());
+        onView(withText("Settings")).inRoot(isPlatformPopup()).perform(click());
 
+        // loop to stall for activity to fully load. Necessary work around for preventing misclick.
+        for(int i = 0; i < 100; i++){
+            // Step 3: The app shows three buttons: Request Dietician View, Sign Out, and Delete Account
+            onView(withId(R.id.delete_account_settings_user)).check(matches(isDisplayed()));
+            onView(withId(R.id.request_dietitian_settings_user)).check(matches(isDisplayed()));
+            onView(withId(R.id.sign_out_settings_user)).check(matches(isDisplayed()));
+        }
+        // Step 4: User presses Request Dietician View
+        onView(withId(R.id.request_dietitian_settings_user)).perform(click());
+        // Step 5a: The user does not acknowledge the pop up (via cancel or back)
+        Espresso.onView(ViewMatchers.withText("Cancel")).perform(ViewActions.click());
+
+        // Step 5a1: The pop up is dismissed and the user can interact with the settings page
+        onView(withId(R.id.delete_account_settings_user)).check(matches(isDisplayed()));
+        onView(withId(R.id.request_dietitian_settings_user)).check(matches(isDisplayed()));
+        onView(withId(R.id.sign_out_settings_user)).check(matches(isDisplayed()));
+    }
+
+    private void viewProfile(){
+        onView(withId(R.id.menu_bar_icon_home)).perform(click());
+        onView(withText("Profile")).inRoot(isPlatformPopup()).perform(click());
+
+        Espresso.onView(ViewMatchers.withText("Name: Mock User"))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        Espresso.onView(ViewMatchers.withText("Email: MockUser@gmail.com"))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        Espresso.onView(ViewMatchers.withText("User ID: 1"))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        Espresso.onView(ViewMatchers.withText("Dietary Restrictions:"))
+                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+    }
 
     private void deleteUser(){
         onView(withId(R.id.menu_bar_icon_home)).perform(click());
@@ -75,6 +129,10 @@ public class ManageProfileTest {
         onView(withId(R.id.delete_account_settings_user)).perform(click());
         Espresso.onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
 
+        for(int j = 0; j < 150; j++){
+            onView(withId(R.id.edit_button)).check(doesNotExist());
+            onView(withId(R.id.delete_button)).check(doesNotExist());
+        }
 
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
     }
@@ -91,6 +149,11 @@ public class ManageProfileTest {
 
         onView(withId(R.id.delete_account_settings_dietician)).perform(click());
         Espresso.onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
+
+        for(int j = 0; j < 150; j++){
+            onView(withId(R.id.edit_button)).check(doesNotExist());
+            onView(withId(R.id.delete_button)).check(doesNotExist());
+        }
 
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
     }
@@ -153,6 +216,8 @@ public class ManageProfileTest {
     }
 
     private void signInUser() {
+
+        // Step 1: User signs in using google sign in
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
         Espresso.onView(ViewMatchers.withId(R.id.user_button)).perform(ViewActions.click());
         Espresso.onView(ViewMatchers.withText("Welcome Back!"))
@@ -160,18 +225,28 @@ public class ManageProfileTest {
     }
 
     private void requestDietician() {
+        // Step 2: User opens settings page
         onView(withId(R.id.menu_bar_icon_home)).perform(click());
         onView(withText("Settings")).inRoot(isPlatformPopup()).perform(click());
 
+        // loop to stall for activity to fully load. Necessary work around for preventing misclick.
         for(int i = 0; i < 100; i++){
+            // Step 3: The app shows three buttons: Request Dietician View, Sign Out, and Delete Account
             onView(withId(R.id.delete_account_settings_user)).check(matches(isDisplayed()));
             onView(withId(R.id.request_dietitian_settings_user)).check(matches(isDisplayed()));
             onView(withId(R.id.sign_out_settings_user)).check(matches(isDisplayed()));
         }
-
+        // Step 4: User presses Request Dietician View
         onView(withId(R.id.request_dietitian_settings_user)).perform(click());
+        // Step 5: User acknowledges the pop up message then presses OK
         Espresso.onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
 
-//        onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
+        for(int j = 0; j < 150; j++){
+            onView(withId(R.id.edit_button)).check(doesNotExist());
+            onView(withId(R.id.delete_button)).check(doesNotExist());
+        }
+
+        // Step 6: The User is redirected to the login page.
+        onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
     }
 }
