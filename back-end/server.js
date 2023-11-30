@@ -696,6 +696,28 @@ app.post("/delete/items", async (req,res)=>{
   }
 })
 
+app.get("/delete/UPC", async (req,res)=>{
+  try{
+    const UPC=req.query.p1
+
+    if(UPC==="ForceError"){
+      throw new Error("Forced Error");
+    }
+
+    const query = 'DELETE FROM OWNS WHERE UPC= ?'
+    const query2 = 'DELETE FROM GROCERIES WHERE UPC= ?'
+    await getcon().promise().query(query, [UPC])
+    await getcon().promise().query(query2, [UPC])
+    
+    console.log('SUCCESS DELETE Groceries') 
+    query_success(res, 'SUCCESS DELETE Groceries')
+    
+  } catch(error){
+    console.error('Error:', error.stack)
+    database_error(res, error)
+  }
+})
+
 //done
 //update items
 //ChatGPT usage: Partial
