@@ -110,10 +110,7 @@ wss.on('connection', async (ws,req) => {
 
   // On receiving a message from the client
   ws.on('message', async (message) => {
-    try{
-   
       console.log('Received:', message);
-      
       // Parse the message (assuming it's in JSON format)
       let parsedMessage = JSON.parse(message);
       
@@ -126,14 +123,14 @@ wss.on('connection', async (ws,req) => {
       forwardMessage(parsedMessage.FROM_USER, parsedMessage.DID, parsedMessage.UID, parsedMessage.Text);
 
       // Prepare notification
-  let targetTable = parsedMessage.FROM_USER === 1 ? 'DIETICIAN' : 'USERS';
-  let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
-  let oppositeID=parsedMessage.FROM_USER === 1 ? parsedMessage.UID : parsedMessage.DID;
-  let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
-  let receiveID= targetTable === 'DIETICIAN' ? 'UID' : 'DID'
-  let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
-  let [tokensResult] = await con.promise().query(queryToken, [targetID]);
-  let token = tokensResult[0]?.MessageToken;
+      let targetTable = parsedMessage.FROM_USER === 1 ? 'DIETICIAN' : 'USERS';
+      let targetID = parsedMessage.FROM_USER === 1 ? parsedMessage.DID : parsedMessage.UID;
+      let oppositeID=parsedMessage.FROM_USER === 1 ? parsedMessage.UID : parsedMessage.DID;
+      let store= targetTable === 'DIETICIAN' ? 'DID' : 'UID'
+      let receiveID= targetTable === 'DIETICIAN' ? 'UID' : 'DID'
+      let queryToken = 'SELECT MessageToken FROM ' + targetTable +' WHERE ' + store+'=?'
+      let [tokensResult] = await con.promise().query(queryToken, [targetID]);
+      let token = tokensResult[0]?.MessageToken;
 
   if (token) {
     let notificationText = `You have a new message from ${parsedMessage.FROM_USER === 1 ? 'user' : 'dietitian'} with ${receiveID} ${oppositeID}`;
@@ -148,10 +145,6 @@ wss.on('connection', async (ws,req) => {
     console.log(messagePayload);
     Messaging(messagePayload);
   }
-    } catch(error){
-        console.error('Database error:', error)
-        ws.send(JSON.stringify({ type: 'error', message: 'Error saving the message' }))
-    }
   });
 
   // When the client closes the connection
