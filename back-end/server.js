@@ -323,6 +323,7 @@ app.post("/get/users", async (req, res) => {
 //done
 ////ChatGPT usage: Partial
 app.post("/add/users", async (req,res)=>{
+  try{
     const FirstName=req.body.p1
     const LastName=req.body.p2
     const Email=req.body.p3
@@ -342,6 +343,11 @@ app.post("/add/users", async (req,res)=>{
         return `${r.UID}`
     });
     query_success(res, formattedResults)
+      
+  } catch(error){
+      console.error('Error:', error.stack)
+      database_error(res, error)
+  }
 })
 
 //delete users
