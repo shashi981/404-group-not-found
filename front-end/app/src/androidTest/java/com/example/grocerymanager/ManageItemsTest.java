@@ -236,7 +236,7 @@ public class ManageItemsTest {
     private void deleteItemInInventory(String itemName) {
         // Check if the item is added to the inventory
         onView(withText(itemName))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
 
         onView(withId(R.id.delete_button)).perform(ViewActions.click());
 
