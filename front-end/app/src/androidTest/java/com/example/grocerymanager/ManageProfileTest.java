@@ -10,7 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -90,7 +89,7 @@ public class ManageProfileTest {
         // Step 4: User presses Request Dietician View
         onView(withId(R.id.request_dietitian_settings_user)).perform(click());
         // Step 5a: The user does not acknowledge the pop up (via cancel or back)
-        onView(ViewMatchers.withText("Cancel")).perform(click());
+        onView(withText("Cancel")).perform(click());
 
         // Step 5a1: The pop up is dismissed and the user can interact with the settings page
         onView(withId(R.id.delete_account_settings_user)).check(matches(isDisplayed()));
@@ -103,7 +102,7 @@ public class ManageProfileTest {
         onView(withText("Profile")).inRoot(isPlatformPopup()).perform(click());
 
         onView(withText("Name: Mock User"))
-                .check(matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
         onView(withText("Email: MockUser@gmail.com"))
                 .check(matches(isDisplayed()));
         onView(withText("User ID: 1"))
@@ -123,7 +122,7 @@ public class ManageProfileTest {
         }
 
         onView(withId(R.id.delete_account_settings_user)).perform(click());
-        onView(ViewMatchers.withText("Delete")).perform(click());
+        onView(withText("Delete")).perform(click());
 
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());
@@ -144,7 +143,7 @@ public class ManageProfileTest {
         }
 
         onView(withId(R.id.delete_account_settings_dietician)).perform(click());
-        onView(ViewMatchers.withText("Delete")).perform(ViewActions.click());
+        onView(withText("Delete")).perform(click());
 
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());
@@ -200,14 +199,14 @@ public class ManageProfileTest {
 
     private void signInAdmin() {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        onView(withId(R.id.admin_button)).perform(ViewActions.click());
+        onView(withId(R.id.admin_button)).perform(click());
         onView(withText("Dashboard"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
     private void signInDietician() {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        onView(withId(R.id.dietician_button)).perform(ViewActions.click());
+        onView(withId(R.id.dietician_button)).perform(click());
         onView(withId(R.id.chatDietitianUserButton)).check(matches(isDisplayed()));
     }
 
@@ -215,7 +214,7 @@ public class ManageProfileTest {
 
         // Step 1: User signs in using google sign in
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        onView(ViewMatchers.withId(R.id.user_button)).perform(click());
+        onView(withId(R.id.user_button)).perform(click());
         onView(withText("Welcome Back!"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
@@ -235,7 +234,7 @@ public class ManageProfileTest {
         // Step 4: User presses Request Dietician View
         onView(withId(R.id.request_dietitian_settings_user)).perform(click());
         // Step 5: User acknowledges the pop up message then presses OK
-        onView(ViewMatchers.withText("OK")).perform(click());
+        onView(withText("OK")).perform(click());
 
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());

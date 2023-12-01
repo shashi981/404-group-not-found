@@ -119,7 +119,7 @@ public class ManageItemsTest {
         String expectedDate = getCurrentDate();
 
         onView(withText("Expiry Date: " + expectedDate))
-                .check(ViewAssertions.matches(isDisplayed()));
+                .check(matches(isDisplayed()));
 
         onView(withText("Quantity: " + itemQuantity))
                 .check(ViewAssertions.matches(isDisplayed()));
@@ -158,35 +158,35 @@ public class ManageItemsTest {
     private void addItemToInventory(String itemName, String quantity) {
 
         // Step 5: The app shows two text input fields, a button for entering the expiry date, a button to add an item, and a button to save to inventory
-        Espresso.onView(withId(R.id.item_name)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.item_quantity)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.set_expiry_date)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.add_item_to_list)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.add_items_to_inventory)).check(matches(isDisplayed()));
+        onView(withId(R.id.item_name)).check(matches(isDisplayed()));
+        onView(withId(R.id.item_quantity)).check(matches(isDisplayed()));
+        onView(withId(R.id.set_expiry_date)).check(matches(isDisplayed()));
+        onView(withId(R.id.add_item_to_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.add_items_to_inventory)).check(matches(isDisplayed()));
 
 
 
 
         // Step 6: The user inputs the new item and quantity into the two text input fields, and the expiry date via the button
-        onView(ViewMatchers.withId(R.id.item_name)).perform(ViewActions.typeText(itemName));
+        onView(withId(R.id.item_name)).perform(ViewActions.typeText(itemName));
         onView(withId(R.id.item_quantity)).perform(ViewActions.typeText(quantity));
         Espresso.closeSoftKeyboard();
 
-        onView(ViewMatchers.withId(R.id.set_expiry_date)).perform(ViewActions.click());
+        onView(withId(R.id.set_expiry_date)).perform(ViewActions.click());
 
-        onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
+        onView(withText("OK")).perform(ViewActions.click());
 
         // Step 7: The user presses the “add item” button
-        onView(ViewMatchers.withId(R.id.add_item_to_list)).perform(ViewActions.click());
+        onView(withId(R.id.add_item_to_list)).perform(ViewActions.click());
 
 
         // Step 8: The screen refreshes and the new item is listed on the screen
-        onView(ViewMatchers.withText(itemName))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        onView(withText(itemName))
+                .check(ViewAssertions.matches(isDisplayed()));
 
         String expectedDate = getCurrentDate();
 
-        onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
+        onView(withText("Expiry Date: " + expectedDate))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
         onView(withText("Quantity: " + quantity))
@@ -198,7 +198,7 @@ public class ManageItemsTest {
     private void editItemInInventory(String itemName, String newQuantity) {
 
         // Check if the item is added to the inventory
-        Espresso.onView(ViewMatchers.withText(itemName))
+        onView(ViewMatchers.withText(itemName))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
         onView(withId(R.id.edit_button)).perform(ViewActions.click());
@@ -215,7 +215,7 @@ public class ManageItemsTest {
         onView(withId(R.id.edit_expiry_date_button)).perform(ViewActions.click());
 
         // Click the "OK" or "Done" button to select the current date
-        Espresso.onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
+        onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
 
         // Click the "Save" button
         onView(withId(R.id.save_button))
@@ -229,7 +229,7 @@ public class ManageItemsTest {
         String expectedDate = getCurrentDate();
 
         // Check if the displayed date matches the expected date
-        Espresso.onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
+        onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
