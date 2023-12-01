@@ -273,7 +273,6 @@ async function ItemIDcheck(UID, ItemID){
 //done
 //ChatGPT usage: Partial
 app.post("/get/users", async (req, res) => {
-  try{
     const email = req.body.p1
     const token = req.body.p2
 
@@ -305,10 +304,6 @@ app.post("/get/users", async (req, res) => {
 
     console.log("USER GET")
     res.json(responseObject)
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 
@@ -617,7 +612,6 @@ app.post("/add/items_man", async (req,res)=>{
 //done
 //ChatGPT usage: Partial
 app.post("/delete/items", async (req,res)=>{
-  try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
     
@@ -640,10 +634,6 @@ app.post("/delete/items", async (req,res)=>{
 
     console.log('SUCCESS DELETED items')
     query_success(res, 'DELETED ITEM')
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 app.get("/delete/UPC", async (req,res)=>{
