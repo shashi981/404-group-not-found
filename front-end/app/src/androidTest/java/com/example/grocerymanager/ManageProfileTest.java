@@ -107,7 +107,7 @@ public class ManageProfileTest {
         onView(withText("User ID: 1"))
                 .check(matches(isDisplayed()));
         onView(withText("Dietary Restrictions:"))
-                .check(ViewAssertions.matches(isDisplayed()));
+                .check(matches(isDisplayed()));
     }
 
     private void deleteUser(){
@@ -200,7 +200,7 @@ public class ManageProfileTest {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
         onView(withId(R.id.admin_button)).perform(click());
         onView(withText("Dashboard"))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(ViewMatchers.isDisplayed()));
     }
 
     private void signInDietician() {

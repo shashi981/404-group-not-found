@@ -182,15 +182,15 @@ public class ManageItemsTest {
 
         // Step 8: The screen refreshes and the new item is listed on the screen
         onView(withText(itemName))
-                .check(ViewAssertions.matches(isDisplayed()));
+                .check(matches(isDisplayed()));
 
         String expectedDate = getCurrentDate();
 
         onView(withText("Expiry Date: " + expectedDate))
-                .check(matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
 
         onView(withText("Quantity: " + quantity))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(ViewMatchers.isDisplayed()));
         onView(withId(R.id.edit_button)).check(matches(isDisplayed()));
         onView(withId(R.id.delete_button)).check(matches(isDisplayed()));
     }
@@ -241,7 +241,7 @@ public class ManageItemsTest {
         onView(withId(R.id.delete_button)).perform(ViewActions.click());
 
         // Verify that the item is removed from the inventory
-        Espresso.onView(ViewMatchers.withText(itemName))
+        onView(withText(itemName))
                 .check(doesNotExist());
     }
 
