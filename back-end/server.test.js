@@ -622,14 +622,9 @@ describe('Reminder: items about to expiry', () => {
      
   mockError()
 
-  try {
-
-    await SendExpiryReminder()
-  } catch (error) {
+    const [error] = await SendExpiryReminder()
     // Assert that the error is the expected database error
     expect(error.message).toBe('Simulated database error');
-  }
-
   jest.resetAllMocks();
   });
 })
