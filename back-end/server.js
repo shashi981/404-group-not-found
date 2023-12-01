@@ -8,9 +8,6 @@ const cron = require("node-cron")
 const admin = require("firebase-admin")
 const WebSocket = require("ws")
 
-let onlineUsers = {}; // { userId: socketId, ... }
-let onlineDieticians = {}; // { dieticianId: socketId, ... }
-
 let userConnections = {};
 let dieticianConnections = {};
 
@@ -119,13 +116,12 @@ wss.on('connection', async (ws,req) => {
       
       // Parse the message (assuming it's in JSON format)
       let parsedMessage = JSON.parse(message);
-      const UID=parsedMessage.UID
-      const DID =parsedMessage.DID
+      
       // Store in the database
       let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)'
       const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
 
-      console.log('Message saved');
+      console.log('Message saved', result);
 
       forwardMessage(parsedMessage.FROM_USER, parsedMessage.DID, parsedMessage.UID, parsedMessage.Text);
 
