@@ -10,7 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -106,9 +105,9 @@ public class ManageProfileTest {
         onView(withText("Email: MockUser@gmail.com"))
                 .check(matches(isDisplayed()));
         onView(withText("User ID: 1"))
-                .check(matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
         onView(withText("Dietary Restrictions:"))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(ViewAssertions.matches(isDisplayed()));
     }
 
     private void deleteUser(){

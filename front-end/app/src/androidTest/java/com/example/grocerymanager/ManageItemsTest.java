@@ -122,7 +122,7 @@ public class ManageItemsTest {
                 .check(matches(isDisplayed()));
 
         onView(withText("Quantity: " + itemQuantity))
-                .check(ViewAssertions.matches(isDisplayed()));
+                .check(matches(isDisplayed()));
     }
 
     private void addItemToInventory(String itemName) {
@@ -187,7 +187,7 @@ public class ManageItemsTest {
         String expectedDate = getCurrentDate();
 
         onView(withText("Expiry Date: " + expectedDate))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(ViewMatchers.isDisplayed()));
 
         onView(withText("Quantity: " + quantity))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
@@ -198,7 +198,7 @@ public class ManageItemsTest {
     private void editItemInInventory(String itemName, String newQuantity) {
 
         // Check if the item is added to the inventory
-        onView(ViewMatchers.withText(itemName))
+        onView(withText(itemName))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
         onView(withId(R.id.edit_button)).perform(ViewActions.click());
@@ -215,7 +215,7 @@ public class ManageItemsTest {
         onView(withId(R.id.edit_expiry_date_button)).perform(ViewActions.click());
 
         // Click the "OK" or "Done" button to select the current date
-        onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
+        onView(withText("OK")).perform(ViewActions.click());
 
         // Click the "Save" button
         onView(withId(R.id.save_button))
@@ -229,13 +229,13 @@ public class ManageItemsTest {
         String expectedDate = getCurrentDate();
 
         // Check if the displayed date matches the expected date
-        onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
+        onView(withText("Expiry Date: " + expectedDate))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
     private void deleteItemInInventory(String itemName) {
         // Check if the item is added to the inventory
-        Espresso.onView(ViewMatchers.withText(itemName))
+        onView(withText(itemName))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
         onView(withId(R.id.delete_button)).perform(ViewActions.click());
