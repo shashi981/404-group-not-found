@@ -230,10 +230,11 @@ describe('/add/users endpoint', () => {
 
 //Interface Post https://20.104.197.24:443/get/users
 describe('Get USER request', () => {
+  //Test: Valid data input for get user
   //Input: both Email and Token passed, email is valid, unique and exists in the database 
   // Expected status code: 200
-  //Expected behaviour: Message Token for the user with that email is updated, and get all //information for the user with that email
-  //Expected output: UID, FirstName, LastName, Email, ProfileURL
+  //Expected behaviour: Message Token for the user with that email is updated, and get all 
+  //Expected output: UID, FirstName, LastName, Email, ProfileURL, FirstName, LastName, Email, ProfileURL same as input
   test("Valid user", async()=>{
     const email='john.doe@example.com' //this email should exist in db
     const url= "/get/users"
@@ -255,6 +256,11 @@ describe('Get USER request', () => {
     expect(res.body.ProfileURL).toEqual(responseObject.ProfileURL)
   })
 
+  //Test: Force to enter error catching block
+  //Input: All parameters are "ForceError"
+  // Expected status code: 500
+  //Expected behaviour: No changes made to the database, Force Error is catched and returned
+  //Expected output error text: Error querying the databaseError: Forced Error
   test('should handle database error and enter catch block', async () => {
 
     const email="ForceError"
@@ -268,10 +274,11 @@ describe('Get USER request', () => {
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
   
+  //Test email not in database
   //Input: both Email and Token passed, email doesn’t exist in the database 
   // Expected status code: 500
   //Expected behaviour: No database column is changed
-  //Expected output: None
+  //Expected output: Empty
   test("Email Not in DB", async()=>{
     const email="invalidtest@gmail.com" //this email should not exist in db
     const Token="fakoehfnjildhnfljhasfjsfksjf"
@@ -285,10 +292,11 @@ describe('Get USER request', () => {
     expect(res.body).toEqual(responseObject)
   })
   
+  //Test: Missing parameters(NULL)
   //Input: either email or token is not passed, or both
   // Expected status code: 500
   //Expected behaviour: No database column is changed
-  //Expected output: None
+  //Expected output: Empty
   test("Missing input", async()=>{
     const email="" 
     const Token=""
@@ -301,7 +309,6 @@ describe('Get USER request', () => {
     expect(res.status).toStrictEqual(500)
     expect(res.body).toEqual(responseObject)
   
-  
   })
 })
 
@@ -311,7 +318,7 @@ describe('/get/items endpoint before add items', () => {
    * Input: Valid UID in the query parameters
    * Expected status code: 200
    * Expected behavior: Empty, nothing is added yet
-   * Expected output: An array of items in the response body
+   * Expected output: Empty
    */
   test('Get items for user with valid UID', async () => {
     const res = await request(app).get(`/get/items?p1=${UID}`);
@@ -327,7 +334,7 @@ describe('/add/items endpoint',() => {
    * Expected behavior: Items are added to the database, and a success message is returned in the response body
    * Expected output: { message: 'SUCCESS ADDED ITEMS' } in the response body
    */
-  test('Add items with valid data', async () => {
+  test('Add items with valid data, UPC not in database', async () => {
     const currentDate = new Date();
     const tomorrow = new Date(currentDate);
     tomorrow.setDate(currentDate.getDate() + 1);
@@ -352,7 +359,7 @@ describe('/add/items endpoint',() => {
    * Expected behavior: Items are added to the database, and a success message is returned in the response body
    * Expected output: { message: 'SUCCESS ADDED ITEMS' } in the response body
    */
-  test('Add items with valid data', async () => {
+  test('Add items with valid data, UPC in database now', async () => {
     const currentDate = new Date();
     const tomorrow = new Date(currentDate);
     tomorrow.setDate(currentDate.getDate() + 1);
@@ -412,9 +419,9 @@ describe('/add/items endpoint',() => {
    * Test: Attempt to add items with UPC that cannot be found
    * Input: Valid user ID, UPCs, ExpireDates, and ItemCounts in the request body
    * but the UPC cannot be find in db or api, have to be input manual
-   * Expected status code: 500
+   * Expected status code: 200
    * Expected behavior: Items are not added to the database, and the UPC is returned in the response body to should which item is not added
-   * Expected output: An error message in the response body
+   * Expected output: The UPC value that is not added is sent back for manual input
    */
   test('Attempt to add items with UPC cant be find in db and API', async () => {
     const invalidData = {
@@ -427,6 +434,12 @@ describe('/add/items endpoint',() => {
     const res = await request(app).post('/add/items').send(invalidData);
     expect(res.status).toStrictEqual(200);
   });
+
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error*/
 
   test('should handle database error and enter catch block', async () => {
      
@@ -442,6 +455,10 @@ describe('/add/items endpoint',() => {
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
 
+  /*Test: Force to enter error catching block of inner try-catch (error when calling fetchDataFromAPI)
+  Input: Valid UID, UPC="1234567890", expiryDate and ItemCount="ForceError"
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output text: Values not added for UPCs: 1234567890 (The UPC that has error when fetching is sent back) */
   test('should handle fetch data error and enter catch block', async () => {
      
     const ErrorData = {
@@ -526,6 +543,12 @@ describe('/add/items_man endpoint', () => {
     expect(res.status).toStrictEqual(500);
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error*/
+
   test('should handle database error and enter catch block', async () => {
      
     const ErrorData = {
@@ -558,7 +581,7 @@ describe('/get/items endpoint', () => {
   /**
    * Test: Attempt to get items for a user with invalid UID
    * Input: Invalid UID in the query parameters
-   * Expected status code: 500 (or appropriate error status code)
+   * Expected status code: 500 
    * Expected behavior: No items are retrieved, and an error message is returned in the response body
    * Expected output: An error message in the response body
    */
@@ -571,7 +594,7 @@ describe('/get/items endpoint', () => {
   /**
    * Test: Attempt to get items without providing a UID
    * Input: No UID provided in the query parameters
-   * Expected status code: 404 (or appropriate error status code)
+   * Expected status code: 500
    * Expected behavior: Endpoint not found due to missing UID
    * Expected output: An error message indicating missing UID or invalid request
    */
@@ -579,6 +602,12 @@ describe('/get/items endpoint', () => {
     const res = await request(app).get('/get/items');
     expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
   });
+
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error*/
 
   test('should handle database error and enter catch block', async () => {
      
@@ -590,21 +619,27 @@ describe('/get/items endpoint', () => {
 });
 
 describe('Reminder: items about to expiry', () => {
+  /*Test: Sending reminders to each user with items about to expiry
+  Input: None
+  Expected behaviour: Firebase notification is send to each user with valid Token and items about to expiry in 
+  2 days or already expired
+  Expected output: Firebase notification is sent
+  */
   test('This should generate reminders for items about to expiry', async()=>{
     await SendExpiryReminder()
   })
   
+  /*
+  Test: causing an error during query using mocking
+  Expected behaviour: 'Simulated database error' is thrown
+  Expected output: error message be 'Simulated database error'
+  */
   test('should handle database error and enter catch block', async () => {
      
-    mockError()
+  mockError()
 
-  // Your test assertions
-  //await expect(processShoppingData()).rejects.toThrow('Mocked database error');
-  // Reset mocks to avoid affecting subsequent tests
   try {
-    // Call the function that uses getcon
-    // This will throw the simulated database error
-    // Your test logic here
+
     await SendExpiryReminder()
   } catch (error) {
     // Assert that the error is the expected database error
@@ -615,14 +650,13 @@ describe('Reminder: items about to expiry', () => {
   });
 })
 
-//todo add a case for 3 items
 describe('/get/recipe endpoint', () => {
   /**
    * Test: Get recipe for 3 items about to expire based on all 3 preference and UID
    * Input: Valid UID with preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on the preferences and items about to expire
-   * Expected output: Response body containing the recipes
+   * Expected output: Response body containing the recipes that fit the filter, can be empty
    */
   test('Get recipe for items about to expire based on preference and UID', async () => {
     const validData = {
@@ -642,13 +676,13 @@ describe('/get/recipe endpoint', () => {
    * Input: Valid UID with preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on the preferences and items about to expire
-   * Expected output: Response body containing the recipes
+   * Expected output: Response body containing the recipes that fit the filter, can be empty
    */
   test('Get recipe for items about to expire based on preference and UID', async () => {
     await request(app).get('/delete/pref?p1=' + UID);
     const validData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: [ 'Vegetarian', 'Non-dairy'] // Replace with actual valid preferences
+      p1: UID, 
+      p2: [ 'Vegetarian', 'Non-dairy'] 
     };
 
     await request(app).post('/add/pref').send(validData);
@@ -669,13 +703,13 @@ describe('/get/recipe endpoint', () => {
    * Input: Valid UID with preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on the preferences and items about to expire
-   * Expected output: Response body containing the recipes
+   * Expected output: Response body containing the recipes that fit the filter, can be empty
    */
   test('Get recipe for items about to expire based on preference and UID', async () => {
     await request(app).get('/delete/pref?p1=' + UID);
     const validData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: ['Non-dairy'] // Replace with actual valid preferences
+      p1: UID, 
+      p2: ['Non-dairy'] 
     };
 
     await request(app).post('/add/pref').send(validData);
@@ -690,7 +724,7 @@ describe('/get/recipe endpoint', () => {
    * Input: Valid UID without preferences and items about to expire
    * Expected status code: 200
    * Expected behavior: Retrieve recipes based on items about to expire without considering preferences
-   * Expected output: Response body containing the recipes
+   * Expected output: Response body containing the recipes that fit the filter, can be empty
    */
   test('Get recipe for items about to expire without preferences', async () => {
     await request(app).get('/delete/pref?p1=' + UID);
@@ -727,6 +761,12 @@ describe('/get/recipe endpoint', () => {
     expect(res.body).toStrictEqual({});
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/get/recipe?p1='+'ForceError' );
@@ -745,11 +785,11 @@ describe('/update/items endpoint', () => {
    */
   test('Update items with valid data', async () => {
     const validData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: [1], // Replace with actual valid ItemIDs
-      p3: [123456], // Replace with actual valid UPCs
-      p4: ['2023-12-01'], // Replace with actual valid ExpireDates
-      p5: [5] // Replace with actual valid ItemCounts
+      p1: UID, 
+      p2: [1], 
+      p3: [123456], 
+      p4: ['2023-12-01'], 
+      p5: [5] 
     };
 
     const res = await request(app).post('/update/items').send(validData);
@@ -766,11 +806,11 @@ describe('/update/items endpoint', () => {
    */
   test('Attempt to update items with mismatched array lengths', async () => {
     const invalidData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: [1, 2], // Replace with actual valid ItemIDs
-      p3: [123456, 789012], // Replace with actual valid UPCs
+      p1: UID, 
+      p2: [1, 2], 
+      p3: [123456, 789012],
       p4: ['2023-12-01'], // Missing one ExpireDate
-      p5: [5, 10] // Replace with actual valid ItemCounts
+      p5: [5, 10] 
     };
 
     const res = await request(app).post('/update/items').send(invalidData);
@@ -787,16 +827,23 @@ describe('/update/items endpoint', () => {
    */
   test('Attempt to update items without UID', async () => {
     const invalidData = {
-      p2: [1, 2], // Replace with actual valid ItemIDs
-      p3: [123456, 789012], // Replace with actual valid UPCs
-      p4: ['2023-12-01', '2023-12-15'], // Replace with actual valid ExpireDates
-      p5: [5, 10] // Replace with actual valid ItemCounts
+      p2: [1, 2], 
+      p3: [123456, 789012], 
+      p4: ['2023-12-01', '2023-12-15'], 
+      p5: [5, 10] 
     };
 
     const res = await request(app).post('/update/items').send(invalidData);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing UID
+    expect(res.status).toStrictEqual(500); 
   });
 
+  /*
+  Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const ErrorData = {
@@ -824,8 +871,8 @@ describe('/delete/items endpoint', () => {
   test('Delete items with valid UID and ItemID', async () => {
     await request(app).get(`/get/items?p1=${UID}`);
     const validData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: [1] // Replace with actual valid ItemIDs
+      p1: UID, 
+      p2: [1] 
     };
 
     const res = await request(app).post('/delete/items').send(validData);
@@ -838,16 +885,16 @@ describe('/delete/items endpoint', () => {
    * Input: Invalid UID in the request body
    * Expected status code: 200 (assuming the route handles invalid UID cases gracefully)
    * Expected behavior: No items are deleted, and a message indicating no rows were deleted is returned
-   * Expected output: 'No rows were deleted. Check the values in your DELETE query.' in the response body
+   * Expected output: 'Error querying the databaseValue not found' in the response body
    */
   test('Attempt to delete items with invalid UID', async () => {
     const invalidData = {
       p1: 'invalid', // An invalid UID example
-      p2: [1, 2] // Replace with actual valid ItemIDs
+      p2: [1] 
     };
 
     const res = await request(app).post('/delete/items').send(invalidData);
-    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+    expect(res.status).toStrictEqual(500); 
     expect(res.text).toBe('Error querying the databaseValue not found');
   });
 
@@ -856,15 +903,16 @@ describe('/delete/items endpoint', () => {
    * Input: No UID provided in the request body
    * Expected status code: 500
    * Expected behavior: Endpoint not found due to missing UID
-   * Expected output: An error message indicating missing UID or invalid request
+   * Expected output: 'Error querying the databaseValue not found' in the response body
    */
   test('Attempt to delete items without UID', async () => {
     const invalidData = {
-      p2: [1, 2] // Replace with actual valid ItemIDs
+      p2: [1] 
     };
 
     const res = await request(app).post('/delete/items').send(invalidData);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing UID
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toBe('Error querying the databaseValue not found');
   });
 
   /**
@@ -872,17 +920,25 @@ describe('/delete/items endpoint', () => {
    * Input: No ItemID provided in the request body
    * Expected status code: 500
    * Expected behavior: Endpoint not found due to missing ItemID
-   * Expected output: An error message indicating missing ItemID or invalid request
+   * Expected output: 'Error querying the databaseValue not found' in the response body
    */
   test('Attempt to delete items without ItemID', async () => {
     const invalidData = {
-      p1: UID // Replace with an actual valid UID
+      p1: UID 
     };
 
     const res = await request(app).post('/delete/items').send(invalidData);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing ItemID
+    expect(res.status).toStrictEqual(500);
+    expect(res.text).toBe('Error querying the databaseValue not found');
   });
 
+  /*
+  Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const ErrorData = {
@@ -897,29 +953,31 @@ describe('/delete/items endpoint', () => {
 });
 
 describe('Algorithm: processShoppingData', () => {
-  //Expect to send message using Firebase
+  /*Test: Sending shopping reminders to each user with items expect to run out in 5 days and those items at least have 3 purchase record
+  Input: None
+  Expected behaviour: Firebase notification is send to each user with valid Token and items that is expect to run out in 5 days
+  Expected output: Firebase notification is sent
+  */
   test('This should generate shopping reminders', async()=>{
     await processShoppingData()
   })
   
+  /*Test: causing an error during query using mocking
+  Input: None
+  Expected behaviour: 'Simulated database error' is thrown
+  Expected output: error message be 'Simulated database error'*/
   test('should handle database error and enter catch block', async () => {
      
   mockError()
 
-  // Your test assertions
-  //await expect(processShoppingData()).rejects.toThrow('Mocked database error');
-  // Reset mocks to avoid affecting subsequent tests
   try {
-    // Call the function that uses getcon
-    // This will throw the simulated database error
-    // Your test logic here
     await processShoppingData()
   } catch (error) {
     // Assert that the error is the expected database error
     expect(error.message).toBe('Simulated database error');
   }
 
-  jest.resetAllMocks();
+  jest.resetAllMocks(); //rest all mocking
   });
 })
 
@@ -933,8 +991,8 @@ describe('/add/pref endpoint', () => {
    */
   test('Add preferences with valid data', async () => {
     const validData = {
-      p1: UID, // Replace with an actual valid UID
-      p2: ['Vegan'] // Replace with actual valid preferences
+      p1: UID, 
+      p2: ['Vegan']
     };
 
     const res = await request(app).post('/add/pref').send(validData);
@@ -947,34 +1005,42 @@ describe('/add/pref endpoint', () => {
    * Input: No UID provided in the request body
    * Expected status code: 500
    * Expected behavior: Endpoint not found due to missing UID
-   * Expected output: An error message indicating missing UID or invalid request
+   * Expected output: 'Error querying the databaseValue not found' in the response body
    */
   test('Attempt to add preferences without UID', async () => {
     const invalidData = {
-      p2: ['Vegan'] // Replace with actual valid preferences
+      p2: ['Vegan'] 
     };
 
     const res = await request(app).post('/add/pref').send(invalidData);
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 500 for missing UID
+    expect(res.status).toStrictEqual(500); 
   });
 
   /**
    * Test: Attempt to add preferences with an empty array
    * Input: Empty array provided for preferences in the request body
-   * Expected status code: 200 (or appropriate status code for handling empty preferences array)
+   * Expected status code: 500
    * Expected behavior: No preferences are added, and a message indicating empty preferences is returned
-   * Expected output: 'No preferences provided' in the response body
+   * Expected output: 'Error querying the databaseError: Column 'UID' cannot be null' in the response body
    */
   test('Attempt to add preferences with an empty array', async () => {
     const emptyData = {
-      p1: UID, // Replace with an actual valid UID
+      p1: UID, 
       p2: [] // Empty array for preferences
     };
 
     const res = await request(app).post('/add/pref').send(emptyData);
-    expect(res.status).toStrictEqual(500); // Assuming the route handles empty preferences array gracefully
+    expect(res.status).toStrictEqual(500); 
+    expect(res.text).toBe('Error querying the databaseError: Empty array is passed');
   });
 
+  /*
+  Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const ErrorData = {
@@ -1007,25 +1073,27 @@ describe('/get/pref endpoint', () => {
    * Input: Valid UID in the query parameters
    * Expected status code: 200
    * Expected behavior: Preferences with the specified UID are retrieved from the database
-   * Expected output: An array of preferences in the response body
+   * Expected output: Empty json object
    */
   test('Get preferences with valid UID but no pref in db', async () => {
     await request(app).get('/delete/pref?p1=' + UID);
     const res = await request(app).get('/get/pref?p1=' + UID);
     expect(res.status).toStrictEqual(200);
-
+    const responseObject = {}
+    expect(res.body).toEqual(responseObject)
   });
+
   /**
    * Test: Attempt to get preferences with an invalid UID
    * Input: Invalid UID in the query parameters
-   * Expected status code: 200 (assuming the route handles invalid UID cases gracefully)
+   * Expected status code: 500
    * Expected behavior: No preferences are found for the invalid UID
    * Expected output: An empty object in the response body
    */
   test('Attempt to get preferences with invalid UID', async () => {
     const invalidUID = 'invalid'; // An invalid UID example
     const res = await request(app).get('/get/pref?p1=' + invalidUID);
-    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+    expect(res.status).toStrictEqual(500); 
   });
 
   /**
@@ -1037,9 +1105,14 @@ describe('/get/pref endpoint', () => {
    */
   test('Attempt to get preferences without UID', async () => {
     const res = await request(app).get('/get/pref');
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+    expect(res.status).toStrictEqual(500); 
   });
   
+  //Test: Force to enter error catching block
+  //Input: All parameters are "ForceError"
+  // Expected status code: 500
+  //Expected behaviour: No changes made to the database, Force Error is catched and returned
+  //Expected output error text: Error querying the databaseError: Forced Error
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/get/pref?p1='+'ForceError' );
@@ -1065,14 +1138,14 @@ describe('/delete/pref endpoint', () => {
   /**
    * Test: Attempt to delete preferences with an invalid UID
    * Input: Invalid UID in the query parameters
-   * Expected status code: 200 (assuming the route handles invalid UID cases gracefully)
-   * Expected behavior: No preferences are deleted, and a message indicating no rows were deleted is returned
-   * Expected output: 'No preferences were deleted. Check the values in your DELETE query.' in the response body
+   * Expected status code: 500
+   * Expected behavior: No preferences are deleted
+   * Expected output: An error message indicating missing UID or invalid request
    */
   test('Attempt to delete preferences with invalid UID', async () => {
     const invalidUID = 'invalid'; // An invalid UID example
     const res = await request(app).get('/delete/pref?p1=' + invalidUID);
-    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+    expect(res.status).toStrictEqual(500); 
   });
 
   /**
@@ -1084,9 +1157,15 @@ describe('/delete/pref endpoint', () => {
    */
   test('Attempt to delete preferences without UID', async () => {
     const res = await request(app).get('/delete/pref');
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+    expect(res.status).toStrictEqual(500); 
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/delete/pref?p1='+'ForceError' );
@@ -1106,11 +1185,14 @@ describe('/get/pref_list endpoint', () => {
   test('Get available preferences from the database', async () => {
     const res = await request(app).get('/get/pref_list');
     expect(res.status).toStrictEqual(200);
-    // Add more specific assertions based on your expected output
-    // For example, you can check the array length, specific preferences, etc.
-    // Ensure that the response body matches the expected structure and data from the database
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/get/pref_list?p1='+'ForceError' );
@@ -1119,12 +1201,12 @@ describe('/get/pref_list endpoint', () => {
   });
 });
 
-describe('/get/dietReq endpoint empty', () => {
+describe('/get/dietReq endpoint empty before /add/dietReq', () => {
   /**
-   * Test: Retrieve all requests for being a dietitian
+   * Test: Retrieve all requests for being a dietitian when no request is being made
    * Expected status code: 200
    * Expected behavior: Empty, no request being made
-   * Expected output: An array of dietitian requests in the response body
+   * Expected output: Empty Array
    */
   test('Retrieve all requests for being a dietitian', async () => {
   const res = await request(app).get('/get/dietReq');
@@ -1150,15 +1232,21 @@ describe('/add/dietReq endpoint', () => {
   /**
    * Test: Attempt to send a request without providing a UID
    * Input: No UID provided in the query parameters
-   * Expected status code: 500 (or appropriate error status code)
+   * Expected status code: 500 
    * Expected behavior: Endpoint not found due to missing UID
    * Expected output: An error message indicating missing UID or invalid request
    */
   test('Attempt to send a request without providing a UID', async () => {
     const res = await request(app).get('/add/dietReq');
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+    expect(res.status).toStrictEqual(500); 
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/add/dietReq?p1='+'ForceError' );
@@ -1180,6 +1268,12 @@ describe('/get/dietReq endpoint', () => {
     
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/get/dietReq?p1='+'ForceError' );
@@ -1194,7 +1288,7 @@ describe('/approve/dietReq endpoint', () => {
    * Input: A valid user ID (UID) for a dietitian request
    * Expected status code: 200
    * Expected behavior: Approve the dietitian request, add the user to the dietitian table,
-   *                    and remove the request from the dietitian request table
+   *                    and remove the request from the dietitian request table, remove the user from usertable
    * Expected output: 'SUCCESS approve being dietician request' in the response body
    */
   test('Approve request for being a dietitian', async () => {
@@ -1204,6 +1298,12 @@ describe('/approve/dietReq endpoint', () => {
     
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/approve/dietReq?p1='+'ForceError' );
@@ -1240,6 +1340,12 @@ describe('/remove/dietReq endpoint', () => {
 
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/remove/dietReq?p1='+'ForceError' );
@@ -1258,8 +1364,8 @@ describe('/get/dietician endpoint', () => {
    * Expected output: Dietitian information in the response body
    */
   test('Get dietitian with email and update Firebase token', async () => {
-    const validEmail = 'john.doe@example.com'; // Replace with a valid dietitian email
-    const validToken = 'newFirebaseToken'; // Replace with a valid Firebase token
+    const validEmail = 'john.doe@example.com'; 
+    const validToken = 'newFirebaseToken'; 
     const res = await request(app).post('/get/dietician').send({
       p1:validEmail,
       p2:validToken
@@ -1267,15 +1373,6 @@ describe('/get/dietician endpoint', () => {
     
     expect(res.status).toStrictEqual(200);
     
-    // Add assertions based on your actual response structure and the expected behavior
-    // of retrieving dietitian information and updating the Firebase token.
-    // You can check if the response body contains the expected dietitian information.
-    // For example, if you have a response like:
-    // { DID: 1, FirstName: 'John', LastName: 'Doe', Email: 'dietitian@example.com', ProfileURL: 'profile.jpg' }
-    // You can use expect(res.body.Email).toBe(validEmail);
-    // Adjust these assertions based on your actual implementation.
-
-    // Assuming the response contains dietitian information
     expect(res.body).toHaveProperty('DID');
     expect(res.body).toHaveProperty('FirstName');
     expect(res.body).toHaveProperty('LastName');
@@ -1286,6 +1383,12 @@ describe('/get/dietician endpoint', () => {
     await request(app).get(`/delete/dietician?p1=${DID}`)
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
 
     const email="ForceError"
@@ -1306,11 +1409,11 @@ describe('/get/users_type endpoint', () => {
    * Test: Get user type based on email
    * Input: Valid email for a user
    * Expected status code: 200
-   * Expected behavior: Retrieve the user type (user, dietician, admin) based on the email
+   * Expected behavior: Retrieve the user type user based on the email
    * Expected output: Response body containing the user type
    */
   test('Get user type for a user email', async () => {
-    const validUserEmail = 'user@example.com'; // Replace with a valid user email
+    const validUserEmail = 'user@example.com'; 
     const res = await request(app).get(`/get/users_type?p1=${validUserEmail}`);
 
     expect(res.status).toStrictEqual(200);
@@ -1321,11 +1424,11 @@ describe('/get/users_type endpoint', () => {
    * Test: Get user type based on email for a dietitian
    * Input: Valid email for a dietitian
    * Expected status code: 200
-   * Expected behavior: Retrieve the user type (user, dietician, admin) based on the email
+   * Expected behavior: Retrieve the user type dietician based on the email
    * Expected output: Response body containing the user type
    */
   test('Get user type for a dietitian email', async () => {
-    const validDietitianEmail = 'dietitian@example.com'; // Replace with a valid dietitian email
+    const validDietitianEmail = 'dietitian@example.com'; 
     const res = await request(app).get(`/get/users_type?p1=${validDietitianEmail}`);
 
     expect(res.status).toStrictEqual(200);
@@ -1336,11 +1439,11 @@ describe('/get/users_type endpoint', () => {
    * Test: Get user type based on email for an admin
    * Input: Valid email for an admin
    * Expected status code: 200
-   * Expected behavior: Retrieve the user type (user, dietician, admin) based on the email
+   * Expected behavior: Retrieve the user type admin based on the email
    * Expected output: Response body containing the user type
    */
   test('Get user type for an admin email', async () => {
-    const validAdminEmail = 'admin@example.com'; // Replace with a valid admin email
+    const validAdminEmail = 'admin@example.com'; 
     const res = await request(app).get(`/get/users_type?p1=${validAdminEmail}`);
 
     expect(res.status).toStrictEqual(200);
@@ -1349,19 +1452,25 @@ describe('/get/users_type endpoint', () => {
 
   /**
    * Test: Get user type for an email that does not exist
-   * Input: Invalid email that does not exist in any user type
-   * Expected status code: 200 (or appropriate error status code)
+   * Input: email that does not exist in any user type
+   * Expected status code: 200 
    * Expected behavior: Return a message indicating that the entry does not exist
    * Expected output: Response body indicating that the entry does not exist
    */
   test('Get user type for a non-existent email', async () => {
-    const invalidEmail = 'nonexistent@example.com'; // Replace with a non-existent email
+    const invalidEmail = 'nonexistent@example.com'; 
     const res = await request(app).get(`/get/users_type?p1=${invalidEmail}`);
 
-    expect(res.status).toStrictEqual(200); // Assuming the route handles non-existent email cases gracefully
+    expect(res.status).toStrictEqual(200); 
     expect(res.body.Message).toBe('Does not exist\n');
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/get/users_type?p1='+'ForceError' );
@@ -1379,25 +1488,23 @@ describe('/get/recipe_info endpoint', () => {
    * Expected output: Response body containing the recipe information
    */
   test('Get recipe info using RID', async () => {
-    const validRID = 52767; // Replace with valid RIDs fix this
+    const validRID = 52767; 
 
     const res = await request(app)
       .get(`/get/recipe_info?p1=${validRID}`);
 
     expect(res.status).toStrictEqual(200);
-    // Add more assertions based on the expected output format
-    // For example, check if the response body contains the expected recipe information
   });
 
   /**
    * Test: Get recipe info with invalid or non-existent RID(s)
-   * Input: Invalid or non-existent RID(s)
+   * Input: non-existent RID(s)
    * Expected status code: 200
    * Expected behavior: Return an empty response as there is no recipe information for the provided RID(s)
    * Expected output: Empty response body
    */
   test('Get recipe info with invalid or non-existent RID(s)', async () => {
-    const invalidRID=999; // Replace with invalid or non-existent RIDs
+    const invalidRID=999; 
 
     const res = await request(app)
       .get(`/get/recipe_info?p1=${invalidRID}=`);
@@ -1406,6 +1513,12 @@ describe('/get/recipe_info endpoint', () => {
     expect(res.body).toStrictEqual({});
   });
 
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/get/recipe_info?p1='+'ForceError' );
@@ -1417,7 +1530,12 @@ describe('/get/recipe_info endpoint', () => {
 
 //Interface GET https://20.104.197.24:443/delete/users
 describe('/delete/users endpoint',  () => {
-
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block', async () => {
      
     const res = await request(app).get('/delete/users?p1=' +"ForceError");
@@ -1441,36 +1559,49 @@ describe('/delete/users endpoint',  () => {
   /**
    * Test: Attempt to delete a user with an invalid UID
    * Input: Invalid UID in the query parameters
-   * Expected status code: 200 (assuming the route handles invalid UID cases gracefully)
-   * Expected behavior: No user is deleted, and a message indicating no rows were deleted is returned
-   * Expected output: 'No rows were deleted. Check the values in your DELETE query.' in the response body
+   * Expected status code: 500
+   * Expected behavior: value not found due to missing UID
+   * Expected output: An error message indicating missing UID or invalid request
    */
   test('Attempt to delete user with invalid UID', async () => {
     const invalidUID = 'invalid'; // An invalid UID example
     const res = await request(app).get('/delete/users?p1=' +invalidUID);
-    expect(res.status).toStrictEqual(500); // Assuming the route handles invalid UID cases gracefully
+    expect(res.status).toStrictEqual(500); 
   });
 
   /**
    * Test: Attempt to delete a user without providing a UID
    * Input: No UID provided in the query parameters
    * Expected status code: 500
-   * Expected behavior: Endpoint not found due to missing UID
+   * Expected behavior: value not found due to missing UID
    * Expected output: An error message indicating missing UID or invalid request
    */
   test('Attempt to delete user without UID', async () => {
     const res = await request(app).get('/delete/users');
-    expect(res.status).toStrictEqual(500); // Assuming the route returns a 404 for missing UID
+    expect(res.status).toStrictEqual(500); 
   });
 });
 
 describe('Test case for helper function',  () => {
+  /*Test: Force to enter error catching block
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block for delete dietician', async () => {
      
     const res = await request(app).get('/delete/dietician?p1=' +"ForceError");
     expect(res.status).toStrictEqual(500); 
     expect(res.text).toStrictEqual("Error querying the databaseError: Forced Error"); 
   });
+
+  /*Test: Force to enter error catching block for
+  Input: All parameters are "ForceError"
+  Expected status code: 500
+  Expected behaviour: No changes made to the database, Force Error is catched and returned
+  Expected output error text: Error querying the databaseError: Forced Error
+  */
   test('should handle database error and enter catch block for delete UPC and also clear up the UPC added', async () => {
     
     await request(app).get('/delete/UPC?p1=' +UPC);
