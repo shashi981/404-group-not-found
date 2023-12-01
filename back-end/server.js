@@ -410,6 +410,7 @@ app.get("/update/users", async (req,res)=>{
 //done
 //ChatGPT usage: Partial
 app.get("/get/items", async (req,res)=>{
+  try{
     const UID=req.query.p1
 
     if(UID==="ForceError"){
@@ -450,12 +451,18 @@ app.get("/get/items", async (req,res)=>{
     console.log('SUCCESS Get items') 
 
     res.json(items)
+      
+  } catch (error) {
+    console.error('Error:', error.stack)
+    database_error(res, error)
+  }
 })
 
 //add items
 //done
 //ChatGPT usage: Partial
 app.post("/add/items", async (req, res) => {
+  try {
     const UID = req.body.p1
     const UPCs = req.body.p2
     const ExpireDates = req.body.p3
@@ -525,6 +532,10 @@ app.post("/add/items", async (req, res) => {
       console.log('Values not added for UPCs: ' + returnStatement)
       res.json({ message: 'Values not added for UPCs: ' + returnStatement })
     }
+  } catch (error) {
+    console.error('Error:', error.stack)
+    database_error(res, error)
+  }
 })
 
 

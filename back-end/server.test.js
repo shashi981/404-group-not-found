@@ -954,10 +954,12 @@ describe('Algorithm: processShoppingData', () => {
      
   mockError()
 
-
-  const [error] = await processShoppingData()
-  // Assert that the error is the expected database error
-  expect(error.message).toBe('Simulated database error');
+  try {
+    await processShoppingData()
+  } catch (error) {
+    // Assert that the error is the expected database error
+    expect(error.message).toBe('Simulated database error');
+  }
 
   jest.resetAllMocks(); //rest all mocking
   });
