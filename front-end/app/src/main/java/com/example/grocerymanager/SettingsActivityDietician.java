@@ -134,7 +134,7 @@ public class SettingsActivityDietician extends AppCompatActivity {
             int DID = dieticianData.getDID();
             Log.d(TAG, "Deleting user with ID: " + DID);
             Request request = new Request.Builder()
-                    .url(serverURL + "delete/users?p1=" + DID)
+                    .url(serverURL + "delete/dietician?p1=" + DID)
                     .build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
