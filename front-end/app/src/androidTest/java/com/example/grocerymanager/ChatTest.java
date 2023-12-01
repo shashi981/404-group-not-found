@@ -49,12 +49,12 @@ public class ChatTest {
         // Step 1: User signs in using google sign in
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
 
-        onView(ViewMatchers.withId(R.id.user_button)).perform(ViewActions.click());
-        Espresso.onView(withText("Welcome Back!"))
-                .check(matches(ViewMatchers.isDisplayed()));
+        onView(withId(R.id.user_button)).perform(ViewActions.click());
+        onView(withText("Welcome Back!"))
+                .check(matches(isDisplayed()));
 
         // Step 2: User opens the “Chat With a Dietician” screen
-        onView(ViewMatchers.withId(R.id.chat_icon_home)).perform(ViewActions.click());
+        onView(withId(R.id.chat_icon_home)).perform(ViewActions.click());
         for(int i = 0; i < 100; i++){
             onView(withId(R.id.menu_bar_icon_chat)).check(matches(isDisplayed()));
         }
@@ -87,11 +87,11 @@ public class ChatTest {
         onView(withId(R.id.sendButton)).check(matches(isDisplayed()));
 
         // Step 6: The user inputs a text message in the text input field
-        onView(ViewMatchers.withId(R.id.inputMessage)).perform(ViewActions.typeText(message));
+        onView(withId(R.id.inputMessage)).perform(ViewActions.typeText(message));
         Espresso.closeSoftKeyboard();
 
         // Step 7: The user presses the send icon
-        onView(ViewMatchers.withId(R.id.sendButton)).perform(ViewActions.click());
+        onView(withId(R.id.sendButton)).perform(ViewActions.click());
         for(int j = 0; j < 150; j++){
             onView(withId(R.id.edit_button)).check(doesNotExist());
             onView(withId(R.id.delete_button)).check(doesNotExist());
