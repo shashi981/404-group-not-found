@@ -9,8 +9,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import org.junit.Rule;
@@ -258,7 +256,7 @@ public class ManageItemsTest {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
         onView(withId(R.id.user_button)).perform(ViewActions.click());
         onView(withText("Welcome Back!"))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
 
         // Step 2: User opens the “Scan Groceries” screen
         onView(withId(R.id.scan_groceries_button_home)).perform(ViewActions.click());
