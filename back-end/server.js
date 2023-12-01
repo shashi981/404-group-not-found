@@ -336,7 +336,6 @@ app.post("/add/users", async (req,res)=>{
 //done
 //ChatGPT usage: No
 app.get("/delete/users", async (req,res)=>{
-  try{
     const UID=req.query.p1
 
     if(UID==="ForceError"){
@@ -356,11 +355,6 @@ app.get("/delete/users", async (req,res)=>{
   
     console.log('SUCCESS DELETED USER')
     query_success(res, 'DELETED USER')
-      
-    } catch(error){
-        console.error('Error:', error.stack)
-        database_error(res, error)
-    }
 })
 
 //update user
@@ -552,7 +546,6 @@ function fetchDataFromAPI(url) {
 //done
 //ChatGPT usage: No
 app.post("/add/items_man", async (req,res)=>{
-  try{
     const UID=req.body.p1
     const UPC = req.body.p2 // should be -1
     const ExpireDate = req.body.p3 
@@ -595,11 +588,6 @@ app.post("/add/items_man", async (req,res)=>{
 
     console.log('SUCCESS ADDED items') 
     query_success(res, 'SUCCESS ADDED ITEMS MANUAL')
-   
-  }catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //delete items
@@ -631,7 +619,6 @@ app.post("/delete/items", async (req,res)=>{
 })
 
 app.get("/delete/UPC", async (req,res)=>{
-  try{
     const UPC=req.query.p1
 
     if(UPC==="ForceError"){
@@ -645,18 +632,12 @@ app.get("/delete/UPC", async (req,res)=>{
     
     console.log('SUCCESS DELETE Groceries') 
     query_success(res, 'SUCCESS DELETE Groceries')
-    
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //done
 //update items
 //ChatGPT usage: Partial
 app.post("/update/items", async (req,res)=>{
-  try{
     const UID=req.body.p1
     const ItemID=req.body.p2 
     const UPC = req.body.p3 
@@ -696,18 +677,12 @@ app.post("/update/items", async (req,res)=>{
     })
 
   query_success(res, 'SUCCESS Updated items')
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //add pref
 //done
 //ChatGPT usage: No
 app.post("/add/pref", async (req,res)=>{
-
-  try{
     const UID=req.body.p1
     const Pref = req.body.p2 
     const values = [];
@@ -735,18 +710,12 @@ app.post("/add/pref", async (req,res)=>{
 
     console.log('SUCCESS ADDED Pref') 
     query_success(res, 'SUCCESS ADDED Pref')
-  
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  } 
 })
 
 //delete pref
 //done
 //ChatGPT usage: No
 app.get("/delete/pref", async (req,res)=>{
-  try{
     const UID=req.query.p1
 
     if(UID==="ForceError"){
@@ -767,18 +736,12 @@ app.get("/delete/pref", async (req,res)=>{
     
     console.log('SUCCESS DELETE Pref') 
     query_success(res, 'SUCCESS DELETE Pref')
-    
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //get preference
 //done
 //ChatGPT usage: No
 app.get("/get/pref", async (req,res)=>{
-  try{
     const UID=req.query.p1
 
     if(UID==="ForceError"){
@@ -806,18 +769,12 @@ app.get("/get/pref", async (req,res)=>{
       })
       console.log('SUCCESS select Pref') 
       res.json(formattedResults)
-      
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //get available preference from database
 //done
 //ChatGPT usage: Partial
 app.get("/get/pref_list", async (req,res)=>{
-  try{
 
     if(req.query.p1==="ForceError"){
       throw new Error("Forced Error");
@@ -831,18 +788,12 @@ app.get("/get/pref_list", async (req,res)=>{
       return {Pref:result.Pref};
     });
     res.json(formattedResults)
-  } catch(error){
-      console.error('Error:', error.stack);
-      database_error(res, error);
-  }
 })
 
 //request for being a dietician
 //done
 //ChatGPT usage: No
 app.get("/add/dietReq", async (req,res)=>{
-
-  try{
     const UID=req.query.p1
 
     if(UID==="ForceError"){
@@ -863,11 +814,6 @@ app.get("/add/dietReq", async (req,res)=>{
 
     console.log('Request for being dietician made!!' + getcon().threadId)
     query_success(res, 'Request for being dietician made!!')
-    
-  } catch(error){
-      console.error('Error:', error.stack);
-      database_error(res, error);
-  }
 })
 
 //get all request for being a dietician
@@ -912,7 +858,6 @@ app.get("/get/dietReq", async (req,res)=>{
 //done
 //ChatGPT usage: Partial
 app.get("/approve/dietReq", async (req,res)=>{
-  try{
     const UID=req.query.p1
     console.log(UID)
 
@@ -934,18 +879,12 @@ app.get("/approve/dietReq", async (req,res)=>{
 
     console.log('SUCCESS approve being dietician request') 
     query_success(res, 'SUCCESS approve being dietician request')
-  
-  }catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //remove request for being a dietician 
 //done
 //ChatGPT usage: No
 app.get("/remove/dietReq", async (req,res)=>{
-  try{
     const UID=req.query.p1
     console.log(UID)
 
@@ -960,11 +899,6 @@ app.get("/remove/dietReq", async (req,res)=>{
 
     console.log('SUCCESS delete being dietician request') 
     query_success(res, 'SUCCESS delete being dietician request')
-  
-  }catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 
@@ -972,7 +906,6 @@ app.get("/remove/dietReq", async (req,res)=>{
 //done
 //ChatGPT usage: No
 app.post("/get/dietician", async (req,res)=>{
-  try{
   const Email=req.body.p1
   const Token=req.body.p2
   
@@ -1000,14 +933,9 @@ app.post("/get/dietician", async (req,res)=>{
   console.log("DIETICIAN GET")
 
   res.json(responseObject);
-  }catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 app.get("/delete/dietician", async (req,res)=>{
-  try{
     const DID=req.query.p1
 
     if(DID==="ForceError"){
@@ -1019,11 +947,6 @@ app.get("/delete/dietician", async (req,res)=>{
   
     console.log('SUCCESS DELETED Dietician')
     query_success(res, 'DELETED Dietician')
-
-    } catch(error){
-        console.error('Error:', error.stack)
-        database_error(res, error)
-    }
 })
 
 //give the user type of the email if exist: admin, dietician or user else return does not exist
@@ -1222,7 +1145,6 @@ app.get("/get/recipe", async (req,res)=>{
 //done
 //ChatGPT usage: No
 app.get("/get/recipe_info", async (req,res)=>{
-  try{
     
     const RID=req.query.p1 ? req.query.p1.split(',') : []
 
@@ -1249,11 +1171,6 @@ app.get("/get/recipe_info", async (req,res)=>{
       console.log('SUCCESS return recipe_info') 
       console.log(formattedResults)
       res.json(formattedResults)
-      
-  } catch(error){
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
 })
 
 //the schedule for shopping reminder algorithm 
@@ -1266,7 +1183,6 @@ cron.schedule(schedule, () => {
 //done 
 //ChatGPT usage: Partial
 async function processShoppingData() {
-  try{
     console.log("algorithm tiggered")
     // User-defined settings
     const reminderPeriodDays = 5
@@ -1369,9 +1285,6 @@ async function processShoppingData() {
         }
       }
     })
-  }catch(error){
-    //console.error('Error:', error)
-  }
 }
 
 // Call the function to process shopping data and generate reminders
@@ -1386,7 +1299,6 @@ cron.schedule(schedule, () => {
 //ChatGPT usage: Partial
 async function SendExpiryReminder(){
   //get all users that have items about to expiry
-  try{
     const currentDate = new Date()
 
     const DisableSafeMode='SET SQL_SAFE_UPDATES = 0;'
@@ -1474,9 +1386,6 @@ async function SendExpiryReminder(){
         Messaging(message);
       })
     }
-  }catch(error){
-    //console.error('Error:', error)
-  }
 }
 
 //the firebase notification function 
