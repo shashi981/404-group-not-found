@@ -223,14 +223,14 @@ public class ManageItemsTest {
 
         // Verify that the item is updated in the inventory
         onView(withText("Quantity: " + newQuantity))
-                .check(ViewAssertions.matches(isDisplayed()));
+                .check(matches(isDisplayed()));
 
         // Get the current date in the desired format (yyyy-MM-dd)
         String expectedDate = getCurrentDate();
 
         // Check if the displayed date matches the expected date
         onView(withText("Expiry Date: " + expectedDate))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
     }
 
     private void deleteItemInInventory(String itemName) {

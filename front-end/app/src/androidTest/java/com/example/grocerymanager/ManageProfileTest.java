@@ -10,7 +10,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 
-import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
@@ -215,7 +214,7 @@ public class ManageProfileTest {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
         onView(withId(R.id.user_button)).perform(click());
         onView(withText("Welcome Back!"))
-                .check(matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
     }
 
     private void requestDietician() {
