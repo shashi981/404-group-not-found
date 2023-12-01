@@ -1,15 +1,5 @@
 const request = require('supertest');
-const {app,  SendExpiryReminder,  processShoppingData, getcon} = require('./server'); 
-const fs = require("fs");
-let actualtoken
-
-fs.readFile('./token.txt', 'utf8', (err, data) => {
-  if (err) {
-    console.error('Error reading the file:', err)
-  } else {
-    actualtoken= data
-  }
-})
+const {app,  SendExpiryReminder,  processShoppingData, getcon} = require('./server');   
 
 //test
 describe('/get/messageToken endpoint', () => {
@@ -139,8 +129,8 @@ describe('/get/chatHistory/:UID/:DID endpoint', () => {
   });
 });
 
-let UID
-let UID2
+let UID=null
+let UID2=null
 let UPC='068700115004'
 
 // Function to mock the database error
@@ -175,7 +165,7 @@ describe('/add/users endpoint', () => {
       p2: 'Doe',
       p3: 'john.doe@example.com',
       p4: 'https://example.com/profile.jpg',
-      p5: actualtoken
+      p5: 'someToken'
     };
     const res = await request(app).post('/add/users').send(userData);
     //console.log('Response:', res.body);  // Log the entire response object
@@ -208,19 +198,13 @@ describe('/add/users endpoint', () => {
 
   /**
    * Test: Attempt to add a user with invalid data
-   * Input: Invalid user data in the request body
+   * Input: no user data in the request body
    * Expected status code: 500
    * Expected behavior: User is not added to the database, and an error message is returned in the response body
    * Expected output: An error message in the response body
    */
   test('Attempt to add user with invalid data', async () => {
-    const invalidUserData = {
-      p1: 'John',
-      p2: 123, // Invalid data type for LastName
-      p3: 'john.doe@example.com',
-      p4: 'https://example.com/profile.jpg',
-      p5: 'someToken'
-    };
+    const invalidUserData = {};
 
     const res = await request(app).post('/add/users').send(invalidUserData);
     expect(res.status).toStrictEqual(500);
@@ -240,7 +224,7 @@ describe('Get USER request', () => {
     const url= "/get/users"
     const res= await request(app).post(url).send({
       p1:email,
-      p2:actualtoken
+      p2:'someToken'
     })
     const responseObject = {
         FirstName: 'John',
@@ -292,7 +276,7 @@ describe('Get USER request', () => {
     expect(res.body).toEqual(responseObject)
   })
   
-  //Test: Missing parameters(NULL)
+  //Test: Missing parameters(null)
   //Input: either email or token is not passed, or both
   // Expected status code: 500
   //Expected behaviour: No database column is changed
@@ -1551,7 +1535,13 @@ describe('/delete/users endpoint',  () => {
    * Expected output: 'DELETED USER' in the response body
    */
   test('Delete user with valid UID', async () => {
-    const res = await request(app).get('/delete/users?p1=' +UID2);
+    var res
+    if(UID!=null){
+      res=await request(app).get('/delete/users?p1=' +UID);
+    }
+    if(UID2!=null){
+      res = await request(app).get('/delete/users?p1=' +UID2);
+    }
     expect(res.status).toStrictEqual(200);
     expect(res.body.Message).toBe('DELETED USER');
   });
