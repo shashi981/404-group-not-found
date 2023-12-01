@@ -116,8 +116,7 @@ wss.on('connection', async (ws,req) => {
       
       // Parse the message (assuming it's in JSON format)
       let parsedMessage = JSON.parse(message);
-      const UID=parsedMessage.UID
-      const DID =parsedMessage.DID
+      
       // Store in the database
       let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)'
       const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
