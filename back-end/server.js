@@ -8,9 +8,6 @@ const cron = require("node-cron")
 const admin = require("firebase-admin")
 const WebSocket = require("ws")
 
-let onlineUsers = {}; // { userId: socketId, ... }
-let onlineDieticians = {}; // { dieticianId: socketId, ... }
-
 let userConnections = {};
 let dieticianConnections = {};
 
