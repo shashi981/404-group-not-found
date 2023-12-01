@@ -1,5 +1,5 @@
 const request = require('supertest');
-const {app,  SendExpiryReminder,  processShoppingData, getcon} = require('./server');   
+const {app,  SendExpiryReminder,  processShoppingData} = require('./server');   
 
 //test
 describe('/get/messageToken endpoint', () => {

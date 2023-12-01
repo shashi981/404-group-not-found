@@ -121,7 +121,7 @@ wss.on('connection', async (ws,req) => {
       let query = 'INSERT INTO CHAT (UID, DID, Text, Time, FROM_USER) VALUES (?, ?, ?, ?, ?)'
       const [result]=await con.promise().query(query, [parsedMessage.UID, parsedMessage.DID, parsedMessage.Text, new Date(), parsedMessage.FROM_USER])
 
-      console.log('Message saved');
+      console.log('Message saved', result);
 
       forwardMessage(parsedMessage.FROM_USER, parsedMessage.DID, parsedMessage.UID, parsedMessage.Text);
 
