@@ -109,40 +109,40 @@ public class ManageItemsTest {
 
     private void saveItemToInventory(String itemName, String itemQuantity) {
         // Step 9: The user presses the “save to inventory” button
-        Espresso.onView(ViewMatchers.withId(R.id.add_items_to_inventory)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.add_items_to_inventory)).perform(ViewActions.click());
 
         // Step 10: The user is redirected to the “Manage Inventory” screen. The new item is listed on the screen
-        Espresso.onView(ViewMatchers.withText(itemName))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+        onView(ViewMatchers.withText(itemName))
+                .check(matches(ViewMatchers.isDisplayed()));
 
 
         String expectedDate = getCurrentDate();
 
-        Espresso.onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
+        onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
-        Espresso.onView(ViewMatchers.withText("Quantity: " + itemQuantity))
+        onView(ViewMatchers.withText("Quantity: " + itemQuantity))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 
     private void addItemToInventory(String itemName) {
         // Step 5: The app shows two text input fields, a button for entering the expiry date, a button to add an item, and a button to save to inventory
-        Espresso.onView(withId(R.id.item_name)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.item_quantity)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.set_expiry_date)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.add_item_to_list)).check(matches(isDisplayed()));
-        Espresso.onView(withId(R.id.add_items_to_inventory)).check(matches(isDisplayed()));
+        onView(withId(R.id.item_name)).check(matches(isDisplayed()));
+        onView(withId(R.id.item_quantity)).check(matches(isDisplayed()));
+        onView(withId(R.id.set_expiry_date)).check(matches(isDisplayed()));
+        onView(withId(R.id.add_item_to_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.add_items_to_inventory)).check(matches(isDisplayed()));
 
         // Step 7a: The user does not fill out all inputs.
-        Espresso.onView(ViewMatchers.withId(R.id.item_name)).perform(ViewActions.typeText(itemName));
+        onView(ViewMatchers.withId(R.id.item_name)).perform(ViewActions.typeText(itemName));
         Espresso.closeSoftKeyboard();
 
-        Espresso.onView(ViewMatchers.withId(R.id.set_expiry_date)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.set_expiry_date)).perform(ViewActions.click());
 
-        Espresso.onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
+        onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
 
         // Step 7: The user presses the “add item” button
-        Espresso.onView(ViewMatchers.withId(R.id.add_item_to_list)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.add_item_to_list)).perform(ViewActions.click());
 
         // Step 7a1: The app does not add the item to the list.
         Espresso.onView(withId(R.id.item_name)).check(matches(isDisplayed()));
@@ -169,7 +169,7 @@ public class ManageItemsTest {
 
         // Step 6: The user inputs the new item and quantity into the two text input fields, and the expiry date via the button
         Espresso.onView(ViewMatchers.withId(R.id.item_name)).perform(ViewActions.typeText(itemName));
-        Espresso.onView(ViewMatchers.withId(R.id.item_quantity)).perform(ViewActions.typeText(quantity));
+        onView(ViewMatchers.withId(R.id.item_quantity)).perform(ViewActions.typeText(quantity));
         Espresso.closeSoftKeyboard();
 
         Espresso.onView(ViewMatchers.withId(R.id.set_expiry_date)).perform(ViewActions.click());
@@ -189,7 +189,7 @@ public class ManageItemsTest {
         Espresso.onView(ViewMatchers.withText("Expiry Date: " + expectedDate))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
-        Espresso.onView(ViewMatchers.withText("Quantity: " + quantity))
+        onView(ViewMatchers.withText("Quantity: " + quantity))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
         onView(withId(R.id.edit_button)).check(matches(isDisplayed()));
         onView(withId(R.id.delete_button)).check(matches(isDisplayed()));
@@ -201,10 +201,10 @@ public class ManageItemsTest {
         Espresso.onView(ViewMatchers.withText(itemName))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
-        Espresso.onView(ViewMatchers.withId(R.id.edit_button)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.edit_button)).perform(ViewActions.click());
 
         // Edit the quantity
-        Espresso.onView(ViewMatchers.withId(R.id.edit_quantity))
+        onView(ViewMatchers.withId(R.id.edit_quantity))
                 .perform(ViewActions.replaceText(newQuantity));
 
         Espresso.closeSoftKeyboard();
@@ -212,17 +212,17 @@ public class ManageItemsTest {
 
 
         // Click the "Set Expiry Date" button
-        Espresso.onView(ViewMatchers.withId(R.id.edit_expiry_date_button)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.edit_expiry_date_button)).perform(ViewActions.click());
 
         // Click the "OK" or "Done" button to select the current date
         Espresso.onView(ViewMatchers.withText("OK")).perform(ViewActions.click());
 
         // Click the "Save" button
-        Espresso.onView(ViewMatchers.withId(R.id.save_button))
+        onView(ViewMatchers.withId(R.id.save_button))
                 .perform(ViewActions.click());
 
         // Verify that the item is updated in the inventory
-        Espresso.onView(ViewMatchers.withText("Quantity: " + newQuantity))
+        onView(ViewMatchers.withText("Quantity: " + newQuantity))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
         // Get the current date in the desired format (yyyy-MM-dd)
@@ -238,7 +238,7 @@ public class ManageItemsTest {
         Espresso.onView(ViewMatchers.withText(itemName))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
-        Espresso.onView(ViewMatchers.withId(R.id.delete_button)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.delete_button)).perform(ViewActions.click());
 
         // Verify that the item is removed from the inventory
         Espresso.onView(ViewMatchers.withText(itemName))
@@ -256,18 +256,18 @@ public class ManageItemsTest {
 
         // Step 1: User signs in using google sign in
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
-        Espresso.onView(ViewMatchers.withId(R.id.user_button)).perform(ViewActions.click());
-        Espresso.onView(ViewMatchers.withText("Welcome Back!"))
+        onView(ViewMatchers.withId(R.id.user_button)).perform(ViewActions.click());
+        onView(ViewMatchers.withText("Welcome Back!"))
                 .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
 
         // Step 2: User opens the “Scan Groceries” screen
-        Espresso.onView(ViewMatchers.withId(R.id.scan_groceries_button_home)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.scan_groceries_button_home)).perform(ViewActions.click());
 
         // Step 3: The app shows two options: Scan item UPC code and Manually add items.
         onView(withId(R.id.manual_scanner)).check(matches(isDisplayed()));
         onView(withId(R.id.scanBarcodeButton)).check(matches(isDisplayed()));
 
         // Step 4: User opens the “Manually Add Items” screen.
-        Espresso.onView(ViewMatchers.withId(R.id.manual_scanner)).perform(ViewActions.click());
+        onView(ViewMatchers.withId(R.id.manual_scanner)).perform(ViewActions.click());
     }
 }
