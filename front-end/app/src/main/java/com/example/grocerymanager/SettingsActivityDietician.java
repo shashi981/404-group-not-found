@@ -36,8 +36,7 @@ public class SettingsActivityDietician extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     private GoogleSignInAccount googleAccount;
-    private NetworkManager networkManager;
-    private OkHttpClient client;
+
 
     //    ChatGPT Usage: No. Adapted from other similar implementation in other activities.
     @Override
@@ -125,8 +124,8 @@ public class SettingsActivityDietician extends AppCompatActivity {
     //    ChatGPT Usage: No.
     private void deleteAccount() {
         // need to connect this to database by deleting entries
-        networkManager = new NetworkManager(this);
-        client = networkManager.getClient();
+        NetworkManager networkManager = new NetworkManager(this);
+        OkHttpClient client = networkManager.getClient();
 
 
         String serverURL = "https://20.104.197.24/";
