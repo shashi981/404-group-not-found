@@ -190,7 +190,7 @@ public class ManageItemsTest {
                 .check(matches(isDisplayed()));
 
         onView(withText("Quantity: " + quantity))
-                .check(matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
         onView(withId(R.id.edit_button)).check(matches(isDisplayed()));
         onView(withId(R.id.delete_button)).check(matches(isDisplayed()));
     }
@@ -199,7 +199,7 @@ public class ManageItemsTest {
 
         // Check if the item is added to the inventory
         onView(withText(itemName))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
 
         onView(withId(R.id.edit_button)).perform(ViewActions.click());
 
@@ -223,7 +223,7 @@ public class ManageItemsTest {
 
         // Verify that the item is updated in the inventory
         onView(withText("Quantity: " + newQuantity))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(ViewAssertions.matches(isDisplayed()));
 
         // Get the current date in the desired format (yyyy-MM-dd)
         String expectedDate = getCurrentDate();

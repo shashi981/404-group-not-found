@@ -200,7 +200,7 @@ public class ManageProfileTest {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
         onView(withId(R.id.admin_button)).perform(click());
         onView(withText("Dashboard"))
-                .check(matches(ViewMatchers.isDisplayed()));
+                .check(matches(isDisplayed()));
     }
 
     private void signInDietician() {
@@ -215,7 +215,7 @@ public class ManageProfileTest {
         onView(withId(R.id.logo_login)).check(matches(withText("Grocery Manager")));
         onView(withId(R.id.user_button)).perform(click());
         onView(withText("Welcome Back!"))
-                .check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+                .check(matches(ViewMatchers.isDisplayed()));
     }
 
     private void requestDietician() {
