@@ -173,30 +173,25 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            try {
-                                JSONArray jsonArray = new JSONArray(responseBody);
-                                if (jsonArray.length() > 0) {
-                                    String numberAsString = jsonArray.getString(0);
-                                    int number = Integer.parseInt(numberAsString);
-                                    String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
-                                    Uri defProfileUri = Uri.parse(defProfile);
-                                    UserData userData;
+                            String userID = result.optString("Message", "");
+                            userID = userID.replace("[", "").replace("]", "").replace("\"", "");
+                            if (userID.length() > 0) {
+                                int number = Integer.parseInt(userID.trim());
+                                String defProfile = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fcommons.wikimedia.org%2Fwiki%2FFile%3AWindows_10_Default_Profile_Picture.svg&psig=AOvVaw2j1Lp-ZpTvx11OnK74KfzH&ust=1698889676555000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOCPxq_XoYIDFQAAAAAdAAAAABAJ";
+                                Uri defProfileUri = Uri.parse(defProfile);
+                                UserData userData;
 
-                                    if(account.getPhotoUrl() == null){
+                                if(account.getPhotoUrl() == null){
 
-                                        userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, number);
-                                    }
-                                    else{
-                                        userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
-                                    }
-
-                                    SharedPrefManager.saveUserData(MainActivity.this, userData);
-                                    launchHomeIntent();
-
+                                    userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), defProfileUri, number);
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                signOut();
+                                else{
+                                    userData = new UserData(account.getGivenName(), account.getFamilyName(), account.getEmail(), account.getPhotoUrl(), number);
+                                }
+
+                                SharedPrefManager.saveUserData(MainActivity.this, userData);
+                                launchHomeIntent();
+
                             }
                         }
                     });
