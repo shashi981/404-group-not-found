@@ -56,9 +56,9 @@ admin.initializeApp({
 const con = mysql.createConnection({
   host: "localhost",
   port: "3306",
-  user: "404GroupNotFound",
-  password: "404Group",
-  database: "grocerymanger"
+  user: "cpen321",
+  password: "grocerymanager",
+  database: "grocerymanager"
 });
 
 
