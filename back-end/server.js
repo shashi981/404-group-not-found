@@ -7,12 +7,16 @@ const moment = require("moment")
 const cron = require("node-cron")
 const admin = require("firebase-admin")
 const WebSocket = require("ws")
+
 const userRoutes = require('./userRoutes')
 const itemRoutes = require('./itemRoutes')
 const prefRoutes = require('./prefRoutes')
 const dietReqRoutes=require('./dietReqRoutes')
 const recipeRoutes=require('./recipeRoutes')
 const dieticianRoutes=require('./dieticianRoutes')
+const chatRoutes=require('./chatRoutes')
+const otherRoutes=require('./otherRoutes')
+const usertypeRoutes=require('./usertypeRoutes')
 
 let userConnections = {}
 let dieticianConnections = {}
@@ -36,6 +40,9 @@ app.use('/pref', prefRoutes)
 app.use('/dietReq', dietReqRoutes)
 app.use('/recipe', recipeRoutes)
 app.use('/dietician', dieticianRoutes)
+app.use(usertypeRoutes)
+app.use(chatRoutes)
+app.use(otherRoutes)
 
 //use this to get more recipes when have the time to do so
 /*
@@ -172,118 +179,6 @@ function forwardMessage(fromBit, DID, UID, Text){
       console.log(`No active connection found for user with Reciever`)
   }
 }
-
-//repeated
-//END POINTS FOR WS
-app.get('/get/availableDieticians', (req, res) => {
-    const query = 'SELECT DID, FirstName, LastName, Email, ProfileURL FROM DIETICIAN'
-
-    getcon().query(query, (error, results) => {
-        if (error) {
-            database_error(res, error)
-        } else {
-            res.json(results)
-        }
-    })
-})
-
-app.get('/get/usersForDietician/:dieticianId', (req, res) => {
-  const dieticianId = req.params.dieticianId
-
-  // Adjusted the query to join with the USERS table and fetch user details
-  const query = `
-      SELECT DISTINCT U.*
-      FROM USERS U
-      JOIN CHAT C ON U.UID = C.UID
-      WHERE C.DID = ?
-  `
-
-  getcon().query(query, [dieticianId], (error, results) => {
-      if (error) {
-          database_error(res, error) 
-      } else {
-          res.json(results)
-      }
-  })
-})
-
-app.get('/get/messageToken/:DID', (req, res) => {
-  const DID = req.params.DID // Extract the DID from the URL
-
-  const query = 'SELECT MessageToken FROM DIETICIAN WHERE DID = ?'
-  getcon().query(query, [DID], (err, results) => {
-      if (err) {
-          console.error('Error executing MySQL query: ' + err)
-          res.status(500).send('Internal Server Error')
-      } else if (results.length === 0) {
-          res.status(404).send('Dietitian not found')
-      } else {
-          res.json({ MessageToken: results[0].MessageToken })
-      }
-  })
-})
-
-// Endpoint to retrieve chat history between a user and a dietician
-app.get('/get/chatHistory/:UID/:DID', (req, res) => {
-    const UID = req.params.UID
-    const DID = req.params.DID
-    const limit = 100  // max number of messages to return
-
-    const query = 'SELECT * FROM CHAT WHERE UID = ? AND DID = ? ORDER BY Time DESC LIMIT ?'
-
-    getcon().query(query, [UID, DID, limit], (error, results) => {
-        if (error) {
-            database_error(res, error)
-        } else {
-            res.json(results)
-        }
-    })
-})
-
-//give the user type of the email if exist: admin, dietician or user else return does not exist
-//done
-app.get("/get/users_type", async (req,res)=>{
-
-  try {
-    const Email = req.query.p1
-
-    if(Email==="ForceError"){
-      throw new Error("Forced Error")
-    }
-
-    const query1 = 'SELECT * FROM USERS WHERE Email=?'
-    const [userResults] = await getcon().promise().query(query1, [Email])
-
-    if (userResults.length > 0) {
-      console.log('Entry exists as user')
-      return query_success(res, 'User\n')
-    }
-
-    const query2 = 'SELECT * FROM DIETICIAN WHERE Email=?'
-    const [dieticianResults] = await getcon().promise().query(query2, [Email]);
-
-    if (dieticianResults.length > 0) {
-      console.log('Entry exists as dietician')
-      return query_success(res, 'Dietician\n')
-    }
-
-    const query3 = 'SELECT * FROM ADMIN WHERE Email=?'
-    const [adminResults] = await getcon().promise().query(query3, [Email])
-
-    if (adminResults.length > 0) {
-      console.log('Entry exists as admin')
-      return query_success(res, 'Admin\n')
-    }
-
-    console.log('This is an entry that does not exist')
-
-    return query_success(res, 'Does not exist\n')
-  } catch (error) {
-    console.error('Error:', error.stack)
-    database_error(res, error)
-  }
-
-})
 
 //the schedule for shopping reminder algorithm 
 cron.schedule(schedule, () => {

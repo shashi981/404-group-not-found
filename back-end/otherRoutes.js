@@ -1,6 +1,14 @@
 const express = require('express')
 const router = express.Router()
-const { UIDcheck, ItemIDcheck} = require('./check')
+
+function database_error(response, error) {
+    response.status(500).send('Error querying the database'+error)
+}
+  
+function query_success(response, message){
+    response.status(200)
+    response.json({Message: message})
+}
 
 router.get("/delete/UPC", async (req,res)=>{
     try{
@@ -24,3 +32,5 @@ router.get("/delete/UPC", async (req,res)=>{
         database_error(res, error)
     }
 })
+
+module.exports = router

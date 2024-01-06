@@ -32,11 +32,11 @@ app.post("/get", async (req,res)=>{
         const dietician = results[0]
     
         const responseObject = {
-        DID: dietician.DID,
-        FirstName: dietician.FirstName,
-        LastName: dietician.LastName,
-        Email: dietician.Email,
-        ProfileURL: dietician.ProfileURL,
+            DID: dietician.DID,
+            FirstName: dietician.FirstName,
+            LastName: dietician.LastName,
+            Email: dietician.Email,
+            ProfileURL: dietician.ProfileURL,
         }
         console.log("DIETICIAN GET")
     
