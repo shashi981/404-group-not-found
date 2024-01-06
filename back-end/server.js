@@ -22,13 +22,7 @@ let userConnections = {}
 let dieticianConnections = {}
 
 //database connection
-const con = mysql.createConnection({
-  host: "localhost",
-  port: "3306",
-  user: "cpen321",
-  password: "grocerymanager",
-  database: "grocerymanager"
-});
+const con = require('./dbConfig')
 
 //app
 const app = express()
