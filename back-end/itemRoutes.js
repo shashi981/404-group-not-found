@@ -13,12 +13,10 @@ fs.readFile(UPCKeypath, 'utf8', (err, data) => {
   }
 })
 
-//ChatGPT usage: No
 function database_error(response, error) {
     response.status(500).send('Error querying the database'+error)
 }
   
-//ChatGPT usage: No
 function query_success(response, message){
     response.status(200)
     response.json({Message: message})
@@ -26,8 +24,7 @@ function query_success(response, message){
 
 //get items
 //done
-//ChatGPT usage: Partial
-router.get("/get/items", async (req,res)=>{
+router.get("/get", async (req,res)=>{
     try{
         const con = req.app.get('dbConnection')
         const UID=req.query.p1
@@ -78,8 +75,7 @@ router.get("/get/items", async (req,res)=>{
   
 //add items
 //done
-//ChatGPT usage: Partial
-router.post("/add/items", async (req, res) => {
+router.post("/add", async (req, res) => {
     try {
         const con = req.app.get('dbConnection')
         const UID = req.body.p1
@@ -164,7 +160,6 @@ router.post("/add/items", async (req, res) => {
   
   
 //get data from the UPC API
-//ChatGPT usage: Yes
 function fetchDataFromAPI(url) {
     return new Promise((resolve, reject) => {
         https.get(url, (response) => {
@@ -192,8 +187,7 @@ function fetchDataFromAPI(url) {
   
 //add items manually
 //done
-//ChatGPT usage: No
-router.post("/add/items_man", async (req,res)=>{
+router.post("/add_man", async (req,res)=>{
     try{
         const con = req.app.get('dbConnection')
         const UID=req.body.p1
@@ -245,8 +239,7 @@ router.post("/add/items_man", async (req,res)=>{
   
 //delete items
 //done
-//ChatGPT usage: Partial
-router.post("/delete/items", async (req,res)=>{
+router.post("/delete", async (req,res)=>{
     try{
         const con = req.app.get('dbConnection')
         const UID=req.body.p1
@@ -278,33 +271,9 @@ router.post("/delete/items", async (req,res)=>{
     }
 })
   
-router.get("/delete/UPC", async (req,res)=>{
-    try{
-        const con = req.app.get('dbConnection')
-        const UPC=req.query.p1
-        
-        if(UPC==="ForceError"){
-            throw new Error("Forced Error")
-        }
-    
-        const query = 'DELETE FROM OWNS WHERE UPC= ?'
-        const query2 = 'DELETE FROM GROCERIES WHERE UPC= ?'
-        await con.promise().query(query, [UPC])
-        await con.promise().query(query2, [UPC])
-        
-        console.log('SUCCESS DELETE Groceries') 
-        query_success(res, 'SUCCESS DELETE Groceries')
-      
-    } catch(error){
-        console.error('Error:', error.stack)
-        database_error(res, error)
-    }
-})
-  
 //done
 //update items
-//ChatGPT usage: Partial
-router.post("/update/items", async (req,res)=>{
+router.post("/update", async (req,res)=>{
     try{
         const con = req.app.get('dbConnection')
         const UID=req.body.p1
@@ -351,3 +320,5 @@ router.post("/update/items", async (req,res)=>{
         database_error(res, error)
     }
 })
+
+module.exports = router

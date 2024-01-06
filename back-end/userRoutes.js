@@ -2,12 +2,10 @@ const express = require('express')
 const router = express.Router()
 const { Emailcheck, UIDcheck} = require('./check')
 
-//ChatGPT usage: No
 function database_error(response, error) {
     response.status(500).send('Error querying the database'+error)
 }
   
-//ChatGPT usage: No
 function query_success(response, message){
     response.status(200)
     response.json({Message: message})
@@ -15,7 +13,6 @@ function query_success(response, message){
 
 //get users
 //done
-//ChatGPT usage: Partial
 router.post("/get", async (req, res) => {
     try{
         const con = req.app.get('dbConnection')
@@ -59,7 +56,6 @@ router.post("/get", async (req, res) => {
   
 //add users
 //done
-//ChatGPT usage: Partial
 router.post("/add", async (req,res)=>{
     try{
         const con = req.app.get('dbConnection')
@@ -90,7 +86,6 @@ router.post("/add", async (req,res)=>{
   
 //delete users
 //done
-//ChatGPT usage: No
 router.get("/delete", async (req,res)=>{
     try{
         const con = req.app.get('dbConnection')
