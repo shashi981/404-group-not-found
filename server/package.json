@@ -1,0 +1,33 @@
+{
+    "name": "client",
+    "version": "2.0.0",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "nodemon ./src/index.js",
+        "test": "NODE_ENV=test jest"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "firebase-admin": "^11.11.0",
+        "fs": "^0.0.1-security",
+        "https": "^1.0.0",
+        "moment": "^2.29.4",
+        "mysql2": "^3.6.2",
+        "node-cron": "^3.0.2",
+        "socket.io": "^4.7.2",
+        "socket.io-client": "^4.7.2",
+        "punycode": "^2.3.1",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "nodemon": "^3.0.2",
+        "supertest": "^6.3.3"
+    }
+}
