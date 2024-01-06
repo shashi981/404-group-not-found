@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.services;
 
 import android.content.Context;
 import android.util.Log;
