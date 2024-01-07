@@ -1,8 +1,7 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.misc;
 
-
-import static com.example.grocerymanager.BackendPathingMock.getRequest;
-import static com.example.grocerymanager.BackendPathingMock.postRequest;
+import static com.example.grocerymanager.misc.BackendPathingMock.getRequest;
+import static com.example.grocerymanager.misc.BackendPathingMock.postRequest;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -11,6 +10,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.activities.AdminActivity;
+import com.example.grocerymanager.activities.DietitianActivity;
+import com.example.grocerymanager.activities.HomeActivity;
+import com.example.grocerymanager.components.CallbackListener;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.helpers.TokenManager;
+import com.example.grocerymanager.models.DietitianData;
+import com.example.grocerymanager.models.UserData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

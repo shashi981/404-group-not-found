@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.models;
 
 import android.net.Uri;
 

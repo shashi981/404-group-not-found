@@ -87,8 +87,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".MainActivity"
+            android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.LandingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

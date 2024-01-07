@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.ChatAdapterDietician;
+import com.example.grocerymanager.helpers.ChatMessage;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.DietitianData;
+import com.example.grocerymanager.models.NetworkManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;

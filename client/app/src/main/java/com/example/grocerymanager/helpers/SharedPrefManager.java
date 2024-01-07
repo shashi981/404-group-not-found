@@ -1,8 +1,11 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+
+import com.example.grocerymanager.models.DietitianData;
+import com.example.grocerymanager.models.UserData;
 
 public class SharedPrefManager {
 

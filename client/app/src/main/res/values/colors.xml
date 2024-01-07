@@ -5,4 +5,11 @@
     <color name="faded_white">#FFF5F5F5</color>
     <color name="dark_blue">#FF3C4256</color>
     <color name="mint_green">#FFC5E1A5</color>
+
+
+    <color name="primary_400">#163020FF</color>
+    <color name="accent_400">#B6C4B6FF</color>
+    <color name="secondary_400">#304D30FF</color>
+    <color name="neutral_400">#EEF0E5FF</color>
+
 </resources>

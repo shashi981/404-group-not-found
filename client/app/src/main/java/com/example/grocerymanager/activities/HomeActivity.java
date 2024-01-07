@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +8,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.UserData;
 
 public class HomeActivity extends AppCompatActivity {
 

@@ -1,8 +1,10 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.grocerymanager.R;
 
 public class DietitianChat extends AppCompatActivity {
     @Override

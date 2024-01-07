@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
@@ -17,6 +17,13 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.components.DatePickerFragment;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.Item;
+import com.example.grocerymanager.models.NetworkManager;
+import com.example.grocerymanager.models.UserData;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanOptions;
 
@@ -308,7 +315,7 @@ public class BarcodeActivity extends AppCompatActivity implements DatePickerFrag
         options.setPrompt("Volume up to turn on flash");
         options.setBeepEnabled(true);
         options.setOrientationLocked(true);
-        options.setCaptureActivity(CaptureAct.class);
+        options.setCaptureActivity(CameraCaptureActivity.class);
         barcodeLauncher.launch(options);
     }
 

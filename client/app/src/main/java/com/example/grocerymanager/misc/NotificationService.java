@@ -1,4 +1,4 @@
-package com.example.grocerymanager.firebase;
+package com.example.grocerymanager.misc;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -10,7 +10,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.grocerymanager.R;
-import com.example.grocerymanager.TokenManager;
+import com.example.grocerymanager.helpers.TokenManager;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

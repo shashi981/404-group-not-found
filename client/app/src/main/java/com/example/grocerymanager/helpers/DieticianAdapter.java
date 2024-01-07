@@ -1,5 +1,4 @@
-
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.activities.ChatUserActivity;
+import com.example.grocerymanager.models.DietitianData;
+
 import java.util.List;
 
 public class DieticianAdapter extends RecyclerView.Adapter<DieticianAdapter.DieticianViewHolder> {

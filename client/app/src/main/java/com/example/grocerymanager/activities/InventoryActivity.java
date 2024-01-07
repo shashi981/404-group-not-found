@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,6 +15,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.components.DatePickerFragment;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.Item;
+import com.example.grocerymanager.models.NetworkManager;
+import com.example.grocerymanager.models.UserData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

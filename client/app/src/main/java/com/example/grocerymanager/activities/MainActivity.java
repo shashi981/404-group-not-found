@@ -1,8 +1,7 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
-
-import static com.example.grocerymanager.BackendPathing.getRequest;
-import static com.example.grocerymanager.BackendPathing.postRequest;
+import static com.example.grocerymanager.helpers.BackendPathing.getRequest;
+import static com.example.grocerymanager.helpers.BackendPathing.postRequest;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +14,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.components.CallbackListener;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.helpers.TokenManager;
+import com.example.grocerymanager.models.DietitianData;
+import com.example.grocerymanager.models.UserData;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

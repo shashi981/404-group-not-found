@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 public class ChatMessage {
     private String message;

@@ -1,8 +1,8 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.components;
 
 import org.json.JSONObject;
 
-interface CallbackListener {
+public interface CallbackListener {
     void onSuccess(JSONObject result);
 
     void onFailure(String errorMessage);

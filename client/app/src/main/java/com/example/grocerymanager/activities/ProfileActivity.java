@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.NetworkManager;
+import com.example.grocerymanager.models.UserData;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;

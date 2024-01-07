@@ -1,4 +1,4 @@
-package com.example.grocerymanager.services;
+package com.example.grocerymanager.helpers;
 
 import android.content.Context;
 import android.util.Log;
@@ -30,7 +30,6 @@ public class ServerManager {
         Request request = new Request.Builder()
             .url(serverURL + "/path")
             .addHeader("Authorization", "Bearer YOUR_TOKEN")
-            .timeout(10, TimeUnit.SECONDS)
             .get()
             .build();
 

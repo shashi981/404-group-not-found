@@ -1,5 +1,4 @@
-
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.helpers.DieticianAdapter;
+import com.example.grocerymanager.models.DietitianData;
+import com.example.grocerymanager.models.NetworkManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import okhttp3.*;

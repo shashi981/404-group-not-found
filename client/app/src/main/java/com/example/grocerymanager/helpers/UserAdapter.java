@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
@@ -9,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.activities.ChatDieticianActivity;
+import com.example.grocerymanager.models.UserData;
 
 import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>{

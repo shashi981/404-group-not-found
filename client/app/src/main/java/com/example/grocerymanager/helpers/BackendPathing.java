@@ -1,7 +1,10 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.example.grocerymanager.components.CallbackListener;
+import com.example.grocerymanager.models.NetworkManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;

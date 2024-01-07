@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.misc;
 
 
 import android.content.DialogInterface;
@@ -13,6 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.activities.MainActivity;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.DietitianData;
+import com.example.grocerymanager.models.NetworkManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

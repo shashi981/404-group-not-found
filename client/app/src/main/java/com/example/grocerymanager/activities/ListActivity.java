@@ -1,10 +1,12 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+
+import com.example.grocerymanager.R;
 
 public class ListActivity extends AppCompatActivity {
 

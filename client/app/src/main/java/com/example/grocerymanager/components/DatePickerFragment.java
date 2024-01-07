@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.components;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

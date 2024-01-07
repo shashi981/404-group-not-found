@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 
 import androidx.annotation.NonNull;
@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.NetworkManager;
+import com.example.grocerymanager.models.UserData;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.misc;
 
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.SharedPrefManager;
+import com.example.grocerymanager.models.DietitianData;
 import com.squareup.picasso.Picasso;
 
 public class ProfileActivityDietician extends AppCompatActivity {

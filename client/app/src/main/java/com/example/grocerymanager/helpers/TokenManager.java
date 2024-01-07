@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;

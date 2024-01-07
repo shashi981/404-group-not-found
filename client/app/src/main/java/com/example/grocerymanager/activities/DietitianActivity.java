@@ -1,4 +1,4 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
+
+import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.misc.ProfileActivityDietician;
+import com.example.grocerymanager.misc.SettingsActivityDietician;
 
 public class DietitianActivity extends AppCompatActivity {
 

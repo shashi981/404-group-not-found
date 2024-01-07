@@ -1,7 +1,10 @@
-package com.example.grocerymanager;
+package com.example.grocerymanager.models;
 
 
 import android.content.Context;
+
+import com.example.grocerymanager.R;
+
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
