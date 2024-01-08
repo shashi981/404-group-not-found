@@ -7,9 +7,18 @@
     <color name="mint_green">#FFC5E1A5</color>
 
 
-    <color name="primary_400">#163020FF</color>
-    <color name="accent_400">#B6C4B6FF</color>
-    <color name="secondary_400">#304D30FF</color>
-    <color name="neutral_400">#EEF0E5FF</color>
+    <color name="primary_400">#FF163020</color>
+
+    <color name="accent_200">#FFC6D2C6</color>
+    <color name="accent_400">#FFB6C4B6</color>
+    <color name="accent_700">#FF526652</color>
+
+    <color name="secondary_400">#FF304D30</color>
+
+    <color name="neutral_400">#FFEEF0E5</color>
+    <color name="neutral_500">#FFD3D8BB</color>
+
+    <color name="transparent">#00EEF0E5</color>
+
 
 </resources>

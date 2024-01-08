@@ -20,7 +20,7 @@ public class LandingActivity extends AppCompatActivity {
         FragmentAdapter adapter = new FragmentAdapter(this);
 
         viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(1,true);
+        viewPager.setCurrentItem(2,false);
     }
 
 }

@@ -1,8 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Grocerymanager" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Grocerymanager" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="colorPrimary">@color/primary_400</item>
+        <item name="colorSecondary">@color/secondary_400</item>
+        <item name="colorAccent">@color/accent_400</item>
+        <item name="colorTertiary">@color/neutral_400</item>
     </style>
 
     <style name="Theme.Grocerymanager" parent="Base.Theme.Grocerymanager" />

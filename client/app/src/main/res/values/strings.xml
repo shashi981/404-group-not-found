@@ -32,10 +32,12 @@
 
 
     <!-- Home Page -->
-    <string name="scan_groceries_button">Scan Groceries</string>
-    <string name="manage_inventory_button">Manage Inventory</string>
-    <string name="consult_dietitian_button">Consult a Dietitian</string>
-    <string name="suggested_recipes_button">Suggested Recipes</string>
+    <string name="scan_groceries_button">Scan\nGroceries</string>
+    <string name="manage_inventory_button">Manage\nInventory</string>
+    <string name="consult_dietitian_button">Consult A\nDietitian</string>
+    <string name="suggested_recipes_button">Suggested\nRecipes</string>
+    <string name="shop_list_button">Shopping\nList</string>
+
     <string name="assistance_home">How Can I Be Of Assistance?</string>
     <string name="salutations_home">Welcome Back!</string>
     <string name="salutations_name_home">Hello User</string>
@@ -88,4 +90,11 @@
     <string name="sign_out_dropdown">Sign Out</string>
 
 
+<!--    content descriptions-->
+    <string name="profile_icon">Profile Icon</string>
+    <string name="settings_icon">Settings Icon</string>
+    <string name="inventory_icon">Inventory Icon</string>
+    <string name="recipe_icon">Recipe Icon</string>
+    <string name="chat_icon">Chat Icon</string>
+    <string name="list_icon">Shopping Cart Icon</string>
 </resources>
