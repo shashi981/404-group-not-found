@@ -108,4 +108,7 @@
     <string name="request_settings">Dietitian\nView</string>
     <string name="logout_settings">Logout Of\nAccount</string>
     <string name="delete_settings">Delete\nAccount</string>
+
+    <string name="available_dietitians">Available Dietitians</string>
+    <string name="messages">Messages</string>
 </resources>

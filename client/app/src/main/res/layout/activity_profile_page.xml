@@ -150,7 +150,7 @@
             android:orientation="vertical">
         </LinearLayout>
     </LinearLayout>
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/edit_dietary_restrictions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -163,7 +163,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dietary_section"
         app:layout_constraintVertical_bias="0.1"
-        android:textAllCaps="false"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"/>
 

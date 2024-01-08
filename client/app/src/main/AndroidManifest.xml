@@ -67,6 +67,12 @@
             android:name=".activities.UserListActivity"
             android:exported="false" />
         <activity
+            android:name=".activities.ProfilePageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.SettingsPageActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.ChatUserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"

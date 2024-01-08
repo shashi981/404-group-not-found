@@ -36,14 +36,16 @@
         app:srcCompat="@drawable/settings_icon_50" />
 
     <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.65"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.43">
+        app:layout_constraintVertical_bias="0.6">
 
         <LinearLayout
             android:id="@+id/inventory_container_inventory"
@@ -55,18 +57,19 @@
     </ScrollView>
 
 
-    <Button
-        android:backgroundTint="@color/dark_blue"
-        android:backgroundTintMode="src_over"
-        android:textColor="@color/faded_white"
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/add_items_inventory"
+        android:background="@drawable/rounded_button"
+        android:textColor="@color/primary_400"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_items_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.852" />
+        app:layout_constraintTop_toBottomOf="@id/scroll_view"
+        app:layout_constraintVertical_bias="0.2"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
