@@ -58,10 +58,10 @@
     <string name="profile_content_description">Google Profile Picture</string>
     <string name="google_name_profile">Name: </string>
     <string name="google_email_profile">Email: </string>
-    <string name="grocery_manager_id">GroceryManager ID: </string>
+    <string name="grocery_manager_id">ID: </string>
     <string name="preferences">Preferences: </string>
     <string name="dietary_restrictions">Dietary Restrictions: </string>
-    <string name="edit_dietary_restrictions">Edit</string>
+    <string name="edit_dietary_restrictions">Edit Dietary Restrictions</string>
     <string name="vegan_profile">Vegan</string>
     <string name="vegetarian_profile">Vegetarian</string>
     <string name="non_dairy_profile">Non-dairy</string>
@@ -97,4 +97,15 @@
     <string name="recipe_icon">Recipe Icon</string>
     <string name="chat_icon">Chat Icon</string>
     <string name="list_icon">Shopping Cart Icon</string>
+    <string name="report_icon">Report Icon</string>
+    <string name="request_icon">Request Icon</string>
+    <string name="logout_icon">Logout Icon</string>
+    <string name="delete_icon">Delete Account Icon</string>
+
+
+    <!--    button text-->
+    <string name="report_settings">Report A\nProblem</string>
+    <string name="request_settings">Dietitian\nView</string>
+    <string name="logout_settings">Logout Of\nAccount</string>
+    <string name="delete_settings">Delete\nAccount</string>
 </resources>

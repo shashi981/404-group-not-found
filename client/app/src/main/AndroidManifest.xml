@@ -18,76 +18,77 @@
         android:theme="@style/Theme.Grocerymanager"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivityMock"
+            android:name=".misc.MainActivityMock"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivityAdmin"
+            android:name=".misc.SettingsActivityAdmin"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivityDietician"
+            android:name=".misc.SettingsActivityDietician"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivityDietician"
+            android:name=".misc.ProfileActivityDietician"
             android:exported="false" />
         <activity
-            android:name=".ChatDieticianActivity"
+            android:name=".activities.ChatDieticianActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".DietitianListActivity"
+            android:name=".activities.DietitianListActivity"
             android:exported="false" />
         <activity
-            android:name=".AdminActivity"
+            android:name=".activities.AdminActivity"
             android:exported="false" />
         <activity
-            android:name=".DietitianActivity"
+            android:name=".activities.DietitianActivity"
             android:exported="false" />
         <activity
-            android:name=".AddItemsActivity"
+            android:name=".activities.AddItemsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".activities.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ListActivity"
+            android:name=".activities.ListActivity"
             android:exported="false" />
         <activity
-            android:name=".RecipeActivity"
+            android:name=".activities.RecipeActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".activities.ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".UserListActivity"
+            android:name=".activities.UserListActivity"
             android:exported="false" />
         <activity
-            android:name=".ChatUserActivity"
+            android:name=".activities.ChatUserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".InventoryActivity"
+            android:name=".activities.InventoryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ScannerActivity"
+            android:name=".activities.ScannerActivity"
             android:exported="false" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".activities.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".BarcodeActivity"
+            android:name=".activities.BarcodeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".activities.MainActivity"
             android:exported="false" />
         <activity
             android:name=".activities.LandingActivity"
@@ -99,13 +100,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CaptureAct"
-            android:screenOrientation="portrait"
+            android:name=".activities.CameraCaptureActivity"
+            android:screenOrientation="fullSensor"
             android:stateNotNeeded="true"
             android:theme="@style/zxing_CaptureTheme" />
 
         <service
-            android:name=".firebase.NotificationService"
+            android:name=".misc.NotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

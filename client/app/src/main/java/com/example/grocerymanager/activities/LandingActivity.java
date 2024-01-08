@@ -10,17 +10,22 @@ import com.example.grocerymanager.helpers.FragmentAdapter;
 
 public class LandingActivity extends AppCompatActivity {
 
+    ViewPager2 viewPager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
-        ViewPager2 viewPager = findViewById(R.id.viewPager);
+        viewPager = findViewById(R.id.viewPager);
 
         FragmentAdapter adapter = new FragmentAdapter(this);
 
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(2,false);
+    }
+
+    public void setCurrentItem(int position) {
+        viewPager.setCurrentItem(position, true);
     }
 
 }
