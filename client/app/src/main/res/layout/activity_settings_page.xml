@@ -29,7 +29,7 @@
         app:layout_constraintGuide_percent="0.2" />
 
     <LinearLayout
-        android:id="@+id/roundedContainer"
+        android:id="@+id/rounded_container"
         android:orientation="horizontal"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -41,7 +41,35 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/settings_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/settings_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        android:src="@drawable/settings_icon_100" />
+
+    <TextView
+        android:id="@+id/settings_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings"
+        android:textColor="@color/primary_400"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@id/constraint_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/settings_icon"
+        app:layout_constraintVertical_bias="0.2" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_percent="0.9"
@@ -50,12 +78,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintTop_toBottomOf="@id/guideline"
+        app:layout_constraintVertical_bias="0.6">
 
         <!-- Panel 1 -->
         <LinearLayout
-            android:id="@+id/panel1"
+            android:id="@+id/report_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
@@ -63,9 +91,9 @@
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/panel3"
+            app:layout_constraintBottom_toTopOf="@+id/logout_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/panel2"
+            app:layout_constraintEnd_toStartOf="@+id/dietitian_button"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
@@ -91,7 +119,7 @@
 
         <!-- Panel 2 -->
         <LinearLayout
-            android:id="@+id/panel2"
+            android:id="@+id/dietitian_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
@@ -99,8 +127,8 @@
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/panel4"
-            app:layout_constraintStart_toEndOf="@+id/panel1"
+            app:layout_constraintBottom_toTopOf="@+id/delete_button"
+            app:layout_constraintStart_toEndOf="@+id/report_button"
             app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center"
             android:clickable="true"
@@ -127,17 +155,17 @@
 
         <!-- Panel 3 -->
         <LinearLayout
-            android:id="@+id/panel3"
+            android:id="@+id/logout_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
             android:orientation="vertical"
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
-            app:layout_constraintTop_toBottomOf="@+id/panel1"
+            app:layout_constraintTop_toBottomOf="@+id/report_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/panel4"
+            app:layout_constraintEnd_toStartOf="@+id/delete_button"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
@@ -163,16 +191,16 @@
 
         <!-- Panel 4 -->
         <LinearLayout
-            android:id="@+id/panel4"
+            android:id="@+id/delete_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
             android:orientation="vertical"
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
-            app:layout_constraintTop_toBottomOf="@+id/panel2"
+            app:layout_constraintTop_toBottomOf="@+id/dietitian_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/panel3"
+            app:layout_constraintStart_toEndOf="@+id/logout_button"
             app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center"
             android:clickable="true"
@@ -191,13 +219,11 @@
                 android:layout_height="wrap_content"
                 android:text="@string/delete_settings"
                 android:gravity="center"
-                android:textColor="@color/primary_400"
+                android:textColor="@color/warning"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:layout_marginBottom="10dp"/>
         </LinearLayout>
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

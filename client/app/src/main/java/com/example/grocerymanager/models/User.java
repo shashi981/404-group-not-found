@@ -1,23 +1,38 @@
 package com.example.grocerymanager.models;
 
-import java.net.URI;
+import android.net.Uri;
 
 public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private URI uri;
+    private Uri uri;
     // add token somewhere here, unsure yet.
     private String userType;
     private int ID;
 
     private static User instance;
 
-    User(String firstName, String lastName, String email, URI uri){
+    public User(String firstName, String lastName, String email, Uri uri){
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.uri = uri;
+    }
+
+    public User(String firstName, String lastName, String email, Uri uri, String userType, int ID) {
+        this(firstName, lastName, email, uri);
+        this.userType = userType;
+        this.ID = ID;
+    }
+
+    public User(User other) {
+        this.firstName = other.firstName;
+        this.lastName = other.lastName;
+        this.email = other.email;
+        this.uri = other.uri;
+        this.userType = other.userType;
+        this.ID = other.ID;
     }
 
     public static synchronized User getInstance() {
@@ -28,7 +43,11 @@ public class User {
         return instance;
     }
 
-    public void setDetails(String firstName, String lastName, String email, URI uri) {
+    public static void clearInstance() {
+        instance = null;
+    }
+
+    public void setDetails(String firstName, String lastName, String email, Uri uri) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -64,17 +83,18 @@ public class User {
         this.email = email;
     }
 
-    public URI getUri() {
+    public Uri getUri() {
         return uri;
     }
 
-    public void setUri(URI uri) {
+    public void setUri(Uri uri) {
         this.uri = uri;
     }
 
     public String getUserType() {
         return userType;
     }
+
 
     public int getID() {
         return ID;

@@ -31,7 +31,7 @@
         app:layout_constraintGuide_percent="0.2" />
 
     <LinearLayout
-        android:id="@+id/roundedContainer"
+        android:id="@+id/rounded_container"
         android:orientation="horizontal"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -43,32 +43,40 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/google_image_profile"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/profile_content_description"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.17"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintVertical_bias="0.17">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/profile_content_description"
+            tools:srcCompat="@tools:sample/avatars" />
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/google_name_profile"
+        android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/google_name_profile"
-        android:textColor="@color/dark_blue"
+        android:textColor="@color/primary_400"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/google_image_profile"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintTop_toBottomOf="@id/card_view"
+        app:layout_constraintVertical_bias="0.02" />
 
     <LinearLayout
         android:id="@+id/profile_info"
@@ -79,17 +87,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/google_name_profile"
+        app:layout_constraintTop_toBottomOf="@id/profile_name"
         app:layout_constraintVertical_bias="0.1">
 
         <TextView
-            android:id="@+id/google_email_profile"
+            android:id="@+id/profile_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:text="@string/google_email_profile"
-            android:textColor="@color/dark_blue"
-
+            android:textColor="@color/primary_400"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -99,12 +106,26 @@
             app:layout_constraintVertical_bias="0.5" />
 
         <TextView
-            android:id="@+id/user_id_profile"
+            android:id="@+id/profile_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:text="@string/grocery_manager_type"
+            android:textColor="@color/primary_400"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/profile_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:text="@string/grocery_manager_id"
-            android:textColor="@color/dark_blue"
+            android:textColor="@color/primary_400"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -117,7 +138,7 @@
 
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/dietary_section"
+        android:id="@+id/dietary_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -125,16 +146,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.1">
+        app:layout_constraintVertical_bias="0.05">
 
         <TextView
-            android:id="@+id/dietary_restrictions_profile"
+            android:id="@+id/profile_restriction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
             android:layout_marginBottom="10dp"
             android:text="@string/dietary_restrictions"
-            android:textColor="@color/dark_blue"
+            android:textColor="@color/primary_400"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -144,14 +165,14 @@
             app:layout_constraintVertical_bias="0.6" />
 
         <LinearLayout
-            android:id="@+id/restriction_list"
+            android:id="@+id/restriction_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
         </LinearLayout>
     </LinearLayout>
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/edit_dietary_restrictions"
+        android:id="@+id/edit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
@@ -161,7 +182,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dietary_section"
+        app:layout_constraintTop_toBottomOf="@id/dietary_layout"
         app:layout_constraintVertical_bias="0.1"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"/>

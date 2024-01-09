@@ -16,7 +16,7 @@ import com.example.grocerymanager.helpers.ActivityLauncher;
 public class InventoryFragment extends Fragment {
 
     private ImageButton profileIcon;
-    private ImageButton settingsCog;
+    private ImageButton settingsIcon;
 
     public InventoryFragment() {
 
@@ -35,9 +35,9 @@ public class InventoryFragment extends Fragment {
             }
         });
 
-        settingsCog = view.findViewById(R.id.settings_cog);
+        settingsIcon = view.findViewById(R.id.settings_icon);
 
-        settingsCog.setOnClickListener(new View.OnClickListener() {
+        settingsIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ActivityLauncher.launchActivity(requireActivity(), SettingsPageActivity.class);

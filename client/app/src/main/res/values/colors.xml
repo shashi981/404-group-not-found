@@ -19,6 +19,7 @@
     <color name="neutral_500">#FFD3D8BB</color>
 
     <color name="transparent">#00EEF0E5</color>
+    <color name="warning">#FFB22222</color>
 
 
 </resources>

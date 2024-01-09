@@ -5,6 +5,8 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.example.grocerymanager.models.User;
 import com.google.gson.Gson;
 
 
@@ -94,4 +96,64 @@ public class ServerManager {
             e.printStackTrace();
         }
     }
+
+    public static boolean putUser(User user){
+        user.setDBInfo("User", 1);
+        return true;
+    }
+
+//    public static boolean putUser(User user){
+//        String jsonBody = gson.toJson(user);
+//        RequestBody requestBody = RequestBody.create(MediaType.get("application/json"), jsonBody);
+//        Request request = new Request.Builder()
+//                .url(serverURL + "/user")
+//                .put(requestBody)
+//                .build();
+//
+//        try (Response response = client.newCall(request).execute()) {
+//            if (response.isSuccessful()) {
+//                String responseBody = response.body().string();
+//                Log.d(TAG, responseBody);
+//                User updatedUser = gson.fromJson(responseBody, User.class);
+//                user.setDBInfo(updatedUser.getUserType(), updatedUser.getID());
+//                return true;
+//            } else {
+//                // Handle unsuccessful response
+//                Log.e(TAG, "Request failed with code: " + response.code());
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
+
+    public static boolean deleteUser(User user) {
+        User.clearInstance();
+        return true;
+    }
+
+//    public static boolean deleteUser(User user){
+//        Request request = new Request.Builder()
+//                .url(serverURL + "/delete/" + user.getEmail())
+//                .delete()
+//                .build();
+//
+//        try (Response response = client.newCall(request).execute()) {
+//            if (response.isSuccessful()) {
+//                String responseBody = response.body().string();
+//                Log.d(TAG, responseBody);
+//                User.clearInstance();
+//                return true;
+//            } else {
+//                // Handle unsuccessful response
+//                Log.e(TAG, "Request failed with code: " + response.code());
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//
+//    }
 }

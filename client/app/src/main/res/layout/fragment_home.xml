@@ -22,7 +22,7 @@
         app:srcCompat="@drawable/profile_icon_50" />
 
     <ImageButton
-        android:id="@+id/settings_cog"
+        android:id="@+id/settings_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_icon"
@@ -36,33 +36,36 @@
         app:srcCompat="@drawable/settings_icon_50" />
 
     <TextView
-        android:id="@+id/salutations_name_home"
-        android:layout_width="wrap_content"
+        android:id="@+id/greetings_text"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/salutations_name_home"
         android:textColor="@color/primary_400"
         android:textSize="32sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/constraint_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.225" />
+        app:layout_constraintTop_toBottomOf="@id/profile_icon"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintVertical_bias="0.5"
+        android:gravity="center"/>
 
     <TextView
-        android:id="@+id/assistance_home"
+        android:id="@+id/assistance_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/assistance_home"
         android:textColor="@color/primary_400"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/constraint_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.476"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/greetings_text"
         app:layout_constraintVertical_bias="0.3" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_percent="0.9"
@@ -76,7 +79,7 @@
 
         <!-- Panel 1 -->
         <LinearLayout
-            android:id="@+id/panel1"
+            android:id="@+id/inventory_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
@@ -84,9 +87,9 @@
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/panel3"
+            app:layout_constraintBottom_toTopOf="@+id/chat_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/panel2"
+            app:layout_constraintEnd_toStartOf="@+id/shopping_button"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
@@ -112,7 +115,7 @@
 
         <!-- Panel 2 -->
         <LinearLayout
-            android:id="@+id/panel2"
+            android:id="@+id/shopping_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
@@ -120,8 +123,8 @@
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/panel4"
-            app:layout_constraintStart_toEndOf="@+id/panel1"
+            app:layout_constraintBottom_toTopOf="@+id/recipe_button"
+            app:layout_constraintStart_toEndOf="@+id/inventory_button"
             app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center"
             android:clickable="true"
@@ -148,17 +151,17 @@
 
         <!-- Panel 3 -->
         <LinearLayout
-            android:id="@+id/panel3"
+            android:id="@+id/chat_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
             android:orientation="vertical"
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
-            app:layout_constraintTop_toBottomOf="@+id/panel1"
+            app:layout_constraintTop_toBottomOf="@+id/inventory_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/panel4"
+            app:layout_constraintEnd_toStartOf="@+id/recipe_button"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
@@ -184,16 +187,16 @@
 
         <!-- Panel 4 -->
         <LinearLayout
-            android:id="@+id/panel4"
+            android:id="@+id/recipe_button"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rounded_button"
             android:orientation="vertical"
             app:layout_constraintWidth_percent="0.4"
             app:layout_constraintHeight_percent="0.4"
-            app:layout_constraintTop_toBottomOf="@+id/panel2"
+            app:layout_constraintTop_toBottomOf="@+id/shopping_button"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/panel3"
+            app:layout_constraintStart_toEndOf="@+id/chat_button"
             app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center"
             android:clickable="true"

@@ -22,7 +22,7 @@
         app:srcCompat="@drawable/profile_icon_50" />
 
     <ImageButton
-        android:id="@+id/settings_cog"
+        android:id="@+id/settings_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_icon"
@@ -48,7 +48,7 @@
         app:layout_constraintVertical_bias="0.6">
 
         <LinearLayout
-            android:id="@+id/inventory_container_inventory"
+            android:id="@+id/linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -58,7 +58,7 @@
 
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/add_items_inventory"
+        android:id="@+id/add_button"
         android:background="@drawable/rounded_button"
         android:textColor="@color/primary_400"
         android:layout_width="wrap_content"
