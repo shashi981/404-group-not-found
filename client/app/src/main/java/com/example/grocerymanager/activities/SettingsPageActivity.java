@@ -18,6 +18,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.grocerymanager.R;
+import com.example.grocerymanager.helpers.ActivityLauncher;
+import com.example.grocerymanager.models.ContactForm;
 import com.example.grocerymanager.models.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -78,6 +80,24 @@ public class SettingsPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 deleteConfirmation();
+            }
+        });
+
+        LinearLayout reportButton = findViewById(R.id.report_button);
+        reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActivityLauncher.launchActivity(SettingsPageActivity.this, ContactActivity.class);
+            }
+        });
+
+        LinearLayout dietitianButton = findViewById(R.id.dietitian_button);
+        dietitianButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ContactForm contactForm = ContactForm.getInstance();
+                contactForm.setSubject("Request Dietitian View");
+                ActivityLauncher.launchActivity(SettingsPageActivity.this, ContactActivity.class);
             }
         });
 
