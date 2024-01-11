@@ -28,7 +28,7 @@ public class ProfilePageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                finish();
+                onBackPressed();
 
             }
         });

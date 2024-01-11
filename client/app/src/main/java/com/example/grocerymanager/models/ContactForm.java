@@ -7,17 +7,17 @@ public class ContactForm {
     private String email;
     private String phoneNumber;
     private String subject;
-    private String inquiry;
+    private String concerns;
     private User user;
 
     private static ContactForm instance;
 
-    public ContactForm(String name, String email, String phoneNumber, String subject, String inquiry, User user){
+    public ContactForm(String name, String email, String phoneNumber, String subject, String concerns, User user){
         this.name = name;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.subject = subject;
-        this.inquiry = inquiry;
+        this.concerns = concerns;
         this.user = user;
     }
 
@@ -26,7 +26,7 @@ public class ContactForm {
         this.email = other.email;
         this.phoneNumber = other.phoneNumber;
         this.subject = other.subject;
-        this.inquiry = other.inquiry;
+        this.concerns = other.concerns;
         this.user = other.user;
     }
 
@@ -40,6 +40,15 @@ public class ContactForm {
 
     public static void clearInstance() {
         instance = null;
+    }
+
+    public void updateForm(String name, String email, String phoneNumber, String subject, String concerns, User user){
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.subject = subject;
+        this.concerns = concerns;
+        this.user = user;
     }
 
     public void setSubject(String subject){

@@ -6,6 +6,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.grocerymanager.models.ContactForm;
 import com.example.grocerymanager.models.User;
 import com.google.gson.Gson;
 
@@ -156,4 +157,9 @@ public class ServerManager {
 //        }
 //
 //    }
+
+    public static boolean postForm(ContactForm contactForm){
+        ContactForm.clearInstance();
+        return true;
+    }
 }
