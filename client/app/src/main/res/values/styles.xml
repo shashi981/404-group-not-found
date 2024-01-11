@@ -5,4 +5,12 @@
         <item name="android:textColor">@color/faded_white</item>
     </style>
 
+    <style name="SpinnerStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@color/primary_400</item>
+        <item name="android:backgroundTint">@color/neutral_500</item>
+        <item name="android:popupBackground">@color/neutral_500</item>
+        <item name="android:dropDownSelector">@color/primary_400</item>
+        <item name="android:textSize">@dimen/_11ssp</item>
+    </style>
+
 </resources>

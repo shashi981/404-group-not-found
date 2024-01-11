@@ -5,6 +5,7 @@ import static com.example.grocerymanager.helpers.ServerManager.deleteUser;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,36 +56,30 @@ public class ContactActivity extends AppCompatActivity {
             }
         });
 
-        Spinner spinnerSubject = findViewById(R.id.spinnerSubject);
+        Spinner spinnerSubject = findViewById(R.id.subject_spinner);
 
-// Define your array of subjects (replace with your own data)
         String[] subjects = {"Request Dietitian View", "Report A User", "Other"};
 
-// Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, subjects);
 
-// Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-// Apply the adapter to the spinner
         spinnerSubject.setAdapter(adapter);
 
         if(!contactForm.getSubject().isEmpty()){
             spinnerSubject.setSelection(0);
         }
 
-// Set a listener to handle item selections
         spinnerSubject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                // Handle the selected item
                 selectedSubject = (String) parentView.getItemAtPosition(position);
-                // Do something with the selected subject
+                View view = spinnerSubject.getSelectedView();
+                ((TextView) view).setTextColor(Color.parseColor("#FF20462F"));
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
-                // Do nothing here
             }
         });
 
