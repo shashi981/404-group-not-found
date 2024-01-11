@@ -45,6 +45,10 @@ public class ContactActivity extends AppCompatActivity {
     private Spinner spinnerSubject;
 
     private ContactForm contactForm;
+    private EditText nameEditText;
+    private EditText emailEditText;
+    private EditText phoneEditText;
+    private EditText concernsEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,11 @@ public class ContactActivity extends AppCompatActivity {
         contactForm = ContactForm.getInstance();
 
         user = User.getInstance();
+
+        nameEditText = findViewById(R.id.name_edit_text);
+        emailEditText = findViewById(R.id.email_edit_text);
+        phoneEditText = findViewById(R.id.phone_edit_text);
+        concernsEditText = findViewById(R.id.concerns_edit_text);
 
         ImageButton backIcon = findViewById(R.id.back_icon);
         backIcon.setOnClickListener(new View.OnClickListener() {
@@ -108,21 +117,18 @@ public class ContactActivity extends AppCompatActivity {
     }
 
     private void submitForm() {
-        EditText nameEditText = findViewById(R.id.name_edit_text);
         String name = nameEditText.getText().toString();
         if(name.isEmpty()){
             emptySection("name");
             return;
         }
 
-        EditText emailEditText = findViewById(R.id.email_edit_text);
         String email = emailEditText.getText().toString();
         if(email.isEmpty()){
             emptySection("email");
             return;
         }
 
-        EditText phoneEditText = findViewById(R.id.phone_edit_text);
         String phone = phoneEditText.getText().toString();
         if(phone.isEmpty() || phone.length() != 10){
             emptySection("phone");
@@ -135,7 +141,6 @@ public class ContactActivity extends AppCompatActivity {
             return;
         }
 
-        EditText concernsEditText = findViewById(R.id.concerns_edit_text);
         String concerns = concernsEditText.getText().toString();
         if(concerns.isEmpty()){
             emptySection(("concerns"));
@@ -172,7 +177,7 @@ public class ContactActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if(selectedSubject.isEmpty()){
+        if(!nameEditText.getText().toString().isEmpty() || !emailEditText.getText().toString().isEmpty() || !phoneEditText.getText().toString().isEmpty() || !concernsEditText.getText().toString().isEmpty()){
             backConfirmation();
         }
         else{
