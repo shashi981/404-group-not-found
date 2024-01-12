@@ -32,10 +32,16 @@ public class ContactForm {
 
     public static synchronized ContactForm getInstance() {
         if (instance == null) {
-            // User is not signed in, provide default values or handle accordingly
             instance = new ContactForm("","","","","", null);
         }
         return instance;
+    }
+
+    public static boolean checkInstance(){
+        if(instance == null){
+            return false;
+        }
+        return true;
     }
 
     public static void clearInstance() {

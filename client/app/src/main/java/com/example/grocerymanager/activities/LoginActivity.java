@@ -128,6 +128,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if(putUser(user)){
                 ActivityLauncher.launchActivity(this, LandingActivity.class);
+                finish();
             }
             else{
                 Toast.makeText(LoginActivity.this, "Login Unsuccessful", Toast.LENGTH_LONG).show();

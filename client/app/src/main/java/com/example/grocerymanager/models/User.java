@@ -43,6 +43,13 @@ public class User {
         return instance;
     }
 
+    public static boolean checkInstance(){
+        if(instance == null){
+            return false;
+        }
+        return true;
+    }
+
     public static void clearInstance() {
         instance = null;
     }

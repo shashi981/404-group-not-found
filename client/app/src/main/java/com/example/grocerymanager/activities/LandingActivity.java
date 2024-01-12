@@ -1,5 +1,7 @@
 package com.example.grocerymanager.activities;
 
+import static com.example.grocerymanager.helpers.ServerManager.getRecipes;
+
 import android.os.Bundle;
 import android.util.Log;
 
@@ -33,6 +35,8 @@ public class LandingActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(2,false);
+
+        getRecipes(user);
     }
 
     public void setCurrentItem(int position) {

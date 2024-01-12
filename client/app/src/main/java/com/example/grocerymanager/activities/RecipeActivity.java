@@ -304,7 +304,7 @@ public class RecipeActivity extends AppCompatActivity {
 
                 recipeName.setText(recipe.getRecipeName());
                 youtubeLink.setText(recipe.getYouTubeLink());
-                fiveIngredients.setText(recipe.getFiveIngredientsAstString());
+                fiveIngredients.setText(recipe.getFiveIngredientsAsString());
 
                 selectRecipeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -323,16 +323,16 @@ public class RecipeActivity extends AppCompatActivity {
     //    ChatGPT Usage: No
     private void displayFullRecipe(Recipe recipe){
         Dialog dialog = new Dialog(RecipeActivity.this);
-        dialog.setContentView(R.layout.full_recipe_popup_template);
+        dialog.setContentView(R.layout.recipe_fullview);
 
         Window window = dialog.getWindow();
         if (window != null) {
             window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         }
         
-        TextView recipeName = dialog.findViewById(R.id.name_of_recipe_expanded);
-        TextView ingredientsList = dialog.findViewById(R.id.ingredients_listed);
-        TextView instructionsList = dialog.findViewById(R.id.instructions_listed);
+        TextView recipeName = dialog.findViewById(R.id.recipe_text);
+        TextView ingredientsList = dialog.findViewById(R.id.ingredients_text);
+        TextView instructionsList = dialog.findViewById(R.id.instructions_text);
 
         recipeName.setText(recipe.getRecipeName());
         ingredientsList.setText(recipe.getIngredientsAsString());

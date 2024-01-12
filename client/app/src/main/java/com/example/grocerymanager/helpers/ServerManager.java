@@ -3,10 +3,13 @@ package com.example.grocerymanager.helpers;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.example.grocerymanager.models.ContactForm;
+import com.example.grocerymanager.models.Recipe;
+import com.example.grocerymanager.models.RecipeSet;
 import com.example.grocerymanager.models.User;
 import com.google.gson.Gson;
 
@@ -161,5 +164,97 @@ public class ServerManager {
     public static boolean postForm(ContactForm contactForm){
         ContactForm.clearInstance();
         return true;
+    }
+
+//    public static boolean getRecipes(User user){
+//        Request request = new Request.Builder()
+//                .url(serverURL + "/recipes?id=" + user.getID())
+//                .get()
+//                .build();
+//
+//        try (Response response = client.newCall(request).execute()) {
+//            if (response.isSuccessful()) {
+//                String responseBody = response.body().string();
+//                Log.d(TAG, responseBody);
+//                try {
+//                    JSONArray jsonArray = new JSONArray(responseBody);
+//                    RecipeSet recipeSet = RecipeSet.getInstance();
+//                    recipeSet.clearRecipes();
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                        String recipeName = jsonObject.getString("Name");
+//                        String recipeInstructions = jsonObject.getString("Instruction");
+//                        int RID = jsonObject.getInt("RID");
+//                        String recipeYTLink = jsonObject.getString("YTLink");
+//                        Recipe recipe = new Recipe(recipeName, recipeInstructions, RID, recipeYTLink);
+//                        JSONArray ingredientsArray = jsonObject.getJSONArray("ingredients");
+//                        for(int j = 0; j < ingredientsArray.length(); j++){
+//                            JSONObject individualIngredientObject = ingredientsArray.getJSONObject(j);
+//                            String ingredientName = individualIngredientObject.getString("Ingredient");
+//                            String ingredientAmount = individualIngredientObject.getString("Amount");
+//                            recipe.addIngredient(ingredientName, ingredientAmount);
+//                        }
+//                        recipeSet.addRecipe(recipe);
+//                    }
+//                    return true;
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    RecipeSet.clearInstance();
+//                    return false;
+//                }
+//            } else {
+//                // Handle unsuccessful response
+//                Log.e(TAG, "Request failed with code: " + response.code());
+//                RecipeSet.clearInstance();
+//                return false;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            RecipeSet.clearInstance();
+//            return false;
+//        }
+//    }
+
+    public static boolean getRecipes(User user){
+        // courtesy of ChatGPT
+        String mockedResponse = "["
+                + "{\"Name\": \"Spaghetti Bolognese\", \"Instruction\": \"Cook pasta and prepare Bolognese sauce.\", \"RID\": 1, \"YTLink\": \"https://www.youtube.com/watch?v=123\", \"ingredients\": [{\"Ingredient\": \"Pasta\", \"Amount\": \"200g\"}, {\"Ingredient\": \"Ground Beef\", \"Amount\": \"300g\"}]},"
+                + "{\"Name\": \"Chicken Stir-Fry\", \"Instruction\": \"Stir-fry chicken and vegetables.\", \"RID\": 2, \"YTLink\": \"https://www.youtube.com/watch?v=456\", \"ingredients\": [{\"Ingredient\": \"Chicken Breast\", \"Amount\": \"500g\"}, {\"Ingredient\": \"Broccoli\", \"Amount\": \"250g\"}]},"
+                + "{\"Name\": \"Chocolate Cake\", \"Instruction\": \"Bake a delicious chocolate cake.\", \"RID\": 3, \"YTLink\": \"https://www.youtube.com/watch?v=789\", \"ingredients\": [{\"Ingredient\": \"Flour\", \"Amount\": \"2 cups\"}, {\"Ingredient\": \"Cocoa Powder\", \"Amount\": \"1/2 cup\"}]},"
+                + "{\"Name\": \"Caprese Salad\", \"Instruction\": \"Assemble tomatoes, mozzarella, and basil.\", \"RID\": 4, \"YTLink\": \"https://www.youtube.com/watch?v=101\", \"ingredients\": [{\"Ingredient\": \"Tomatoes\", \"Amount\": \"4\"}, {\"Ingredient\": \"Mozzarella\", \"Amount\": \"200g\"}]},"
+                + "{\"Name\": \"Vegetarian Pizza\", \"Instruction\": \"Prepare a tasty vegetarian pizza.\", \"RID\": 5, \"YTLink\": \"https://www.youtube.com/watch?v=202\", \"ingredients\": [{\"Ingredient\": \"Pizza Dough\", \"Amount\": \"1 ball\"}, {\"Ingredient\": \"Bell Peppers\", \"Amount\": \"1 cup\"}]}"
+                + "]";
+
+        // original code
+        try {
+            JSONArray jsonArray = new JSONArray(mockedResponse);
+            RecipeSet recipeSet = RecipeSet.getInstance();
+            recipeSet.clearRecipes();
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String recipeName = jsonObject.getString("Name");
+                String recipeInstructions = jsonObject.getString("Instruction");
+                int RID = jsonObject.getInt("RID");
+                String recipeYTLink = jsonObject.getString("YTLink");
+                Recipe recipe = new Recipe(recipeName, recipeInstructions, RID, recipeYTLink);
+
+                JSONArray ingredientsArray = jsonObject.getJSONArray("ingredients");
+                for (int j = 0; j < ingredientsArray.length(); j++) {
+                    JSONObject individualIngredientObject = ingredientsArray.getJSONObject(j);
+                    String ingredientName = individualIngredientObject.getString("Ingredient");
+                    String ingredientAmount = individualIngredientObject.getString("Amount");
+                    recipe.addIngredient(ingredientName, ingredientAmount);
+                }
+
+                recipeSet.addRecipe(recipe);
+            }
+
+            return true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            RecipeSet.clearInstance();
+            return false;
+        }
     }
 }
