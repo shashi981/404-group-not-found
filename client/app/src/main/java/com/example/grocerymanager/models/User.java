@@ -2,6 +2,9 @@ package com.example.grocerymanager.models;
 
 import android.net.Uri;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String firstName;
     private String lastName;
@@ -10,6 +13,10 @@ public class User {
     // add token somewhere here, unsure yet.
     private String userType;
     private int ID;
+    private boolean nondairy;
+    private boolean vegan;
+    private boolean vegetarian;
+
 
     private static User instance;
 
@@ -18,21 +25,15 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.uri = uri;
+        this.nondairy = false;
+        this.vegan = false;
+        this.vegetarian = false;
     }
 
     public User(String firstName, String lastName, String email, Uri uri, String userType, int ID) {
         this(firstName, lastName, email, uri);
         this.userType = userType;
         this.ID = ID;
-    }
-
-    public User(User other) {
-        this.firstName = other.firstName;
-        this.lastName = other.lastName;
-        this.email = other.email;
-        this.uri = other.uri;
-        this.userType = other.userType;
-        this.ID = other.ID;
     }
 
     public static synchronized User getInstance() {
@@ -105,5 +106,35 @@ public class User {
 
     public int getID() {
         return ID;
+    }
+
+    public void setRestrictions(boolean nondairy, boolean vegan, boolean vegetarian){
+        this.nondairy = nondairy;
+        this.vegan = vegan;
+        this.vegetarian = vegetarian;
+    }
+
+    public void setNondairy(boolean nondairy) {
+        this.nondairy = nondairy;
+    }
+
+    public boolean isNondairy() {
+        return nondairy;
+    }
+
+    public void setVegan(boolean vegan) {
+        this.vegan = vegan;
+    }
+
+    public boolean isVegan() {
+        return vegan;
+    }
+
+    public void setVegetarian(boolean vegetarian) {
+        this.vegetarian = vegetarian;
+    }
+
+    public boolean isVegetarian() {
+        return vegetarian;
     }
 }
